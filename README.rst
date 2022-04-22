@@ -40,7 +40,7 @@ Pipeline Overview
 *****************
 
 Step 1: Downloader
-******************
+******************0
 
 Resource: TCGA
 --------------
@@ -51,7 +51,7 @@ Annotated variant files are downloaded from the ISB-CGC Big Query repository.
 **Fields** 
 Field descriptions for Big Query output available in field_names_descriptions.csv
 
-Additional field descriptions available on `GDC docs <https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/>`
+Additional field descriptions available on `GDC docs <https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/>`_
 
 
 **Studies**
@@ -129,15 +129,24 @@ Additional field descriptions available on `GDC docs <https://docs.gdc.cancer.go
 **Downloading through Big Query**
 *********************************
 
-*Gain access to the ISB-GCG Big Query repository*
+For complete documentation, see the `ISB-CGC Read the Docs pages <https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/>`
 
-Contact Dr. Fabian Seidle and ask for access. 
+*Step 1 - Gain All Access Requiremenets 
+
+Contact Dr. Fabian Seidle and ask for access to the ISB-CGC Big Query repository
     - For the run in Spring 2022 my (Ned) personal gwu account was added to the project 'isb-cgc-training-001'
     - All users have up to 1 TB of downloads free, for our ourporposes we are well under this limit so should not need to pay
 
+For further information see the `ISB-CGC documentation on gaining access <https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/Gaining-Access-To-Controlled-Access-Data.html>`
 
 
-*Step 2 - Review the tutorial offered by the ISB-CGC*
+
+*Step 2 - Run R scripts using R Studio*
+
+The following scripts are available: 
+
+
+
 
 Go to `MyBinder <https://mybinder.org/>` 
 
