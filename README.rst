@@ -40,7 +40,7 @@ Pipeline Overview
 *****************
 
 Step 1: Downloader
-******************0
+******************
 
 Resource: TCGA
 --------------
@@ -129,7 +129,7 @@ Additional field descriptions available on `GDC docs <https://docs.gdc.cancer.go
 **Downloading through Big Query**
 *********************************
 
-For complete documentation, see the `ISB-CGC Read the Docs pages <https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/>`
+For complete documentation, see the `ISB-CGC Read the Docs pages <https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/>`_
 
 *Step 1 - Gain All Access Requiremenets 
 
@@ -137,305 +137,48 @@ Contact Dr. Fabian Seidle and ask for access to the ISB-CGC Big Query repository
     - For the run in Spring 2022 my (Ned) personal gwu account was added to the project 'isb-cgc-training-001'
     - All users have up to 1 TB of downloads free, for our ourporposes we are well under this limit so should not need to pay
 
-For further information see the `ISB-CGC documentation on gaining access <https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/Gaining-Access-To-Controlled-Access-Data.html>`
+Gain access to dbGaP data
+    - Apply for access to controlled data at `this website <https://dbgap.ncbi.nlm.nih.gov/aa/wga.cgi?page=login>`
+    - You will need to be approved a PI that already has access to dbGaP controlled data
+
+For further information see the `ISB-CGC documentation on gaining access <https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/Gaining-Access-To-Controlled-Access-Data.html>`_
+
+*Step 2 - Run downloader R script using R Studio*
+
+**TCGA_mutation_download.R**
+Run each line one after the other, instead of the whole script together
+
+Running `library(bigrquery)` and calling this library with `bq_project_query()` (later in the script) will open a browser to login with google credentials
+    - Use the google account registered with Fabian for a ISB-CGC project and with dbGAP authorization
+    - After logging in, a token will be saved so that you can login through R studio instead
+
+This script will download all mutation data for TCGA. 
+
+There were issues in running this script because the downloaded file was so large. 
+
+In this case run the following scripts in the folder `mutation_download_subscripts`:
+    - TCGA_mutation_download_part1.R
+    - TCGA_mutation_download_part2.R
+    - TCGA_mutation_download_part3.R
+    - TCGA_mutation_download_part4.R
+
+These scripts will download a set of the TCGA studies, so that the downloaded file size is smaller. 
 
 
+**Additional Information**
+**************************
 
-*Step 2 - Run R scripts using R Studio*
-
-The following scripts are available: 
-
-
-
-
-Go to `MyBinder <https://mybinder.org/>` 
+Go to `MyBinder <https://mybinder.org/>`_ 
 
 For 'Github repository name or URL' enter https://github.com/isb-cgc/ISB-CGC-Demos, then click 'Launch'.
 
 The methods in this tutorial were used to generate the R scripts used to download the data.
 
+**get_field_names.R**
+Download a list of all field names for the mutation data, many fields are excluded in the mutation downloader script.
 
+**TCGA_clinical_info_download.R**
+Download clinical information for all patients included in the mutation file download. 
 
-
-
-
-
-
-
-
-Version 4.0 Information (deprecated)
-####################################
-
-Previous versions' script for automatic download of source files is deprecated due to several resources changing access methods.
-
-Resource: TCGA
---------------
-
-VCF files are generated through the GDC through matching tumor and normal samples as detailed `here <https://docs.gdc.cancer.gov/Data/File_Formats/VCF_Format/>`_
-
-**TCGA Download**
-
-Go to the `GDC data portal repository <https://portal.gdc.cancer.gov/repository>`_
-
-Go to `Advanced Search` and enter the following query:
-
-``cases.project.program.name in ["TCGA"] and cases.project.project_id in ["TCGA-ACC","TCGA-BLCA","TCGA-BRCA","TCGA-CESC","TCGA-COAD","TCGA-DLBC","TCGA-ESCA","TCGA-GBM","TCGA-HNSC","TCGA-KICH","TCGA-KIRC","TCGA-KIRP","TCGA-LAML","TCGA-LGG","TCGA-LIHC","TCGA-LUAD","TCGA-LUSC","TCGA-OV","TCGA-PAAD","TCGA-PCPG","TCGA-PRAD","TCGA-READ","TCGA-SKCM","TCGA-STAD","TCGA-THCA","TCGA-UCEC","TCGA-UCS"] and files.data_format in ["vcf"] and files.data_type in ["Raw Simple Somatic Mutation"]``
-
-This query will yield 5 times as many files as there are cases. This is because each case was run through 5 separate variant calling pipelines.
-
-The variant calling pipelines are detailed `here <https://docs.gdc.cancer.gov/Data/Bioinformatics_Pipelines/DNA_Seq_Variant_Calling_Pipeline/#somatic-variant-calling-workflow>`_
-
-The most recent variant calling tool incorporated is `MuSe <https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-1029-6>`_
-
-After identifying workflow type, the following still have more files then cases: 
-* TCGA-BLCA
-* TCGA-BRCA
-* TCGA-CESC
-* and others...
-
-Why is this the case?
-
-Investigation of TCGA-ESCA:
-
-Found that the repeated sample is TCGA-V5-A7RC
-    * On GDC data portal, TCGA-V5-A7RC contained one sample for primary tumor (similar to other 183 cases) and one sample for metastatic (unique)
-
-We can obtain only unique samples by using the search: 
-
-`cases.project.program.name in ["TCGA"] and cases.project.project_id in ["TCGA-ESCA"] and files.analysis.workflow_type in ["MuSE"] and files.data_format in ["vcf"] and cases.samples.sample_type in ["primary tumor"]`
-
-Do we eliminate this metastatic sample? Or do we include samples from the same case? Will it matter to have multiple samples form the same case downstream?
-
-For TCGA-BRCA: 
-
-Updating the search to include primary tumor only does not eliminate all duplicates. 
-    * Still found 7 metastatic samples
-
-For specific case, three duplicates but no differences between samples identified:
-    * `https://portal.gdc.cancer.gov/repository?facetTab=cases&filters=%7B%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.case_id%22%2C%22value%22%3A%5B%22f130f376-5801-40f9-975d-a7e2f7b5670d%22%5D%7D%7D%2C%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.program.name%22%2C%22value%22%3A%5B%22TCGA%22%5D%7D%7D%2C%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.project_id%22%2C%22value%22%3A%5B%22TCGA-BRCA%22%5D%7D%7D%2C%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.analysis.workflow_type%22%2C%22value%22%3A%5B%22MuSE%22%5D%7D%7D%2C%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.data_format%22%2C%22value%22%3A%5B%22vcf%22%5D%7D%7D%5D%2C%22op%22%3A%22and%22%7D`
-
-Selected 
-
-Repeat this query for all desired TCGA studies. The following studies were gathered for v5.0:
-
-* BLCA
-* BRCA
-* COAD
-* ESCA
-* HNSC
-* KICH
-* KIRC
-* KIRP
-* LIHC
-* LUAD
-* LUSC
-* PRAD
-* READ
-* STAD
-* THCA
-* UCEC
-
-* Pancreatic Cancer
-    * PAAD
-* Ovarian Cancer
-    * OV
-* Skin Cancer
-    * SKCM
-* Cervical Cancer
-    * CESC
-* Brain Cancer
-    * LGG
-    * GBM
-* Hematologic Cancer
-    * LAML
-    * DLBC
-* Adrenal Gland Cancer
-    * ACC
-    * PCPG
-* Uterine Cancer
-    * UCS
-
-TCGA studies from v-4.0 removed in v-5.0
-
-* CHOL - Cholangiocarcinoma
-    * Bile Duct Cancer
-* MESO - Mesothelioma
-    * Malignant Mesothelioma
-* SARC - Sarcoma
-    *  Sarcoma Cell
-* TGCT - Testicular Germ Cell Tumors
-    * Testicular Cancer
-* THYM - Thymoma
-    * Thymus Cancer
-* UVM - Uveal Melanoma
-    * Ocular Cancer
-
-
-**Step 1: Downloader**
-
-In the downloader step, SNV data is downloaded directly from sources using either a manual download from the source's web page or a call to an API.
-
-**Step 2: Annotator**
-
-Step 1: Downloader
-******************
-Previous versions' script for automatic download of source files is deprecated due to several resources changing access methods.
-
-Resource: TCGA
---------------
-
-VCF files are generated through the GDC through matching tumor and normal samples as detailed `here <https://docs.gdc.cancer.gov/Data/File_Formats/VCF_Format/>`_
-
-**TCGA Download**
-
-Go to the `GDC data portal repository <https://portal.gdc.cancer.gov/repository>`_
-
-Go to `Advanced Search` and enter the following query:
-
-``cases.project.program.name in ["TCGA"] and cases.project.project_id in ["TCGA-ACC","TCGA-BLCA","TCGA-BRCA","TCGA-CESC","TCGA-COAD","TCGA-DLBC","TCGA-ESCA","TCGA-GBM","TCGA-HNSC","TCGA-KICH","TCGA-KIRC","TCGA-KIRP","TCGA-LAML","TCGA-LGG","TCGA-LIHC","TCGA-LUAD","TCGA-LUSC","TCGA-OV","TCGA-PAAD","TCGA-PCPG","TCGA-PRAD","TCGA-READ","TCGA-SKCM","TCGA-STAD","TCGA-THCA","TCGA-UCEC","TCGA-UCS"] and files.data_format in ["vcf"] and files.data_type in ["Raw Simple Somatic Mutation"]``
-
-This query will yield 5 times as many files as there are cases. This is because each case was run through 5 separate variant calling pipelines.
-
-The variant calling pipelines are detailed `here <https://docs.gdc.cancer.gov/Data/Bioinformatics_Pipelines/DNA_Seq_Variant_Calling_Pipeline/#somatic-variant-calling-workflow>`_
-
-The most recent variant calling tool incorporated is `MuSe <https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-1029-6>`_
-
-After identifying workflow type, the following still have more files then cases: 
-* TCGA-BLCA
-* TCGA-BRCA
-* TCGA-CESC
-* and others...
-
-Why is this the case?
-
-Investigation of TCGA-ESCA:
-
-Found that the repeated sample is TCGA-V5-A7RC
-    * On GDC data portal, TCGA-V5-A7RC contained one sample for primary tumor (similar to other 183 cases) and one sample for metastatic (unique)
-
-We can obtain only unique samples by using the search: 
-
-`cases.project.program.name in ["TCGA"] and cases.project.project_id in ["TCGA-ESCA"] and files.analysis.workflow_type in ["MuSE"] and files.data_format in ["vcf"] and cases.samples.sample_type in ["primary tumor"]`
-
-Do we eliminate this metastatic sample? Or do we include samples from the same case? Will it matter to have multiple samples form the same case downstream?
-
-For TCGA-BRCA: 
-
-Updating the search to include primary tumor only does not eliminate all duplicates. 
-    * Still found 7 metastatic samples
-
-For specific case, three duplicates but no differences between samples identified:
-    * `https://portal.gdc.cancer.gov/repository?facetTab=cases&filters=%7B%22content%22%3A%5B%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.case_id%22%2C%22value%22%3A%5B%22f130f376-5801-40f9-975d-a7e2f7b5670d%22%5D%7D%7D%2C%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.program.name%22%2C%22value%22%3A%5B%22TCGA%22%5D%7D%7D%2C%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22cases.project.project_id%22%2C%22value%22%3A%5B%22TCGA-BRCA%22%5D%7D%7D%2C%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.analysis.workflow_type%22%2C%22value%22%3A%5B%22MuSE%22%5D%7D%7D%2C%7B%22op%22%3A%22in%22%2C%22content%22%3A%7B%22field%22%3A%22files.data_format%22%2C%22value%22%3A%5B%22vcf%22%5D%7D%7D%5D%2C%22op%22%3A%22and%22%7D`
-
-Selected 
-
-Repeat this query for all desired TCGA studies. The following studies were gathered for v5.0:
-
-* BLCA
-* BRCA
-* COAD
-* ESCA
-* HNSC
-* KICH
-* KIRC
-* KIRP
-* LIHC
-* LUAD
-* LUSC
-* PRAD
-* READ
-* STAD
-* THCA
-* UCEC
-
-* Pancreatic Cancer
-    * PAAD
-* Ovarian Cancer
-    * OV
-* Skin Cancer
-    * SKCM
-* Cervical Cancer
-    * CESC
-* Brain Cancer
-    * LGG
-    * GBM
-* Hematologic Cancer
-    * LAML
-    * DLBC
-* Adrenal Gland Cancer
-    * ACC
-    * PCPG
-* Uterine Cancer
-    * UCS
-
-TCGA studies from v-4.0 removed in v-5.0
-
-* CHOL - Cholangiocarcinoma
-    * Bile Duct Cancer
-* MESO - Mesothelioma
-    * Malignant Mesothelioma
-* SARC - Sarcoma
-    *  Sarcoma Cell
-* TGCT - Testicular Germ Cell Tumors
-    * Testicular Cancer
-* THYM - Thymoma
-    * Thymus Cancer
-* UVM - Uveal Melanoma
-    * Ocular Cancer
-
-Resource: COSMIC
-----------------
-
-`COSMIC <https://cancer.sanger.ac.uk/cosmic/download>`_
-
-What are the disease included in COSMIC?
-
-**COSMIC Download**
-
-To download the COSMIC mutation set, run the script ``download_cosmic.py``
-
-    Error: downloading an empty file for some reason...
-
-Resource: ClinVar
------------------
-
-`ClinVar <https://www.ncbi.nlm.nih.gov/clinvar/>`_
-
-**ClinVar download**
-
-Use the FTP site for access to the latetest clinVar release: 
-
-``wget https://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh38/clinvar.vcf.gz``
-
-For more information see the `README <https://ftp.ncbi.nlm.nih.gov/pub/clinvar/README.txt>`_
-
-Resource: ICGC
---------------
-
-`ICGC <https://dcc.icgc.org/>`_
-
-**ICGC Download**
-
-Manual download at the `Data Portal <https://dcc.icgc.org/releases/release_28/Summary>`
-
-For v-5.0: Downloaded file ``simple_somatic_mutation.aggregated.vcf.gz``
-
-Resource: Intogen
------------------
-
-`IntOGen <https://www.intogen.org/search>`_
-
-**IntOGen Download**
-
-Manual Download from the `downloads page <https://www.intogen.org/download>`_
-
-For v-5.0: Downloaded file ``intogen_driver_mutations_catalog-2016.5.gz``
-
-
-Big Query Investigation
------------------------
-
-Datasets available through Big Query from ISB
-
-List of datasets: https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/Hosted-Data.html
-
+**get_field_names_clinical_info.R**
+Download a list of all field names for the corresponding clinical data, many fields are excluded in the clinical information downloader script. 
