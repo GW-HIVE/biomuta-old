@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BioMuta Pipeline v-5.0 README &mdash; biomuta 5.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Biomuta Downloader" href="downloader.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="#" class="icon icon-home"> biomuta
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="downloader.html">Biomuta Downloader</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">biomuta</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>BioMuta Pipeline v-5.0 README</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="biomuta-pipeline-v-5-0-readme">
+<h1>BioMuta Pipeline v-5.0 README<a class="headerlink" href="#biomuta-pipeline-v-5-0-readme" title="Permalink to this headline"></a></h1>
+<p>Last Updated May 2022 by Ned Cauley</p>
+<section id="description">
+<h2>Description<a class="headerlink" href="#description" title="Permalink to this headline"></a></h2>
+<p>The Biomuta pipeline gathers mutation data from various sources and combines them into a single dataset under common field structure.</p>
+<p>The sources included in BioMuta are:</p>
+<ul class="simple">
+<li><p><strong>The Cancer Genome Atlas (TCGA)</strong></p></li>
+</ul>
+<p>BioMuta gathers mutation data for the following cancers:</p>
+<ul class="simple">
+<li><p><strong>Urinary Bladder Cancer (DOID:11054)</strong></p></li>
+<li><p><strong>Breast Cancer (DOID:1612)</strong></p></li>
+<li><p><strong>Colorectal (DOID:9256)</strong></p></li>
+<li><p><strong>Esophageal Cancer (DOID:5041)</strong></p></li>
+<li><p><strong>Head and Neck Cancer (DOID:11934)</strong></p></li>
+<li><p><strong>Kidney Cancer (DOID:263)</strong></p></li>
+<li><p><strong>Liver Cancer (DOID:3571)</strong></p></li>
+<li><p><strong>Lung Cancer (DOID:1324)</strong></p></li>
+<li><p><strong>Prostate Cancer (DOID:10283)</strong></p></li>
+<li><p><strong>Stomach Cancer (DOID:10534)</strong></p></li>
+<li><p><strong>Thyroid Gland Cancer (DOID:1781)</strong></p></li>
+<li><p><strong>Uterine Cancer (DOID:363)</strong></p></li>
+<li><p><strong>Cervical Cancer (DOID:4362)</strong></p></li>
+<li><p><strong>Brain Cancer (DOID:1319)</strong></p></li>
+<li><p><strong>Hematologic Cancer (DOID:2531)</strong></p></li>
+<li><p><strong>Adrenal Gland Cancer (DOID:3953)</strong></p></li>
+<li><p><strong>Pancreatic Cancer (DOID:1793)</strong></p></li>
+<li><p><strong>Ovarian Cancer (DOID:2394)</strong></p></li>
+<li><p><strong>Skin Cancer (DOID:4159)</strong></p></li>
+</ul>
+</section>
+<section id="running-the-pipeline">
+<h2>Running the Pipeline<a class="headerlink" href="#running-the-pipeline" title="Permalink to this headline"></a></h2>
+<p>To run the BioMuta pipeine, download the scripts from the HIVE Lab github repo:
+<a class="reference external" href="https://github.com/GW-HIVE/biomuta">GW HIVE BioMuta Repository</a></p>
+</section>
+<section id="pipeline-overview">
+<h2>Pipeline Overview<a class="headerlink" href="#pipeline-overview" title="Permalink to this headline"></a></h2>
+<p><strong>Downloader</strong></p>
+<p>In the downloader step, mutation lists will be downloaded from each source. Refer to each individual source below for downloading instructions.</p>
+<p>Downloader page:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="downloader.html">Biomuta Downloader</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="downloader.html#resource-tcga"><strong>Resource: TCGA</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="downloader.html#fields"><strong>Fields</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="downloader.html#studies"><strong>Studies</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="downloader.html#downloading-through-big-query"><strong>Downloading through Big Query</strong></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="downloader.html#step-1-gain-all-access-requiremenets"><strong>Step 1 - Gain All Access Requiremenets</strong></a></li>
+<li class="toctree-l4"><a class="reference internal" href="downloader.html#step-2-run-downloader-r-script-using-r-studio"><strong>Step 2 - Run downloader R script using R Studio</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="downloader.html#additional-information"><strong>Additional Information</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="downloader.html" class="btn btn-neutral float-right" title="Biomuta Downloader" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ned Cauley.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
