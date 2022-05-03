@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biomuta Downloader &mdash; biomuta 5.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="BioMuta Pipeline v-5.0 README" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="index.html" class="icon icon-home"> biomuta
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Biomuta Downloader</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#resource-tcga"><strong>Resource: TCGA</strong></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#fields"><strong>Fields</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#studies"><strong>Studies</strong></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#downloading-through-big-query"><strong>Downloading through Big Query</strong></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#step-1-gain-all-access-requiremenets"><strong>Step 1 - Gain All Access Requiremenets</strong></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#step-2-run-downloader-r-script-using-r-studio"><strong>Step 2 - Run downloader R script using R Studio</strong></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#additional-information"><strong>Additional Information</strong></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">biomuta</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+      <li>Biomuta Downloader</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/downloader.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="biomuta-downloader">
+<h1>Biomuta Downloader<a class="headerlink" href="#biomuta-downloader" title="Permalink to this headline"></a></h1>
+<section id="resource-tcga">
+<h2><strong>Resource: TCGA</strong><a class="headerlink" href="#resource-tcga" title="Permalink to this headline"></a></h2>
+<p>Annotated variant files are downloaded from the ISB-CGC Big Query repository.</p>
+<section id="fields">
+<h3><strong>Fields</strong><a class="headerlink" href="#fields" title="Permalink to this headline"></a></h3>
+<p>Field descriptions for Big Query output available in field_names_descriptions.csv</p>
+<p>Additional field descriptions available on <a class="reference external" href="https://docs.gdc.cancer.gov/Data/File_Formats/MAF_Format/">GDC docs</a></p>
+</section>
+<section id="studies">
+<h3><strong>Studies</strong><a class="headerlink" href="#studies" title="Permalink to this headline"></a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 81%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>TCGA Study ID</p></th>
+<th class="head"><p>TCGA Study Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ACC</p></td>
+<td><p>Adrenocortical carcinoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>BLCA</p></td>
+<td><p>Bladder Urothelial Carcinoma</p></td>
+</tr>
+<tr class="row-even"><td><p>BRCA</p></td>
+<td><p>Breast invasive carcinoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>CESC</p></td>
+<td><p>Cervical squamous cell carcinoma and endocervical adenocarcinoma</p></td>
+</tr>
+<tr class="row-even"><td><p>CHOL</p></td>
+<td><p>Cholangiocarcinoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>COAD</p></td>
+<td><p>Colon adenocarcinoma</p></td>
+</tr>
+<tr class="row-even"><td><p>DLBC</p></td>
+<td><p>Lymphoid Neoplasm Diffuse Large B-cell Lymphoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>ESCA</p></td>
+<td><p>Esophageal carcinoma</p></td>
+</tr>
+<tr class="row-even"><td><p>GBM</p></td>
+<td><p>Glioblastoma multiforme</p></td>
+</tr>
+<tr class="row-odd"><td><p>HNSC</p></td>
+<td><p>Head and Neck squamous cell carcinoma</p></td>
+</tr>
+<tr class="row-even"><td><p>KICH</p></td>
+<td><p>Kidney Chromophobe</p></td>
+</tr>
+<tr class="row-odd"><td><p>KIRC</p></td>
+<td><p>Kidney renal clear cell carcinoma</p></td>
+</tr>
+<tr class="row-even"><td><p>KIRP</p></td>
+<td><p>Kidney renal papillary cell carcinoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>LAML</p></td>
+<td><p>Acute Myeloid Leukemia</p></td>
+</tr>
+<tr class="row-even"><td><p>LGG</p></td>
+<td><p>Brain Lower Grade Glioma</p></td>
+</tr>
+<tr class="row-odd"><td><p>LIHC</p></td>
+<td><p>Liver hepatocellular carcinoma</p></td>
+</tr>
+<tr class="row-even"><td><p>LUAD</p></td>
+<td><p>Lung adenocarcinoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>LUSC</p></td>
+<td><p>Lung squamous cell carcinoma</p></td>
+</tr>
+<tr class="row-even"><td><p>MESO</p></td>
+<td><p>Mesothelioma</p></td>
+</tr>
+<tr class="row-odd"><td><p>OV</p></td>
+<td><p>Ovarian serous cystadenocarcinoma</p></td>
+</tr>
+<tr class="row-even"><td><p>PAAD</p></td>
+<td><p>Pancreatic adenocarcinoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>PCPG</p></td>
+<td><p>Pheochromocytoma and Paraganglioma</p></td>
+</tr>
+<tr class="row-even"><td><p>PRAD</p></td>
+<td><p>Prostate adenocarcinoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>READ</p></td>
+<td><p>Rectum adenocarcinoma</p></td>
+</tr>
+<tr class="row-even"><td><p>SARC</p></td>
+<td><p>Sarcoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>SKCM</p></td>
+<td><p>Skin Cutaneous Melanoma</p></td>
+</tr>
+<tr class="row-even"><td><p>STAD</p></td>
+<td><p>Stomach adenocarcinoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>TGCT</p></td>
+<td><p>Testicular Germ Cell Tumors</p></td>
+</tr>
+<tr class="row-even"><td><p>THCA</p></td>
+<td><p>Thyroid carcinoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>THYM</p></td>
+<td><p>Thymoma</p></td>
+</tr>
+<tr class="row-even"><td><p>UCEC</p></td>
+<td><p>Uterine Corpus Endometrial Carcinoma</p></td>
+</tr>
+<tr class="row-odd"><td><p>UCS</p></td>
+<td><p>Uterine Carcinosarcoma</p></td>
+</tr>
+<tr class="row-even"><td><p>UVM</p></td>
+<td><p>Uveal Melanoma</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="downloading-through-big-query">
+<h3><strong>Downloading through Big Query</strong><a class="headerlink" href="#downloading-through-big-query" title="Permalink to this headline"></a></h3>
+<p>For complete documentation, see the <a class="reference external" href="https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/">ISB-CGC Read the Docs pages</a></p>
+<section id="step-1-gain-all-access-requiremenets">
+<h4><strong>Step 1 - Gain All Access Requiremenets</strong><a class="headerlink" href="#step-1-gain-all-access-requiremenets" title="Permalink to this headline"></a></h4>
+<dl class="simple">
+<dt>Contact Dr. Fabian Seidle and ask for access to the ISB-CGC Big Query repository</dt><dd><ul class="simple">
+<li><p>For the run in Spring 2022 my (Ned) personal gwu account was added to the project ‘isb-cgc-training-001’</p></li>
+<li><p>All users have up to 1 TB of downloads free, for our ourporposes we are well under this limit so should not need to pay</p></li>
+</ul>
+</dd>
+<dt>Gain access to dbGaP data</dt><dd><ul class="simple">
+<li><p>Apply for access to controlled data at <a class="reference external" href="https://dbgap.ncbi.nlm.nih.gov/aa/wga.cgi?page=login">this website</a></p></li>
+<li><p>You will need to be approved a PI that already has access to dbGaP controlled data</p></li>
+</ul>
+</dd>
+</dl>
+<p>For further information see the <a class="reference external" href="https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/Gaining-Access-To-Controlled-Access-Data.html">ISB-CGC documentation on gaining access</a></p>
+</section>
+<section id="step-2-run-downloader-r-script-using-r-studio">
+<h4><strong>Step 2 - Run downloader R script using R Studio</strong><a class="headerlink" href="#step-2-run-downloader-r-script-using-r-studio" title="Permalink to this headline"></a></h4>
+<p><strong>TCGA_mutation_download.R</strong>
+Run each line one after the other, instead of the whole script together</p>
+<dl class="simple">
+<dt>Running <cite>library(bigrquery)</cite> and calling this library with <cite>bq_project_query()</cite> (later in the script) will open a browser to login with google credentials</dt><dd><ul class="simple">
+<li><p>Use the google account registered with Fabian for a ISB-CGC project and with dbGAP authorization</p></li>
+<li><p>After logging in, a token will be saved so that you can login through R studio instead</p></li>
+</ul>
+</dd>
+</dl>
+<p>This script will download all mutation data for TCGA.</p>
+<p>There were issues in running this script because the downloaded file was so large.</p>
+<dl class="simple">
+<dt>In this case run the following scripts in the folder <cite>mutation_download_subscripts</cite>:</dt><dd><ul class="simple">
+<li><p>TCGA_mutation_download_part1.R</p></li>
+<li><p>TCGA_mutation_download_part2.R</p></li>
+<li><p>TCGA_mutation_download_part3.R</p></li>
+<li><p>TCGA_mutation_download_part4.R</p></li>
+</ul>
+</dd>
+</dl>
+<p>These scripts will download a set of the TCGA studies, so that the downloaded file size is smaller.</p>
+</section>
+</section>
+<section id="additional-information">
+<h3><strong>Additional Information</strong><a class="headerlink" href="#additional-information" title="Permalink to this headline"></a></h3>
+<p>Go to <a class="reference external" href="https://mybinder.org/">MyBinder</a></p>
+<p>For ‘Github repository name or URL’ enter <a class="reference external" href="https://github.com/isb-cgc/ISB-CGC-Demos">https://github.com/isb-cgc/ISB-CGC-Demos</a>, then click ‘Launch’.</p>
+<p>The methods in this tutorial were used to generate the R scripts used to download the data.</p>
+<p><strong>get_field_names.R</strong>
+Download a list of all field names for the mutation data, many fields are excluded in the mutation downloader script.</p>
+<p><strong>TCGA_clinical_info_download.R</strong>
+Download clinical information for all patients included in the mutation file download.</p>
+<p><strong>get_field_names_clinical_info.R</strong>
+Download a list of all field names for the corresponding clinical data, many fields are excluded in the clinical information downloader script.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="BioMuta Pipeline v-5.0 README" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2022, Ned Cauley.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
