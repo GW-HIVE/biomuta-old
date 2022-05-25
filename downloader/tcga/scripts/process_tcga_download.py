@@ -50,8 +50,6 @@ def main(new_file, previous_file, tcga_mapping_file, uniprot_mapping_file, outpu
         for row in mapping_csv:
             doid_term = str(row[0]) + " / " + str(row[1])
             mapping_dict[row[2]] = doid_term
-
-        print(mapping_dict)
     
     # Load the uniprot mapping file.
     with open(uniprot_mapping_file, "r") as uniprot_file_handle:
@@ -80,14 +78,13 @@ def main(new_file, previous_file, tcga_mapping_file, uniprot_mapping_file, outpu
     # Export the mapped new mutation data
     mapped_new_file_path = output_folder + "/mapped_tcga_mutations.csv"
     print("Exporting mapped file to " + mapped_new_file_path)
-    new_df.to_csv(mapped_new_file_path, index = True)
+    new_df.to_csv(mapped_new_file_path, index = False)
 
-    
-
-    
-
-
-    #cancer_list = []
+    # Set up a list of cancers to iterate through
+    cancer_list = []
+    for key in mapping_dict:
+        cancer_list.append(key)
+    print(cancer_list)
     #tcga_mapping_list = []
     #tcga_file = open(tcga_mapping_file, "r")
     #tcga_reader = csv.reader(tcga_file, delimiter="\t")
@@ -172,3 +169,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(args.new_file, args.previous_file, args.tcga_mapping_file, args.uniprot_mapping_file, args.output_folder)
+
+
+    # Example run:
+
+    # python process_tcga_download.py -n /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/new_file_top.csv -p /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/old_file_example.csv -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/ -u mapping/uniprot_masterlist.csv -t mapping/TCGA_DOID_mapping_v4.0.csv
