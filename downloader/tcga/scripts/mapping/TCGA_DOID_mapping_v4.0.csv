@@ -1,0 +1,33 @@
+DO_slim_id	DO_slim_name	TCGA_project
+DOID:5041	esophageal cancer	TCGA-ESCA
+DOID:2531	hematologic cancer	TCGA-DLBC
+DOID:9256	colorectal cancer	TCGAR-EAD
+DOID:3070	malignant glioma	TCGA-GBM
+DOID:3070	malignant glioma	TCGA-LGG
+DOID:3963	thyroid carcinoma	TCGA-THCA
+DOID:11054	urinary bladder cancer	TCGA-BLCA
+DOID:363	uterine cancer	TCGA-UCEC
+DOID:169	neuroendocrine tumor	TCGA-PCPG
+DOID:4362	cervical cancer	TCGA-CESC
+DOID:363	uterine cancer	TCGA-UCS
+DOID:3277	thymus cancer	TCGA-THYM
+DOID:3571	liver cancer	TCGA-LIHC
+DOID:11934	head and neck cancer	TCGA-HNSC
+DOID:1909	melanoma	TCGA-UVM
+DOID:1909	melanoma	TCGA-SKCM
+DOID:9256	colorectal cancer	TCGA-COAD
+DOID:3953	adrenal gland cancer	TCGA-ACC
+DOID:1793	pancreatic cancer	TCGA-PAAD
+DOID:2994	germ cell cancer	TCGA-TGCT
+DOID:1324	lung cancer	TCGA-LUSC
+DOID:1790	malignant mesothelioma	TCGA-MESO
+DOID:2394	ovarian cancer	TCGA-OV
+DOID:1115	sarcoma	TCGA-SARC
+DOID:263	kidney cancer	TCGA-KIRP
+DOID:10534	stomach cancer	TCGA-STAD
+DOID:2531	hematologic cancer	TCGA-LAML
+DOID:1793	pancreatic cancer	TCGA-PRAD
+DOID:1324	lung cancer	TCGA-LUAD
+DOID:1612	breast cancer	TCGA-BRCA
+DOID:263	kidney cancer	TCGA-KIRC
+DOID:263	kidney cancer	TCGA-KICH

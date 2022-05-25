@@ -4,6 +4,8 @@ Input:
     * -n : A path to the newly updated Biomuta mutation list
     * -p : A path to the previous update of Biomuta's mutation list
     * -o : A path to the output folder, where the data report will be exported
+    * -u : A path to the uniprot mapping file
+    * -t : A path to the tcga study mapping file
 
 Output:
 ########
@@ -11,11 +13,11 @@ Output:
 
 Usage:
 ########
-    * python convert_icgc_vcf.py -h
+    * python process_tcga_download.py -h
 
     *Gives a description of the neccessary commands
 
-    * python convert_icgc_vcf.py -i <path/input_file.vcf> -s <path/schema.json> -p output_prefix_name -o <path/>
+    * python process_tcga_download.py -i <path/input_file.vcf> -s <path/schema.json> -p output_prefix_name -o <path/>
 
     *Runs the script with the given input vcf and outputs a json file.
 
@@ -31,7 +33,7 @@ import numpy as np
 
 
 
-def main(tcga_mapping_file, uniprot_mapping_file, new_file):
+def main(new_file, previous_file, tcga_mapping_file, uniprot_mapping_file, output_folder):
     '''
     '''
 
@@ -47,7 +49,7 @@ def main(tcga_mapping_file, uniprot_mapping_file, new_file):
         # Populate the mapping dict
         for row in mapping_csv:
             doid_term = str(row[0]) + " / " + str(row[1])
-            mapping_dict[doid_term] = row[2]
+            mapping_dict[row[2]] = doid_term
 
         print(mapping_dict)
     
@@ -66,13 +68,19 @@ def main(tcga_mapping_file, uniprot_mapping_file, new_file):
     
 
     # Load the new file as a dataframe
-    new_df = pd.read_csv("new_file")
+    new_df = pd.read_csv(new_file)
 
     # Map TCGA study names to doid terms
     new_df['doid_term'] = new_df['project_short_name'].map(mapping_dict)
 
     # Map HUGO symbol to uniprot id
-    new_df['uniprotkb_ac'] = new_df['Hugo_symbol'].map(uniprot_mapping_dict)
+    new_df['uniprotkb_ac'] = new_df['Hugo_Symbol'].map(uniprot_mapping_dict)
+
+
+    # Export the mapped new mutation data
+    mapped_new_file_path = output_folder + "/mapped_tcga_mutations.csv"
+    print("Exporting mapped file to " + mapped_new_file_path)
+    new_df.to_csv(mapped_new_file_path, index = True)
 
     
 
@@ -112,9 +120,9 @@ def main(tcga_mapping_file, uniprot_mapping_file, new_file):
 
 
     # Process each cancer separately
-    for cancer in cancer_list:
+    #for cancer in cancer_list:
 
-        print("Processing " + cancer)
+    #    print("Processing " + cancer)
 
        # A set of lists to hold both new and old information
         #new_study_list = []
@@ -151,8 +159,16 @@ def main(tcga_mapping_file, uniprot_mapping_file, new_file):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Commands for civic vcf to csv convertor.')
-    parser.add_argument('--tcga_mapping_file', '-m',
+    parser.add_argument('--new_file', '-n',
+                        help='An absolute path to the new TCGA mutation download')
+    parser.add_argument('--tcga_mapping_file', '-t',
                         help='An absolute path to the TCGA study to cancer mapping file')
+    parser.add_argument('--previous_file', '-p',
+                        help='An absolute path to the previous updates mutation file')
+    parser.add_argument('--output_folder', '-o',
+                        help='An absolute path to the output folder')
+    parser.add_argument('--uniprot_mapping_file', '-u',
+                        help='An absolute path to the uniprot accession mapping file')   
     args = parser.parse_args()
 
-    main(args.tcga_mapping_file)
+    main(args.new_file, args.previous_file, args.tcga_mapping_file, args.uniprot_mapping_file, args.output_folder)
