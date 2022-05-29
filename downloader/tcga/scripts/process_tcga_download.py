@@ -82,20 +82,102 @@ def main(new_file, previous_file, tcga_mapping_file, uniprot_mapping_file, outpu
 
     # Set up a list of cancers to iterate through
     cancer_list = []
-    for key in mapping_dict:
-        cancer_list.append(key)
-    print(cancer_list)
-    #tcga_mapping_list = []
-    #tcga_file = open(tcga_mapping_file, "r")
-    #tcga_reader = csv.reader(tcga_file, delimiter="\t")
-    #next(tcga_reader)
-    #for row in tcga_reader:
-        #tcga_mapping_list.append(row)
-        # Assumes DOID is column 1 and cancer term is column 2 in the mapping file
-        #cancer_list.append(str(row[0]) + " / " + str(row[1]))
-
+    for key, value in mapping_dict.items():
+        if value not in cancer_list:
+            cancer_list.append(value)
 
     
+    # Start a list of all genes present in the dataset
+    total_gene_list = []
+    
+    # A dictionary to hold every cancer type
+    top_level_cancer_dict = {}
+
+    # For the comparison, remove the rows not mapped to uniprot accession
+    new_compare_df = new_df[new_df['uniprotkb_ac'].notna()]
+
+
+    comparison_report_dict = {}
+
+    total_mutation_counter = 0
+
+    # The mutaiton comparison library is structured as:
+    # Top level -- cancer type dict
+    # Mid level -- list of gene dicts, one dict per gene in a cancer type
+    # Bottom level -- list of mutations within each gene dict for that cancer type
+    for cancer in cancer_list:
+
+        print("------------------------------------------")
+        print("Processing " + cancer)
+        print("------------------------------------------")
+
+        
+        gene_list = []
+        gene_dict = {}
+        comparison_details_new = {}
+
+        # Start a counter for number of mutations per cancer
+        mutation_counter = 0
+
+        for index, row in new_compare_df.iterrows():
+
+            # Check the cancer type for the row and if the gene symbol was mapped to a uniprot accession
+            if row['doid_term'] == cancer:
+
+                mutation_counter += 1
+
+                # Add the gene to a gene list for that cancer
+                if row['uniprotkb_ac'] not in gene_list:
+                    gene_list.append(row['uniprotkb_ac'])
+                    print('Registering ' + str(row['uniprotkb_ac']) + ' for ' + cancer)
+
+                    mut_list = [row['Amino_acids']]
+                    
+                    # Add the gene as a key in the gene dictionary for that cancer
+                    gene_dict[row['uniprotkb_ac']] = mut_list
+
+                    # Add the gene to the list for the whole dataset
+                    if row['uniprotkb_ac'] not in total_gene_list:
+                        total_gene_list.append(row['uniprotkb_ac'])
+                    
+                else:
+                    # Add the mutation to the existing mutation list for that gene and cancer
+                    gene_dict[row['uniprotkb_ac']].append(row['Amino_acids'])
+
+                print("Added " + str(row['Amino_acids']) + " to " + str(row['uniprotkb_ac']))
+
+        # Add the mutation and gene lists to the all cancer dictionary
+        top_level_cancer_dict[cancer] = gene_dict
+
+        # Add the number of genes and mutations to the comparison report dictionary
+        comparison_details_new["Mutations in new update"] = mutation_counter
+        comparison_details_new["Genes in new update"] = len(gene_list)
+        comparison_report_dict[cancer] = comparison_details_new
+
+        # Add to the total mutation counter
+        total_mutation_counter += mutation_counter
+    
+    # Add a section for all cancers combined to the comparison report
+    comparison_details_total = {}
+    comparison_details_total["Mutations in new update"] = total_mutation_counter
+    comparison_details_total["Genes in new update"] = len(total_gene_list)
+    comparison_report_dict["Totals"] = comparison_details_total
+    
+
+
+    # Export the mutation lists and comparison report to json files
+    output_json = str(output_folder) + "/TCGA_mutations_by_cancer.json"
+    comparison_report_json = str(output_folder) + "/TCGA_mutations_comparison_report.json"
+
+    with open(output_json, 'w', encoding = 'utf-8') as output_json:
+        json.dump(top_level_cancer_dict, output_json, indent=4)
+    output_json.close()
+
+    with open(comparison_report_json, 'w', encoding = 'utf-8') as comparison_report_json:
+        json.dump(comparison_report_dict, comparison_report_json, indent=4)
+    comparison_report_json.close()
+
+
     # Map the new file for cancer terms and uniprot IDs
     #new_mut_cancer_dict = {}
     #new_mut_gene_dict = {}
@@ -173,4 +255,4 @@ if __name__ == "__main__":
 
     # Example run:
 
-    # python process_tcga_download.py -n /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/new_file_top.csv -p /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/old_file_example.csv -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/ -u mapping/uniprot_masterlist.csv -t mapping/TCGA_DOID_mapping_v4.0.csv
+# python process_tcga_download.py -n /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/new_file_top.csv -p /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/old_file_example.csv -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/ -u mapping/uniprot_masterlist.csv -t mapping/TCGA_DOID_mapping_v4.0.csv
