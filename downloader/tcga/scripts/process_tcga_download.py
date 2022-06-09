@@ -270,56 +270,46 @@ def main(new_file, previous_version_file, tcga_mapping_file, uniprot_mapping_fil
     comparison_report_dict['Totals']['Missing genes'] = len(missing_genes)
 
     # Compare mutations
+
+    total_shared_mutation_counter = 0
+    total_missing_mutations_counter = 0
     
     # Compare mutations per gene in each cancer
     for cancer in cancer_list:
 
+        shared_mutation_counter = 0
+        missing_mutation_counter = 0
+
         # Use the list of mutations from the old mutation list to find what mutations are missing in the new set
         for id, mutations in old_cancer_dictionary[cancer].items():
             for mutation in mutations:
-                
+
                 # Check if the gene is present in the new set
                 if id in new_cancer_dictionary[cancer]:
 
                     if mutation in new_cancer_dictionary[cancer][id]:
                         print("Shared mutation")
                         print(id,mutation)
+                        shared_mutation_counter += 1
 
                     else: 
                         print("Missing mutation")
                         print(id,mutation)
+                        missing_mutation_counter += 1
                 
                 else:
-                    #print(id + " not in new set")
-                    pass
-
-
-
-            
-
-
+                    print("Missing gene and mutation")
+                    print(id,mutation)
+                    missing_mutation_counter += 1
         
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        # Add the shared and missing mutation counts to the data report
+        total_shared_mutation_counter += shared_mutation_counter
+        comparison_report_dict[cancer]['Shared Mutations'] = shared_mutation_counter
+        total_missing_mutations_counter += missing_mutation_counter
+        comparison_report_dict[cancer]['Missing Mutations'] = missing_mutation_counter
+    
+    comparison_report_dict['Totals']['Shared Mutations'] = total_shared_mutation_counter
+    comparison_report_dict['Totals']['Missing Mutations'] = total_missing_mutations_counter
 
 
 
