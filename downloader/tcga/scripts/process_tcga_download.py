@@ -27,6 +27,7 @@ Usage:
 import argparse
 import csv
 from distutils.log import INFO
+from genericpath import exists
 import pandas as pd
 import re
 import json
@@ -34,7 +35,7 @@ import numpy as np
 
 
 
-def main(new_file, previous_version_file, tcga_mapping_file, uniprot_mapping_file, output_folder):
+def main(new_file, icgc_mutations, previous_version_file, tcga_mapping_file, uniprot_mapping_file, output_folder, ):
     '''
     '''
     ##################################
@@ -76,8 +77,8 @@ def main(new_file, previous_version_file, tcga_mapping_file, uniprot_mapping_fil
     ##################################
     # Process the new mutation file
     ##################################
-    # Load the new file as a dataframe
-    new_df = pd.read_csv(new_file)
+    # Load the new file as a dataframe, process all values as strings to speed up conversion to dataframe
+    new_df = pd.read_csv(new_file, dtype=str)
 
     # Map TCGA study names to doid terms
     new_df['doid_term'] = new_df['project_short_name'].map(mapping_dict)
@@ -85,11 +86,17 @@ def main(new_file, previous_version_file, tcga_mapping_file, uniprot_mapping_fil
     # Map HUGO symbol to uniprot id
     new_df['uniprotkb_ac'] = new_df['Hugo_Symbol'].map(uniprot_mapping_dict)
 
+    # Create a column for the uniprot isoform number
+    #new_df['uniprot_ac_isoform'] = " "
+
+    # Create a column for the source
+    #new_df['data_src'] = 'tcga'
+
 
     # Export the mapped new mutation data
-    mapped_new_file_path = output_folder + "/mapped_tcga_mutations.csv"
-    print("Exporting mapped file to " + mapped_new_file_path)
-    new_df.to_csv(mapped_new_file_path, index = False)
+    #mapped_new_file_path = output_folder + "/mapped_tcga_mutations.csv"
+    #print("Exporting mapped file to " + mapped_new_file_path)
+    #new_df.to_csv(mapped_new_file_path, index = False)
 
     # Start a list of all genes present in the new dataset
     total_gene_list = []
@@ -101,6 +108,8 @@ def main(new_file, previous_version_file, tcga_mapping_file, uniprot_mapping_fil
 
     total_new_rows = len(new_compare_df.index)
 
+
+    
     # The mutaiton comparison library is structured as:
     # Top level -- cancer type dict
     # Mid level -- list of gene dicts, one dict per gene in a cancer type
@@ -171,6 +180,74 @@ def main(new_file, previous_version_file, tcga_mapping_file, uniprot_mapping_fil
                     
                 comparison_report_dict[cancer]['Genes in new update'] = len(new_cancer_dictionary[cancer].keys())
     
+
+    ##################################
+    # Add the ICGC mutations
+    ##################################
+    # Load the ICGC mutations and add to TCGA mutations if it was specified
+    if icgc_mutations != 'no_icgc':
+
+        print('Processing ICGC mutations...')
+        
+        # Process all the columns as strings to speed up dataset conversion to a dataframe
+        icgc_df = pd.read_csv(icgc_mutations, dtype=str)
+        
+        total_icgc_rows = len(icgc_df.index)
+
+        for index, row in icgc_df.iterrows():
+
+            print('Processing row ' + str(index) + ' out of ' + str(total_icgc_rows), end ='\r')
+
+            #Create the Amino Acid column 
+            amino_acid_change = row['ref_aa'] + str(row['uniprot_pos']) + row['alt_aa']
+
+            #Take the uniprot protein id without the isoform
+            uniprot_info = str(row['uniprot_ac']).split('-')
+            uniprot_id = uniprot_info[0]
+
+            for cancer in cancer_list:
+
+                if row['do_name'] == cancer:
+
+                    # Create the cancer term in the gene dictionary
+                    if cancer in new_cancer_dictionary:
+                        pass  
+                    else:
+                        new_cancer_dictionary[cancer] = {}
+    
+                # Add the gene to a gene list for that cancer
+                if uniprot_id not in new_cancer_dictionary[cancer]:
+
+                    # A list to hold the mutations for that gene
+                    mut_list = [amino_acid_change]
+
+                    # Assign the mutation list to the newly registered gene
+                    new_cancer_dictionary[cancer][uniprot_id] = mut_list
+
+                    # Add the gene to the list for the whole dataset
+                    if uniprot_id not in total_gene_list:
+                        total_gene_list.append(uniprot_id)
+                    
+                else:
+                    # Add the mutation to the existing mutation list for that gene and cancer
+                    new_cancer_dictionary[cancer][uniprot_id].append(amino_acid_change)
+                
+                # Update or add cancer in the comparison dictionary
+                if cancer in comparison_report_dict:
+                    comparison_report_dict[cancer]['Mutations in new update'] += 1             
+
+                else:
+                    comparison_report_dict[cancer] = {}
+                    comparison_report_dict[cancer]['Mutations in new update'] = 1
+                    
+                comparison_report_dict[cancer]['Genes in new update'] = len(new_cancer_dictionary[cancer].keys())
+
+                
+
+
+
+
+
     # Add a section for all cancers combined to the comparison report
     comparison_details_total = {}
     comparison_details_total['Mutations in new update'] = total_new_rows
@@ -181,6 +258,7 @@ def main(new_file, previous_version_file, tcga_mapping_file, uniprot_mapping_fil
     output_new_json = str(output_folder) + "/new_TCGA_mutations_by_cancer.json"
     with open(output_new_json, 'w', encoding = 'utf-8') as output_new_json:
         json.dump(new_cancer_dictionary, output_new_json, indent=4)
+
 
     ##################################
     # Process the old mutation file
@@ -208,6 +286,12 @@ def main(new_file, previous_version_file, tcga_mapping_file, uniprot_mapping_fil
     absent_cancer_type_list = []
 
     for index, row in old_df.iterrows():
+
+        # For processing only TCGA data
+        #if row['data_source'] == 'tcga':
+        #    pass
+        #else:
+        #    continue
 
         print('Processing row ' + str(index) + ' out of ' + str(total_old_rows), end ='\r')
 
@@ -358,15 +442,14 @@ def main(new_file, previous_version_file, tcga_mapping_file, uniprot_mapping_fil
     # Compare mutations between old and new sets for select genes
     for gene in test_gene_list:
 
-        comparison_report_dict['Test Genes'][gene] = {}
-        comparison_report_dict['Test Genes'][gene]['Shared Mutations'] = []
-        comparison_report_dict['Test Genes'][gene]['Missing Mutations'] = []
-
         shared_gene_mutation_counter = 0
         missing_gene_mutation_counter = 0
 
         # Compare in each cancer
         for cancer in cancer_list:
+
+
+
             
             if cancer in old_cancer_dictionary:
     
@@ -374,6 +457,15 @@ def main(new_file, previous_version_file, tcga_mapping_file, uniprot_mapping_fil
                 for id, mutations in old_cancer_dictionary[cancer].items():
                     if id == gene:
                         for mutation in mutations:
+                            
+                            # Set up lists per gene and per cancer in the test genes section
+                            if gene not in comparison_report_dict['Test Genes']:
+                                comparison_report_dict['Test Genes'][gene] = {}
+                                
+                            if cancer not in comparison_report_dict['Test Genes'][gene]:
+                                comparison_report_dict['Test Genes'][gene][cancer] = {}
+                                comparison_report_dict['Test Genes'][gene][cancer]['Shared Mutations'] = []
+                                comparison_report_dict['Test Genes'][gene][cancer]['Missing Mutations'] = []
 
                             # Do both cancer and gene exist in the new mutation set?
                             if cancer in new_cancer_dictionary:
@@ -382,25 +474,25 @@ def main(new_file, previous_version_file, tcga_mapping_file, uniprot_mapping_fil
                                     # After comparison add the mutation to eoither shared or missing 
                                     if mutation in new_cancer_dictionary[cancer][id]:
                                         shared_gene_mutation_counter += 1
-                                        comparison_report_dict['Test Genes'][gene]['Shared Mutations'].append(mutation)
+                                        comparison_report_dict['Test Genes'][gene][cancer]['Shared Mutations'].append(mutation)
             
                                     else: 
                                         missing_gene_mutation_counter += 1
-                                        comparison_report_dict['Test Genes'][gene]['Missing Mutations'].append(mutation)
+                                        comparison_report_dict['Test Genes'][gene][cancer]['Missing Mutations'].append(mutation)
                                 
                                 # Gene not found in new mutation set
                                 else:
                                     missing_gene_mutation_counter += 1
-                                    comparison_report_dict['Test Genes'][gene]['Missing Mutations'].append(mutation)
+                                    comparison_report_dict['Test Genes'][gene][cancer]['Missing Mutations'].append(mutation)
 
                             # Cancer not found in new mutation set
                             else:
                                 missing_gene_mutation_counter += 1
-                                comparison_report_dict['Test Genes'][gene]['Missing Mutations'].append(mutation)
+                                comparison_report_dict['Test Genes'][gene][cancer]['Missing Mutations'].append(mutation)
     
-            # Add the mutation counters to the comparison report
-            comparison_report_dict['Test Genes'][gene]['Shared Mutation Count'] = shared_gene_mutation_counter
-            comparison_report_dict['Test Genes'][gene]['Missing Mutation Count'] = missing_gene_mutation_counter
+                        # Add the mutation counters to the comparison report
+                        comparison_report_dict['Test Genes'][gene][cancer]['Shared Mutation Count'] = shared_gene_mutation_counter
+                        comparison_report_dict['Test Genes'][gene][cancer]['Missing Mutation Count'] = missing_gene_mutation_counter
 
     print("------------------------------------------")
     print("Creating comparison report....")
@@ -429,6 +521,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Commands for civic vcf to csv convertor.')
     parser.add_argument('--new_file', '-n',
                         help='An absolute path to the new TCGA mutation download')
+    parser.add_argument('--icgc_mutations', '-i',
+                        help='An absolute path to the ICGC mutation file', nargs='?', default='no_icgc')
     parser.add_argument('--tcga_mapping_file', '-t',
                         help='An absolute path to the TCGA study to cancer mapping file')
     parser.add_argument('--previous_version_file', '-p',
@@ -439,9 +533,9 @@ if __name__ == "__main__":
                         help='An absolute path to the uniprot accession mapping file')   
     args = parser.parse_args()
 
-    main(args.new_file, args.previous_version_file, args.tcga_mapping_file, args.uniprot_mapping_file, args.output_folder)
+    main(args.new_file, args.icgc_mutations, args.previous_version_file, args.tcga_mapping_file, args.uniprot_mapping_file, args.output_folder)
 
 
     # Example run:
 
-#python process_tcga_download.py -n /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/tcga/TCGA_SNP_somatic_mutation_hg38.csv -p /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/tcga/human_protein_mutation_cancer.csv -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/ -u mapping/uniprot_masterlist.csv -t mapping/TCGA_DOID_mapping_v4.0.csv
+#python process_tcga_download.py -n /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/tcga/TCGA_SNP_somatic_mutation_hg38.csv -i /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/icgc/biomuta_3.0/biomuta_icgc.csv -p /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/tcga/human_protein_mutation_cancer.csv -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/ -u mapping/uniprot_masterlist.csv -t mapping/TCGA_DOID_mapping_v4.0.csv
