@@ -1,0 +1,29 @@
+1) pph-step1/2/3/4.py
+
+2) compile-proteintable-records.py
+
+3) Extract from UniProt RDF
+
+	Active_Site_Annotation
+	Binding_Site_Annotation
+	Calcium_Binding_Annotation
+	Catalytic_Activity_Annotation
+	Cross-link_Annotation
+	Disulfide_Bond_Annotation
+	Glycosylation_Annotation
+	Initiator_Methionine_Annotation
+	Lipidation_Annotation
+	Metal_Binding_Annotation
+	Modified_Residue_Annotation
+	NP_Binding_Annotation
+	Natural_Variant_Annotation
+	Nucleotide_Binding_Annotation
+	PTM_Annotation
+	Peptide_Annotation
+	Polymorphism_Annotation
+	Propeptide_Annotation
+	Signal_Peptide_Annotation
+	Site_Annotation
+	Subcellular_Location_Annotation
+
+

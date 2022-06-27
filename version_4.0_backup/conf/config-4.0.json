@@ -1,0 +1,187 @@
+{
+    "grchversion":"grch38",
+    "uniprotversion":"2019_05",
+    "ref":{
+        "grch37":{
+            "gtffile":"/data/external/ucsc/grch37/gtf/Homo_sapiens.GRCh37.75.gtf",
+            "dnaseqfile":"/data/external/ucsc/grch37/targets/Homo_sapiens.GRCh37.75.dna.all.fa",
+            "cdsseqfile":"/data/external/ucsc/grch37/targets/Homo_sapiens.GRCh37.75.cds.all.fa",
+            "pepseqfile":"/data/external/ucsc/grch37/targets/Homo_sapiens.GRCh37.75.pep.all.fa",
+            "refseqfile":"/data/external/refseq/grch37/targets/GRCh37_latest_protein.faa",
+            "chrdir":"/data/external/ucsc/grch37/genome/chromosome/",
+            "pepid2refseqac":"/data/external/ucsc/grch37/idmap/pepid2refseqac.csv",
+            "pepid2isoformac":"/data/external/ucsc/grch37/idmap/pepid2isoformac.csv",
+            "dbsnpfile":"/data/projects/biomuta/downloads/v-4.0/dbsnp/GCF_000001405.25-Mar2019.vcf"
+        },
+        "grch38":{
+            "gtffile":"/data/external/ucsc/grch38/gtf/Homo_sapiens.GRCh38.95.gtf",
+            "dnaseqfile":"/data/external/ucsc/grch38/targets/Homo_sapiens.GRCh38.95.dna.all.fa",
+            "cdsseqfile":"/data/external/ucsc/grch38/targets/Homo_sapiens.GRCh38.95.cds.all.fa",
+            "pepseqfile":"/data/external/ucsc/grch38/targets/Homo_sapiens.GRCh38.95.pep.all.fa",
+            "refseqfile":"/data/external/refseq/grch38/targets/GRCh38_latest_protein.faa",
+            "chrdir":"/data/external/ucsc/grch38/genome/chromosome/",
+            "pepid2refseqac":"/data/external/ucsc/grch38/idmap/pepid2refseqac.csv",
+            "pepid2isoformac":"/data/external/ucsc/grch38/idmap/pepid2isoformac.csv",
+            "dbsnpfile":"/data/projects/biomuta/downloads/v-4.0/dbsnp/GCF_000001405.38-Oct2018.vcf"
+        },
+        "2017_11":{
+            "canonseqfile":"/data/external/uniprot/2017_11/targets/human_protein_canonicalsequences.fasta",
+            "allseqfile":"/data/external/uniprot/2017_11/targets/human_protein_allsequences.fasta",
+            "idmapping":"/data/external/uniprot/2017_11/idmap/human_protein_idmapping.csv",
+            "genelocusfile":"/data/external/uniprot/2017_11/idmap/human_protein_genelocus.csv",
+            "trsid2isoformac":"/data/external/uniprot/2017_11/idmap/trsid2isoformac.csv"
+        },
+        "2018_11":{
+            "canonseqfile":"/data/external/uniprot/2018_11/targets/human_protein_canonicalsequences.fasta",
+            "allseqfile":"/data/external/uniprot/2018_11/targets/human_protein_allsequences.fasta",
+            "genelocusfile":"/data/external/uniprot/2018_11/idmap/human_protein_genelocus.csv",
+            "idmapping":"/data/external/uniprot/2018_11/idmap/human_protein_idmapping.csv"
+        },
+        "2019_05":{
+            "canonseqfile":"/data/external/uniprot/2019_05/targets/human_protein_canonicalsequences.fasta",
+            "allseqfile":"/data/external/uniprot/2019_05/targets/human_protein_allsequences.fasta",
+            "genelocusfile":"/data/external/uniprot/2019_05/idmap/human_protein_genelocus.csv",
+            "idmapping":"/data/external/uniprot/2019_05/idmap/human_protein_idmapping.csv"
+        }, 
+        "misc":{
+            "codonfile":"/data/external/misc/codon_list.txt",
+	    "pphuniprotfile":"/data/external/polyphen/uniprot/human.seq",
+	    "annovarhumandbdir":"/data/external/ucsc/genome/annovar/humandb/"
+        }
+    },
+    "binaries":{
+		"blastdbcmd":"/usr/local/bin/blastdbcmd",
+		"tableannovar":"/usr/bin/perl /softwares/annovar/table_annovar.pl",
+		"bgzip":"/softwares/tabix-0.2.6/bgzip",
+		"tabix":"/softwares/tabix-0.2.6/tabix",
+		"bcftools":"/usr/local/bin/bcftools",
+		"vcfsort":"/usr/local/bin/vcf-sort",
+		"mapsnps":"/usr/bin/perl /softwares/polyphen-2.2.2/bin/mapsnps.pl ",
+		"runpph":"/usr/bin/perl /softwares/polyphen-2.2.2/bin/run_pph.pl ",
+		"runweka":"/usr/bin/perl /softwares/polyphen-2.2.2/bin/run_weka.pl ",
+		"netnglyc":"/softwares/netNglyc-1.0/netNglyc"
+    },
+    "dbinfo":{"host":"localhost", "dbname":"biomuta_tst", 
+			"userid":"biomutaadmin", "password":"biomutapass"
+	},
+	"targets":{
+		"human_pep":"/data/external/ucsc/targets/Homo_sapiens.GRCh37.75.pep.all.fa",
+		"human_cds":"/data/external/ucsc/targets/Homo_sapiens.GRCh37.75.cds.all.fa"
+	},
+	"vcfsources":["tcga","icgc","clinvar","civic", "cosmic"],
+	"publisher":{
+		"outdir":"/data/projects/biomuta/generated/v-4.0/publisher/"
+	}
+	,"loader":{
+                "tmpdir":"/tmp/biomuta/"
+                ,"outdir":"/data/projects/biomuta/generated/v-4.0/loader/"
+        },
+	"annotator":{
+                "tmpdir":"/tmp/biomuta/"
+                ,"outdir":"/data/projects/biomuta/generated/v-4.0/annotator/"
+        },
+	"mutmapper":{
+		"tmpdir":"/tmp/biomuta/"
+                ,"outdir":"/data/projects/biomuta/generated/v-4.0/mutmapper/"
+	},
+	"downloader":{
+		"dbsnp":{
+                    "vcffile":"/data/projects/biomuta/downloads/v-4.0/dbsnp/GCF_000001405.38-Oct2018.vcf"
+                },
+                "doid":{
+			"downloadfolder":"/data/projects/biomuta/downloads/v-4.0/doid/"
+		},
+		"cosmic":{
+			"sourceprotocol":"sftp",
+			"sourceurilist":["/cosmic/grch37/cosmic/v80/CosmicNCV.tsv.gz",
+					"/cosmic/grch37/cosmic/v80/CosmicSample.tsv.gz",
+					"/cosmic/grch37/wgs/v79/CosmicWGS_NCV.tsv.gz",
+					"/cosmic/grch37/wgs/v79/CosmicWGS_SamplesExport.tsv.gz"
+			],
+			"downloadfolder":"/data/projects/biomuta/downloads/v-4.0/cosmic/",
+			"outdir":"/data/projects/biomuta/generated/v-4.0/downloader/cosmic/",
+			"userlogin":"brentskoumal@gwu.edu",
+			"userpass":"windsor525",
+			"host":"sftp-cancer.sanger.ac.uk"
+		},
+		"clinvar":{
+			"sourceprotocol":"ftp",
+			"sourceurilist":[
+			"ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_1.0/2017/clinvar_20170130.vcf.gz"],
+			"downloadfolder":"/data/projects/biomuta/downloads/v-4.0/clinvar/",
+			"outdir":"/data/projects/biomuta/generated/v-4.0/downloader/clinvar/"
+		},
+		"icgc":{
+			"sourceprotocol":"https",
+			"sourceurilist":[
+				"https://dcc.icgc.org/api/v1/download?fn=/current/Summary/simple_somatic_mutation.aggregated.vcf.gz"],
+			"downloadfolder":"/data/projects/biomuta/downloads/v-4.0/icgc/",
+			"outdir":"/data/projects/biomuta/generated/v-4.0/downloader/icgc/"
+		},
+		"intogen":{
+			"sourceprotocol":"manual",
+			"sourceurilist":["https://www.intogen.org/downloads"],
+			"downloadfolder":"/data/projects/biomuta/downloads/v-4.0/intogen/",
+			"outdir":"/data/projects/biomuta/generated/v-4.0/downloader/intogen/",
+			"userlogin":"brentskoumal@gwu.edu",
+			"userpass":"windsor525"
+		},
+		"civic":{
+                        "sourceprotocol":"https",
+                        "sourceurilist":["https://civic.genome.wustl.edu/downloads/nightly/nightly-ClinicalEvidenceSummaries.tsv"],
+                        "downloadfolder":"/data/projects/biomuta/downloads/v-4.0/civic/",
+                        "outdir":"/data/projects/biomuta/generated/v-4.0/downloader/civic/"
+                },
+		"tcga":{
+                        "sourceprotocol":"manifest",
+                        "downloadprg":"/usr/bin/gdc-client",
+			"projectlistfile":"/data/projects/biomuta/downloads/v-4.0/tcga/PROJECTLIST.txt",
+                        "downloadfolder":"/data/projects/biomuta/downloads/v-4.0/tcga/",
+                        "outdir":"/data/projects/biomuta/generated/v-4.0/downloader/tcga/",
+			"tokenfile":"/home/brentskoumal/projects/biomuta/conf/gdc-token.pem"
+                }
+
+	},
+	"datareporter"  : {
+                "doid":{
+                        "inputdir":"/data/projects/biomuta/downloads/v-4.0/doid/",
+                        "outputdir":"/data/projects/biomuta/generated/v-4.0/datareporter/doid/"
+		},
+		"cosmic":{
+                        "inputdir":"/data/projects/biomuta/downloads/v-4.0/cosmic/",
+                        "outputdir":"/data/projects/biomuta/generated/v-4.0/datareporter/cosmic/"
+                        },
+                "tcga":{
+                        "inputdir":"/data/projects/biomuta/downloads/v-4.0/tcga/",
+                        "downloaddir":"/data/projects/biomuta/downloads/v-4.0/tcga/",
+                        "outputdir":"/data/projects/biomuta/generated/v-4.0/datareporter/tcga/"
+                       },
+                "clinvar":{
+                        "inputdir":"/data/projects/biomuta/downloads/v-4.0/clinvar/",
+                        "outputdir":"/data/projects/biomuta/generated/v-4.0/datareporter/clinvar/"
+                          },
+                "icgc":{
+                       "inputdir":"/data/projects/biomuta/downloads/v-4.0/icgc/",
+                        "outputdir":"/data/projects/biomuta/generated/v-4.0/datareporter/icgc/"
+                       },
+		"civic":{
+			"inputdir":"/data/projects/biomuta/downloads/v-4.0/civic/",
+			"outputdir":"/data/projects/biomuta/generated/v-4.0/datareporter/civic/"
+			},
+                "ucsc":{
+                        "inputdir":"/data/projects/biomuta/downloads/v-3.0/ucsc/genome/human-genome-hg19.fa"
+                       }
+
+       },
+	"vqueries":{
+                "test":"SELECT ?s, ?o WHERE { ?s <http://www.w3.org/2000/01/rdf-schema#seeAlso> ?o .FILTER regex(str(?o), 'genetree') . }  LIMIT 1000" 
+		,"reviewed":"SELECT ?s, ?o WHERE { ?s <http://purl.uniprot.org/core/reviewed> 'true'^^<http://www.w3.org/2001/XMLSchema#boolean> . } "
+ 
+		,"reviewedgenes":"SELECT ?s, ?o WHERE { ?s <http://purl.uniprot.org/core/reviewed> 'true'^^<http://www.w3.org/2001/XMLSchema#boolean> . ?s <http://www.w3.org/2000/01/rdf-schema#seeAlso> ?o .FILTER regex(str(?o), 'genetree') . } "
+
+		,"siteann":"SELECT ?s, ?p  WHERE {?s ?p <http://purl.uniprot.org/core/Active_Site_Annotation> .FILTER regex(str(?s), '#SIP') . } "
+	}
+    
+}
+
+
