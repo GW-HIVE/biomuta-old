@@ -1,0 +1,42 @@
+{
+    "ref":{
+        "grch37":{
+            "gtffile":"/data/external/ucsc/grch37/gtf/Homo_sapiens.GRCh37.75.gtf",
+            "dnafile":"/data/external/ucsc/grch37/genome/chr-all.fa",
+            "cdsfile":"/data/external/ucsc/grch37/targets/Homo_sapiens.GRCh37.75.cds.all.fa",
+            "pepfile":"/data/external/ucsc/grch37/targets/Homo_sapiens.GRCh37.75.pep.all.fa",
+            "refseqfile":"/data/external/refseq/grch37/targets/GRCh37_latest_protein.faa",
+            "chrdir":"/data/external/ucsc/grch37/genome/chromosome/",
+            "pepid2refseqac":"/data/external/ucsc/grch37/idmap/pepid2refseqac.csv",
+            "pepid2isoformac":"/data/external/ucsc/grch37/idmap/pepid2isoformac.csv"
+        },
+        "grch38":{
+            "gtffile":"/data/external/ucsc/grch38/gtf/Homo_sapiens.GRCh38.95.gtf",
+            "dnafile":"/data/external/ucsc/grch38/genome/chr-all.fa",
+            "cdsfile":"/data/external/ucsc/grch38/targets/Homo_sapiens.GRCh38.95.cds.all.fa",
+            "pepfile":"/data/external/ucsc/grch38/targets/Homo_sapiens.GRCh38.95.pep.all.fa",
+            "refseqfile":"/data/external/refseq/grch38/targets/GRCh38_latest_protein.faa",
+            "chrdir":"/data/external/ucsc/grch38/genome/chromosome/",
+            "pepid2refseqac":"/data/external/ucsc/grch38/idmap/pepid2refseqac.csv",
+            "pepid2isoformac":"/data/external/ucsc/grch38/idmap/pepid2isoformac.csv"
+        },
+        "2017_11":{
+            "canonseqfile":"/data/external/uniprot/2018_17/targets/human_protein_canonicalsequences.fasta",
+            "allseqfile":"/data/external/uniprot/2018_17/targets/human_protein_allsequences.fasta",
+            "idmapping":"/data/external/uniprot/2018_17/idmap/human_uniprot_idmapping.csv",
+            "trsid2isoformac":"/data/external/uniprot/2017_11/idmap/trsid2isoformac.csv"
+        },
+        "2018_11":{
+            "canonseqfile":"/data/external/uniprot/2018_18/targets/human_protein_canonicalsequences.fasta",
+            "allseqfile":"/data/external/uniprot/2018_18/targets/human_protein_allsequences.fasta",
+            "idmapping":"/data/external/uniprot/2018_18/idmap/human_uniprot_idmapping.csv"
+        },
+        "misc":{
+            "codonfile":"/data/external/misc/codon_list.txt",
+	    "pphuniprotfile":"/data/external/polyphen/uniprot/human.seq",
+	    "annovarhumandbdir":"/data/external/ucsc/genome/annovar/humandb/"
+        }
+    }
+}
+
+

@@ -1,0 +1,24 @@
+VCF for grch38
+ftp://ftp.ncbi.nih.gov/snp/archive/b152/VCF/GCF_000001405.38.bgz
+
+
+1) Downloads
+    download-genomeseqs.py
+    download-pep-cds-gtf-files.py
+    download-from-glygen.py
+
+
+2)  Make exon objects
+    make-exonlist.py
+
+3)  Map pep_id to uniprotkb_canonical_ac
+    pepid2canon-step1.py
+    pepid2canon-step2.py
+
+
+4) dbSNP steps
+
+    dbsnp-mapper-step1.py
+    dbsnp-mapper-step2.py
+    dbsnp-mapper-step3.py
+    dbsnp-mapper-step4.py

@@ -1,0 +1,202 @@
+A) DOWNLOADER
+
+   Varation Call Format (VCF) Data is downloaded from the following resources
+	
+	sftp-cancer.sanger.ac.uk (cosmic)
+	ftp://ftp.ncbi.nlm.nih.gov/pub/clinvar/vcf_GRCh37/archive_1.0/2017/clinvar_20170130.vcf.gz (clinvar)
+	https://dcc.icgc.org/api/v1/download?fn=/current/Summary/simple_somatic_mutation.aggregated.vcf.gz (icgc)
+	https://civic.genome.wustl.edu/downloads/nightly/nightly-ClinicalEvidenceSummaries.tsv (civic)
+	Using gdc-client (tcga)
+
+
+
+B) DATA REPORTER 
+
+1) Checking VCF files
+   Filter out variant calls if they match one of the
+   following conditions:
+
+	a) the chromosome reported is not hg37 canonical
+	b) the value for the ref base is longer that one base pair
+	c) the value for the alt base is longer than one base pair
+	d) the value for the ref base is not in ["A","C","G","T"]
+	e) the value for the alt base is not in ["A","C","G","T",",", "-","."]
+	f) the value for the ref base does not match corresponding base in hg37
+
+2) Mapping cancer terms to Disease Ontology ID 
+   The various cancer terminologies used in the VCF files are 
+   mapped to standard DOIDs/terms
+
+
+3) Creating mutation list
+   Generate a list of mutations that passed the filtering in 
+   the first step. The frequency of each mutation is also 
+   given in this listing using DOID for representing cancer types.
+
+   The CSV file generated has the following fields:
+
+	* chr - chromosome 
+	* pos - genomic position
+	* ref - ref base
+	* alt - alt base
+	* passfilter - the pass/fail filter parsed from the VCF file
+	* source - one of the data sources (TCGA/ICGC/COSMIC/CIVIC/CLINVAR)
+	* frequency - contains space separated DOID:count values
+
+4) Data statistics report
+   Summary statistics for all the steps performed so far. These 
+   are number showing:
+	- number of total VCF calls in original files
+	- numer of calls filtered out
+	- number of mutations by DOID
+	- number of mutations by chromosome
+
+All the steps done in this section are done separately for each 
+data resource (TCGA/ICGC/COSMIC/CIVIC/CLINVAR)
+
+
+
+
+C) MUTMAPPER
+
+1) Merging mutations from various resources
+   The mutation lists that have been generated for each data resource
+   separately are merged in this step, and only those with "PASS" values
+   in the "FILTER" field the original VCFs are considered to generate
+   the master mutation inventory.
+
+2) Checking sanity of Ensembl CDS sequences
+   The Ensembl data release 75 for GRCh37 is used for annotation. Just for
+   sanity checking, for each protein coding transcript, exon coordinates 
+   are extracted from GTF file and used to construct CDS sequence 
+   from genomic/chromosome sequences. We make sure that the constructed 
+   CDS sequences are identical to corresponding CDS sequences 
+   given in Ensembl release 75. 
+
+3) Checking sanity of Ensembl peptide sequences 
+   In this step, the constructed CDS sequences are translated
+   into peptides, and we make sure these peptides are identical to 
+   corresponding peptide sequences given in Ensembl release 75.
+
+4) Mapping mutations to Ensembl peptides and identify
+   corresponding amino acide change. 
+   For those mutations that map into exon ranges, the
+   genomic position of the reported mutation is mapped
+   to the following:
+	a) position within the CDS sequence
+	b) index of the mutated codon
+	c) position within the codon
+
+   This allows identification of amino acide change
+   in the corresponding Ensembl pepetide.
+
+
+5) Identifying amino acide position in UniProtKB sequences
+
+   If Ensembl peptide and UniProtKB canonical isoform
+   sequences are not identical, pairwise global aligment
+   is performed to identify corresponding amino acid
+   position in UniProtKB canonical isoform sequences
+
+ 
+6) Identifying amino acide position in RefSeq protein sequences
+
+   If Ensembl peptide and RefSeq protein sequences are not 
+   identical, pairwise global aligment is performed to identify 
+   corresponding amino acid position in RefSeq protein sequences
+
+
+
+D) ANNOTATOR
+
+1) UniProtKB site annotations
+   Position specific annotation is extracted from the UniProtKB
+   resource for the following types of annotation.
+	
+	Active_Site_Annotation
+	Binding_Site_Annotation
+	Calcium_Binding_Annotation
+	Cross-link_Annotation
+	Disulfide_Bond_Annotation
+	Glycosylation_Annotation
+	Initiator_Methionine_Annotation
+	Lipidation_Annotation
+	Metal_Binding_Annotation
+	Modified_Residue_Annotation
+	Natural_Variant_Annotation
+	NP_Binding_Annotation
+	Nucleotide_Binding_Annotation
+	Signal_Peptide_Annotation
+	Site_Annotation
+
+   The extracted site specific annotation is saved in a CSV file 
+   with the following fields:
+
+	canonical_ac - accession for the UniProtKB canonical isoform
+        annotation_type - one of the site annotations listed above
+	start_pos - start position of the site in the amino acid sequence
+	end_pos - end position of the site in the amino acid sequence
+	annotation_value - annotation given to the site
+
+
+2) PolyPhen-2 (Polymorphism Phenotyping v2) tool is used to predict 
+   possible impact of an amino acid substitution on the structure and 
+   function of a human protein.
+
+   For each amino acid alteration identified in the MUTMAPPER section,
+   we generate the a CSV summary file from PolyPhen-2 computations. 
+   The fields in this CSV file are:
+
+	canonical_ac - accession for the UniProtKB canonical isoform
+	pos - amino acid position
+	ref - ref amino acid
+	alt - alt amino acid
+	predicted_effect - one of benign/possibly damaging/probably damaging/unknown
+	probability - probability of the predicated effect 
+ 
+
+3) The NetNglyc tool is used to predicts N-Glycosylation sites in human proteins 
+   using artificial neural networks that examine the sequence context of Asn-Xaa-Ser/Thr 
+   sequons. 
+
+   NetNglyc prediction on variant amino acid sequence is computed and the prediction
+   outcome is compared to the corresponding UniProtKB Glycosylation_Annotation 
+   of the wild type amino acid sequence. Base on this comparison, we generate
+   the following summary outcomes on loss/gain of glycosylation
+
+	no_change - Glycosylation_Annotation=yes, NetNglyc_prediction=yes
+	no_change - Glycosylation_Annotation=no, NetNglyc_prediction=no  
+	gain - Glycosylation_Annotation=no, NetNglyc_prediction=yes
+	loss - Glycosylation_Annotation=yes, NetNglyc_prediction=no
+
+   For each amino acid alteration identified in the MUTMAPPER section,
+   we generate the a CSV summary file from NetNglyc computations.
+   The fields in this CSV file are:
+
+	canonical_ac - accession for the UniProtKB canonical isoform
+        pos - amino acide position
+        ref - ref amino acid
+        alt - alt amino acid      
+	uniprot_call - True/False based on UniProtKB Glycosylation_Annotation
+	netnglyc_call - True/False based on NetNglyc prediction
+	final_call - one of no_change/loss/gain
+
+
+
+E) LOADER
+
+   Data in CSV files generated in the above sections is loaded to 
+   MySQL relational database.
+
+
+
+F) PUBLISHER
+
+   All data in BioMuta backend is dockerized and made available at
+   https://cloud.docker.com under the mazumderlab/biomuta repository
+    
+
+
+
+
+
