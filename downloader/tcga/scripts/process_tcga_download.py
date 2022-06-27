@@ -2,10 +2,11 @@
 Input:
 ########
     * -n : A path to the newly updated Biomuta mutation list
+    * -c : Should the new mutation sbe compared to an older mutation file?
     * -p : A path to the previous update of Biomuta's mutation list
     * -o : A path to the output folder, where the data report will be exported
     * -v : The version of the old biomuta to compare to the newly updated mutation list
-    * -u : A path to the uniprot mapping file
+    * -e : A path to the ENSP to uniprot mapping file
     * -t : A path to the tcga study mapping file
 
 Output:
@@ -35,7 +36,7 @@ import numpy as np
 
 
 
-def main(new_file, icgc_mutations, previous_version_file, tcga_mapping_file, uniprot_mapping_file, output_folder, ):
+def main(new_file, comparison, icgc_mutations, previous_version_file, tcga_mapping_file, ensp_mapping_file, output_folder, ):
     '''
     '''
     ##################################
@@ -61,18 +62,18 @@ def main(new_file, icgc_mutations, previous_version_file, tcga_mapping_file, uni
         if value not in cancer_list:
             cancer_list.append(value)
     
-    # Load the uniprot mapping file.
-    with open(uniprot_mapping_file, "r") as uniprot_file_handle:
-        uniprot_file_csv = csv.reader(uniprot_file_handle, quoting=csv.QUOTE_ALL)
+    # Load the ENSP to uniprot mapping file.
+    with open(ensp_mapping_file, "r") as ensp_file_handle:
+        ensp_file_csv = csv.reader(ensp_file_handle, quoting=csv.QUOTE_ALL)
         # Skip the header.
-        next(uniprot_file_csv)
+        next(ensp_file_csv)
 
         # Set up the mapping file dictionary.
-        uniprot_mapping_dict = {}
+        ensp_mapping_dict = {}
 
         # Populate the mapping dictionary with keys as ensg IDs and values as the gene symbol.
-        for row in uniprot_file_csv:
-            uniprot_mapping_dict[row[0]] = row[1]
+        for row in ensp_file_csv:
+            ensp_mapping_dict[row[3]] = row[0]
     
     ##################################
     # Process the new mutation file
@@ -84,7 +85,7 @@ def main(new_file, icgc_mutations, previous_version_file, tcga_mapping_file, uni
     new_df['doid_term'] = new_df['project_short_name'].map(mapping_dict)
 
     # Map HUGO symbol to uniprot id
-    new_df['uniprotkb_ac'] = new_df['Hugo_Symbol'].map(uniprot_mapping_dict)
+    new_df['uniprotkb_ac'] = new_df['ENSP'].map(ensp_mapping_dict)
 
     # Create a column for the uniprot isoform number
     #new_df['uniprot_ac_isoform'] = " "
@@ -94,9 +95,9 @@ def main(new_file, icgc_mutations, previous_version_file, tcga_mapping_file, uni
 
 
     # Export the mapped new mutation data
-    #mapped_new_file_path = output_folder + "/mapped_tcga_mutations.csv"
-    #print("Exporting mapped file to " + mapped_new_file_path)
-    #new_df.to_csv(mapped_new_file_path, index = False)
+    mapped_new_file_path = output_folder + "/mapped_tcga_mutations.csv"
+    print("Exporting mapped file to " + mapped_new_file_path)
+    new_df.to_csv(mapped_new_file_path, index = False)
 
     # Start a list of all genes present in the new dataset
     total_gene_list = []
@@ -107,6 +108,14 @@ def main(new_file, icgc_mutations, previous_version_file, tcga_mapping_file, uni
     new_compare_df = new_df[new_df['uniprotkb_ac'].notna()]
 
     total_new_rows = len(new_compare_df.index)
+
+    
+    # Check if mutation comparison should be performed
+    if comparison == True:
+        pass
+    else:
+        print('No comparison performed, all done!')
+        exit()
 
 
     
@@ -521,21 +530,25 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Commands for civic vcf to csv convertor.')
     parser.add_argument('--new_file', '-n',
                         help='An absolute path to the new TCGA mutation download')
+    parser.add_argument('--comparison', '-c',
+                        help='Either yes or no to perform the mutation comparison', nargs='?', default=False)
     parser.add_argument('--icgc_mutations', '-i',
                         help='An absolute path to the ICGC mutation file', nargs='?', default='no_icgc')
     parser.add_argument('--tcga_mapping_file', '-t',
                         help='An absolute path to the TCGA study to cancer mapping file')
     parser.add_argument('--previous_version_file', '-p',
-                        help='An absolute path to the previous updates mutation file')
+                        help='An absolute path to the previous updates mutation file', nargs='?', default='no_previous')
     parser.add_argument('--output_folder', '-o',
                         help='An absolute path to the output folder')
-    parser.add_argument('--uniprot_mapping_file', '-u',
-                        help='An absolute path to the uniprot accession mapping file')   
+    parser.add_argument('--ensp_mapping_file', '-e',
+                        help='An absolute path to the ensp to ensp to uniprot accession mapping file')   
     args = parser.parse_args()
 
-    main(args.new_file, args.icgc_mutations, args.previous_version_file, args.tcga_mapping_file, args.uniprot_mapping_file, args.output_folder)
+    main(args.new_file, args.comparison, args.icgc_mutations, args.previous_version_file, args.tcga_mapping_file, args.ensp_mapping_file, args.output_folder)
 
 
     # Example run:
 
 #python process_tcga_download.py -n /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/tcga/TCGA_SNP_somatic_mutation_hg38.csv -i /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/icgc/biomuta_3.0/biomuta_icgc.csv -p /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/tcga/human_protein_mutation_cancer.csv -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/ -u mapping/uniprot_masterlist.csv -t mapping/TCGA_DOID_mapping_v4.0.csv
+
+#python process_tcga_download.py -n /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/tcga/TCGA_SNP_somatic_mutation_hg38.csv -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/ -e /mnt/c/Users/caule/github_general/biomuta/downloader/mapping/human_protein_transcriptlocus.csv -t /mnt/c/Users/caule/github_general/biomuta/downloader/mapping/TCGA_DOID_mapping_v4.0.csv
