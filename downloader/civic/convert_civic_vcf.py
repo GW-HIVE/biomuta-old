@@ -264,6 +264,8 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
                             else:
                                 # Write the row to the csv if it passes check
                                 writer.writerow(row)
+
+
                             
 
 if __name__ == "__main__":
