@@ -91,7 +91,7 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     for index, row in civic_df.iterrows():
         enst_info = str(row['Feature']).split('.')
         enst_id = enst_info[0]
-        civic_df['ENST'] = enst_id
+        civic_df[row['ENST']] = enst_id
 
     # Map ENST symbol to uniprot accession
     civic_df['uniprotkb_canonical_ac'] = civic_df['ENST'].map(ensp_mapping_dict)
