@@ -120,7 +120,7 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
 
     print(final_df.columns)
 
-    mapped_new_file_path = output_folder + "/mapped_tcga_mutations.csv"
+    mapped_new_file_path = output_folder + "/mapped_civic_mutations.csv"
     print("Exporting mapped file to " + mapped_new_file_path)
     final_df.to_csv(mapped_new_file_path, index = False)
 

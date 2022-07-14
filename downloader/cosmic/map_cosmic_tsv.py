@@ -83,6 +83,7 @@ def main(cosmic_tsv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_
     cosmic_df['aa_pos'] = ''
     cosmic_df['ref_nt'] = ''
     cosmic_df['alt_nt'] = ''
+    cosmic_df.rename(columns = {'Sample name':'sample_name'},inplace=True)
 
     # Drop rows with missing information
     cosmic_df.dropna(subset=['Mutation AA','Mutation CDS','Mutation genome position'],inplace=True)
@@ -170,15 +171,12 @@ def main(cosmic_tsv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_
 
     # Select and rename fields for integration with other sources
     final_fields = [
-        'Sample name',
-        'genome_location_info',
+        'sample_name',
         'chr_id',
         'start_pos',
         'end_pos',
-        'nucleotide_info',
         'ref_nt',
         'alt_nt',
-        'amino_acid_info',
         'aa_pos',
         'ref_aa',
         'alt_aa',
