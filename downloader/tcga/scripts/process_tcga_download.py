@@ -27,8 +27,6 @@ Usage:
 
 import argparse
 import csv
-from distutils.log import INFO
-from genericpath import exists
 import pandas as pd
 import re
 import json
@@ -79,37 +77,78 @@ def main(new_file, comparison, icgc_mutations, previous_version_file, tcga_mappi
     # Process the new mutation file
     ##################################
     # Load the new file as a dataframe, process all values as strings to speed up conversion to dataframe
-    new_df = pd.read_csv(new_file, dtype=str)
+    field_list = [
+        'project_short_name',
+        'case_barcode',
+        'Chromosome',
+        'Start_Position',
+        'End_Position',
+        'Reference_Allele',
+        'Tumor_Seq_Allele1',
+        'Amino_acids',
+        'Protein_position',
+        'ENSP'
+    ]
+    
+    print('Loading the mutations as a dataframe...')
+    new_df = pd.read_csv(new_file, dtype=str, usecols=field_list)
+    new_df.dropna(inplace=True)
 
+    print('Mapping doid terms and uniprot accessions...')
     # Map TCGA study names to doid terms
-    new_df['doid_term'] = new_df['project_short_name'].map(mapping_dict)
+    new_df['doid_name'] = new_df['project_short_name'].map(mapping_dict)
 
     # Map HUGO symbol to uniprot id
-    new_df['uniprotkb_ac'] = new_df['ENSP'].map(ensp_mapping_dict)
+    new_df['uniprotkb_canonical_ac'] = new_df['ENSP'].map(ensp_mapping_dict)
 
-    # Create a column for the uniprot isoform number
-    #new_df['uniprot_ac_isoform'] = " "
+    # Format the amino acid ref, alt, and position columns, also the chromosome id
+    print('Formatting amino acid info...')
+    new_df['aa_pos'] = new_df['Protein_position'].apply(aa_format_position)
+    new_df['aa_info'] = new_df['Amino_acids'].apply(aa_format_info)
+    new_df['ref_aa'] = ''
+    new_df['alt_aa'] = ''
+    new_df[['ref_aa','alt_aa']] = pd.DataFrame(new_df['aa_info'].tolist(), index=new_df.index)
+    new_df['chr_id'] = new_df['Chromosome'].apply(remove_chr)
 
     # Create a column for the source
-    #new_df['data_src'] = 'tcga'
+    new_df['source'] = 'tcga'
+    
+    print('Mapping and formatting complete. Creating the final dataframe...')
+    # Create the final dataframe to export
+    final_fields = [
+        'case_barcode',
+        'chr_id',
+        'Start_Position',
+        'End_Position',
+        'Reference_Allele',
+        'Tumor_Seq_Allele1',
+        'aa_pos',
+        'ref_aa',
+        'alt_aa',
+        'doid_name',
+        'uniprotkb_canonical_ac',
+        'source'
+    ]
+    final_df = new_df[final_fields]
+    final_df.dropna(inplace=True)
+    final_df.rename(columns={
+        'case_barcode': 'sample_name',
+        'Start_Position': 'start_pos',
+        'End_Position': 'end_pos',
+        'Reference_Allele': 'ref_nt',
+        'Tumor_Seq_Allele1': 'alt_nt'
+    }, inplace=True)
 
+    final_df.drop_duplicates(keep='first',inplace=True)
 
     # Export the mapped new mutation data
-    mapped_new_file_path = output_folder + "/mapped_tcga_mutations.csv"
+    mapped_new_file_path = output_folder + "/tcga_missense_biomuta_v5.csv"
     print("Exporting mapped file to " + mapped_new_file_path)
-    new_df.to_csv(mapped_new_file_path, index = False)
+    final_df.to_csv(mapped_new_file_path, index = False)
 
     # Start a list of all genes present in the new dataset
     total_gene_list = []
-    
 
-
-    # For the comparison, remove the rows not mapped to uniprot accession
-    new_compare_df = new_df[new_df['uniprotkb_ac'].notna()]
-
-    total_new_rows = len(new_compare_df.index)
-
-    
     # Check if mutation comparison should be performed
     if comparison == True:
         pass
@@ -117,8 +156,12 @@ def main(new_file, comparison, icgc_mutations, previous_version_file, tcga_mappi
         print('No comparison performed, all done!')
         exit()
 
+    # For the comparison, remove the rows not mapped to uniprot accession
+    new_compare_df = new_df[new_df['uniprotkb_canonical_ac'].notna()]
 
-    
+    total_new_rows = len(new_compare_df.index)
+
+
     # The mutaiton comparison library is structured as:
     # Top level -- cancer type dict
     # Mid level -- list of gene dicts, one dict per gene in a cancer type
@@ -521,7 +564,19 @@ def main(new_file, comparison, icgc_mutations, previous_version_file, tcga_mappi
     with open(comparison_report_json, 'w', encoding = 'utf-8') as comparison_report_json:
         json.dump(comparison_report_dict, comparison_report_json, indent=4)
 
-    
+# Function to format the chromosome id
+def remove_chr(chr_info):
+    re.sub(r'chr', '', chr_info)
+    return chr_info
+
+# Functions to format the amino acid change
+def aa_format_position(aa_pos): 
+    aa_pos_list = aa_pos.split('/')
+    return aa_pos_list[0]
+
+def aa_format_info(aa_info):
+    aa_info_list = aa_info.split('/')
+    return aa_info_list
 
 
                             

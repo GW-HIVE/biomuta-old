@@ -24,17 +24,11 @@ Usage:
 '''
 
 import argparse
+from cmath import nan
 import csv
-from distutils.log import INFO
 import re
-import json
-import numpy as np
 import pandas as pd
 
-
-import os
-import shutil
-import sys
 
 
 def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_folder):
@@ -56,6 +50,9 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
         # Populate the mapping dict
         for row in doid_mapping:
             doid_mapping_dict[row[0]] = row[1]
+        
+        for key,value in doid_mapping_dict.items():
+            re.sub(r'NA', '', value)
     
     # Set up a list of cancers to iterate through
     cancer_list = []
@@ -83,46 +80,114 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
 
     # Map doid child to parent terms
     civic_df['doid_name'] = civic_df['CIViC Entity Disease'].map(doid_mapping_dict)
-
+    civic_df['doid_name'] = civic_df['doid_name'].apply(convert_NA)
+    
     # Create a column that removes the dot notation from the ENST IDs in civic data
+    civic_df['sample_name'] = ''
     civic_df['ENST'] = ''
+    civic_df['ref_aa'] = ''
+    civic_df['alt_aa'] = ''
+    civic_df['aa_pos'] = ''
+    civic_df['source'] = 'civic'
+    civic_df['end_pos'] = ''
+
+    # Check for indels and remove
+    civic_df['REF'] = civic_df['REF'].apply(remove_indels)
+
+    # Format the amino acid change and position
+    print('Formatting amino acid information')
+    # amino acid changes to exclude
+    civic_df['amino_acid_info'] = civic_df['CIViC Variant Name'].apply(aa_format)
+    civic_df.dropna(subset=['amino_acid_info'],inplace=True)
+    civic_df[['ref_aa','alt_aa','aa_pos']] = pd.DataFrame(civic_df['amino_acid_info'].tolist(), index=civic_df.index)
     
     # Create a new column with only ENST ID to be used for mapping and separate AA notation
-    for index, row in civic_df.iterrows():
-        enst_info = str(row['Feature']).split('.')
-        enst_id = enst_info[0]
-        civic_df[row['ENST']] = enst_id
+    civic_df['ENST'] = civic_df['Feature'].apply(lambda x : x.split('.')[0])
 
     # Map ENST symbol to uniprot accession
     civic_df['uniprotkb_canonical_ac'] = civic_df['ENST'].map(ensp_mapping_dict)
 
     # Select and rename fields for integration with other sources
     final_fields = [
+        'sample_name',
         '#CHROM',
         'POS',
+        'end_pos',
         'REF',
         'ALT',
-        'CIViC Variant Name',
+        'aa_pos',
+        'ref_aa',
+        'alt_aa',
+        'aa_pos',
         'doid_name',
-        'uniprotkb_canonical_ac'
+        'uniprotkb_canonical_ac',
+        'source'
     ]
 
     final_df = civic_df[final_fields]
-    
+
     # Name the fields in the exported file according tot he BioMuta convention
     final_df.rename(columns={
         '#CHROM': 'chr_id', 
-        'POS': 'chr_pos', 
+        'POS': 'start_pos', 
         'REF': 'ref_nt', 
-        'ALT': 'alt_nt', 
-        'CIViC Variant Name': 'aa_change'
+        'ALT': 'alt_nt'
     }, inplace=True)
 
-    print(final_df.columns)
+    final_df['end_pos'] = final_df['start_pos']
+
+    final_df.dropna(inplace=True)
 
     mapped_new_file_path = output_folder + "/mapped_civic_mutations.csv"
     print("Exporting mapped file to " + mapped_new_file_path)
     final_df.to_csv(mapped_new_file_path, index = False)
+
+###############################
+# Functions for formatting data
+###############################
+
+# Format the amino acid infomation
+def aa_format(aa_info):
+    # Define exceptions and additonal information to remove
+    aa_exceptions = ['FRAMESHIFT','RS','rs','MUTATION','fs','FS','DEL','c.','DUP','HOM']
+    aa_clean_up = ['BCR-ABL_','PML-RARA_','EM4-ALK_','ALK_Fusion_','HIP1-ALK_','FIP1L1-PDGFRA_','CD74-ROS1_','ETV6-NTRK3_']
+    exception_flag = 0
+    for info in aa_clean_up:
+        aa_info = re.sub(info, '', str(aa_info))   
+    for exception in aa_exceptions:
+        if re.search(exception,aa_info):
+            exception_flag = 1
+            aa_list = [nan,nan,nan]
+
+    # Format the amino acid change
+    if exception_flag == 0:
+        aa_list = re.findall(r'[A-Z]',aa_info)
+        # Account for nonsense mutations
+        if re.search(r'\*',aa_info):
+            stop_character = re.findall(r'\*',aa_info)
+            aa_list.append(stop_character[0])
+        
+        aa_position = re.findall(r'\d+',aa_info)
+        aa_list.append(aa_position[0])
+
+    # Account for additional outlier cases
+    if len(aa_list) != 3:
+        return [nan,nan,nan]
+    else:
+        return aa_list
+    
+def remove_indels(nt_info):
+    if len(nt_info) > 1:
+        nt_info = nan
+    
+    return nt_info
+
+def convert_NA(NA_value):
+    if NA_value == 'NA':
+        NA_value = nan
+    
+    return NA_value
+    
 
                             
 
