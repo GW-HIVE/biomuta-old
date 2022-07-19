@@ -68,134 +68,91 @@ def main(cosmic_tsv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_
     # Load the cosmic tsv file and map, then export
     ##################################
     print("Loading COSMIC tsv mutation file...")
-    cosmic_df = pd.read_csv(cosmic_tsv, dtype=str, sep='\t')
+    cosmic_df_iterator = pd.read_csv(cosmic_tsv, dtype=str, sep='\t',chunksize=1000000)
 
-    # Map doid child to parent terms
-    cosmic_df['doid_name'] = cosmic_df['Primary site'].map(doid_mapping_dict)
+    for i, cosmic_df in enumerate(cosmic_df_iterator):
 
-    # Create new fields for reformatted data: ENST, genome location, AA mutation, nuceotide mutation
-    cosmic_df['ENST'] = ''
-    cosmic_df['chr_id'] = ''
-    cosmic_df['start_pos'] = ''
-    cosmic_df['end_pos'] = ''
-    cosmic_df['ref_aa'] = ''
-    cosmic_df['alt_aa'] = ''
-    cosmic_df['aa_pos'] = ''
-    cosmic_df['ref_nt'] = ''
-    cosmic_df['alt_nt'] = ''
-    cosmic_df.rename(columns = {'Sample name':'sample_name'},inplace=True)
+        print("Starting chunk " + str(i))
 
-    # Drop rows with missing information
-    cosmic_df.dropna(subset=['Mutation AA','Mutation CDS','Mutation genome position'],inplace=True)
-    total_rows = len(cosmic_df.index)
-
+        # Map doid child to parent terms
+        cosmic_df['doid_name'] = cosmic_df['Primary site'].map(doid_mapping_dict)
     
-    # Create a new column with only ENST ID to be used for mapping. Also separate the AA notation, genome locations, and nucleotide change
+        # Create new fields for reformatted data: ENST, genome location, AA mutation, nuceotide mutation
+        cosmic_df['ENST'] = ''
+        cosmic_df['chr_id'] = ''
+        cosmic_df['start_pos'] = ''
+        cosmic_df['end_pos'] = ''
+        cosmic_df['ref_aa'] = ''
+        cosmic_df['alt_aa'] = ''
+        cosmic_df['aa_pos'] = ''
+        cosmic_df['ref_nt'] = ''
+        cosmic_df['alt_nt'] = ''
+        cosmic_df.rename(columns = {'Sample name':'sample_name'},inplace=True)
     
-    # Format nucleotide change and remove indels
-    print('Formatting nucleotide information')
-    cosmic_df['nucleotide_info'] = cosmic_df['Mutation CDS'].apply(nt_format)
-    cosmic_df.dropna(subset=['nucleotide_info'],inplace=True)
-    cosmic_df[['ref_nt','alt_nt']] = pd.DataFrame(cosmic_df['nucleotide_info'].tolist(), index=cosmic_df.index)
-    #cosmic_df['ref_nt'] = cosmic_df['Mutation CDS'].apply(nt_format[0])
-    #cosmic_df['alt_nt'] = cosmic_df['Mutation CDS'].apply(nt_format[1])
+        # Drop rows with missing information
+        cosmic_df.dropna(subset=['Mutation AA','Mutation CDS','Mutation genome position'],inplace=True)
+        total_rows = len(cosmic_df.index)
     
-    
-    # Format the amino acid change and position
-    print('Formatting amino acid information')
-    cosmic_df['amino_acid_info'] = cosmic_df['Mutation AA'].apply(aa_format)
-    cosmic_df.dropna(subset=['amino_acid_info'],inplace=True)
-    cosmic_df[['ref_aa','alt_aa','aa_pos']] = pd.DataFrame(cosmic_df['amino_acid_info'].tolist(), index=cosmic_df.index)
-    #cosmic_df['ref_aa'] = cosmic_df['Mutation AA'].apply(aa_format[0])
-    #cosmic_df['alt_aa'] = cosmic_df['Mutation AA'].apply(aa_format[1])
-    #cosmic_df['aa_pos'] = cosmic_df['Mutation AA'].apply(aa_format[2])
-
-    # Format the genomic location
-    print('Formatting genomic location information')
-    cosmic_df['genome_location_info'] = cosmic_df['Mutation genome position'].apply(gen_location_format)
-    cosmic_df.dropna(subset=['genome_location_info'],inplace=True)
-    cosmic_df[['chr_id','start_pos','end_pos']] = pd.DataFrame(cosmic_df['genome_location_info'].tolist(), index=cosmic_df.index)
-    #cosmic_df['chr_id'] = cosmic_df['Mutation genome position'].apply(gen_location_format[0])
-    #cosmic_df['start_pos'] = cosmic_df['Mutation genome position'].apply(gen_location_format[1])
-    #cosmic_df['end_pos'] = cosmic_df['Mutation genome position'].apply(gen_location_format[2])
-    
-    # Map ENST symbol to uniprot accession
-    print('Mapping ENST IDs to uniprot accession')
-    cosmic_df['ENST'] = cosmic_df['Accession Number'].apply(lambda x : x.split('.')[0])
-    cosmic_df['uniprotkb_canonical_ac'] = cosmic_df['ENST'].map(ensp_mapping_dict)
-
-    cosmic_df.dropna(subset=['ref_nt', 'ref_aa', 'chr_id'],inplace=True)
-
-
-    #for index, row in cosmic_df.iterrows():
-
-        #print('Processing row ' + str(index) + ' out of ' + str(total_rows), end ='\r')
-
-        # Separate the nucleotide change
-        #nuc_list = re.findall(r'[A-Z]',row['Mutation CDS'])
-        # Remove indels
-        #if len(nuc_list) != 2:
-        #    continue
-        #row['ref_nt'] = nuc_list[0]
-        #row['alt_nt'] = nuc_list[1]
+        # Create a new column with only ENST ID to be used for mapping. Also separate the AA notation, genome locations, and nucleotide change
         
-        # Process the ENST ID
-        #enst_info = str(row['Accession Number']).split('.')
-        #enst_id = enst_info[0]
-        #cosmic_df[row['ENST']] = enst_id
+        # Format nucleotide change and remove indels
+        print('Formatting nucleotide information')
+        cosmic_df['nucleotide_info'] = cosmic_df['Mutation CDS'].apply(nt_format)
+        cosmic_df.dropna(subset=['nucleotide_info'],inplace=True)
+        cosmic_df[['ref_nt','alt_nt']] = pd.DataFrame(cosmic_df['nucleotide_info'].tolist(), index=cosmic_df.index)
+    
+        # Format the amino acid change and position
+        print('Formatting amino acid information')
+        cosmic_df['amino_acid_info'] = cosmic_df['Mutation AA'].apply(aa_format)
+        cosmic_df.dropna(subset=['amino_acid_info'],inplace=True)
+        cosmic_df[['ref_aa','alt_aa','aa_pos']] = pd.DataFrame(cosmic_df['amino_acid_info'].tolist(), index=cosmic_df.index)
+    
+        # Format the genomic location
+        print('Formatting genomic location information')
+        cosmic_df['genome_location_info'] = cosmic_df['Mutation genome position'].apply(gen_location_format)
+        cosmic_df.dropna(subset=['genome_location_info'],inplace=True)
+        cosmic_df[['chr_id','start_pos','end_pos']] = pd.DataFrame(cosmic_df['genome_location_info'].tolist(), index=cosmic_df.index)
+        
+        # Map ENST symbol to uniprot accession
+        print('Mapping ENST IDs to uniprot accession')
+        cosmic_df['ENST'] = cosmic_df['Accession Number'].apply(lambda x : x.split('.')[0])
+        cosmic_df['uniprotkb_canonical_ac'] = cosmic_df['ENST'].map(ensp_mapping_dict)
+    
+        cosmic_df.dropna(subset=['ref_nt', 'ref_aa', 'chr_id'],inplace=True)
+     
+        # Select and rename fields for integration with other sources
+        final_fields = [
+            'sample_name',
+            'chr_id',
+            'start_pos',
+            'end_pos',
+            'ref_nt',
+            'alt_nt',
+            'aa_pos',
+            'ref_aa',
+            'alt_aa',
+            'doid_name',
+            'uniprotkb_canonical_ac'
+        ]
+    
+        final_df = cosmic_df[final_fields]
+    
+        final_df['source'] = 'cosmic'
+    
+        # Remove rows that did not map to uniprot canonical transcripts and duplicates
+        final_df.dropna(subset=['uniprotkb_canonical_ac'],inplace=True)
+        final_df.drop_duplicates(keep='first',inplace=True)
+        
+        # How to handle the df chunks to process
+        mode = 'w' if i == 0 else 'a'
+        header = i == 0
+        
 
-        # Separate genome location
-        #genome_info = str(row['Mutation genome position']).split(':')
-        #chr_id = genome_info[0]
-        #row['chr_id'] = chr_id
-        #location_range = genome_info[1]
-        #location_positions = str(location_range).split('-')
-        #start_pos = location_positions[0]
-        #row['start_pos'] = start_pos
-        #end_pos = location_positions[1]
-        #row['end_pos'] = end_pos
+        mapped_new_file_path = output_folder + "/cosmic_missense_biomuta_v5.csv"
+        print("Adding processed data to " + mapped_new_file_path)
+        final_df.to_csv(mapped_new_file_path, index = False, header=header, mode=mode)
 
-        # Separate the AA change and protein position
-        #aa_list = re.findall(r'[A-Z]',row['Mutation AA'])
-        # Account for nonsense mutations
-        #if re.search(r'\*',row['Mutation AA']):
-        #    stop_character = re.findall(r'\*',row['Mutation AA'])
-        #    aa_list.append(stop_character[0])
-        #row['ref_aa'] = aa_list[0]
-        #row['alt_aa'] = aa_list[1]
-
-        #aa_position = re.findall(r'\d+',row['Mutation AA'])
-        #row['aa_pos'] = aa_position[0]
-
-    print(cosmic_df.head())
-
-    # Select and rename fields for integration with other sources
-    final_fields = [
-        'sample_name',
-        'chr_id',
-        'start_pos',
-        'end_pos',
-        'ref_nt',
-        'alt_nt',
-        'aa_pos',
-        'ref_aa',
-        'alt_aa',
-        'doid_name',
-        'uniprotkb_canonical_ac'
-    ]
-
-    final_df = cosmic_df[final_fields]
-
-    final_df['source'] = 'cosmic'
-
-    # Remove rows that did not map to uniprot canonical transcripts
-    final_df.dropna(subset=['uniprotkb_canonical_ac'],inplace=True)
-
-    print(final_df.columns)
-
-    mapped_new_file_path = output_folder + "/mapped_cosmic_mutations.csv"
-    print("Exporting mapped file to " + mapped_new_file_path)
-    final_df.to_csv(mapped_new_file_path, index = False)
+        print("Chunk number " + str(i) + " completed")
 
 
 ###############################
