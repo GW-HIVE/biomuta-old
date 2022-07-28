@@ -1,0 +1,24 @@
+field_name,field_description    
+project_short_name,TCGA project name abbreviation
+case_barcode,<'TCGA Case Barcode <https://docs.gdc.cancer.gov/Encyclopedia/pages/TCGA_Barcode/>' unique per patient
+Hugo_Symbol,HUGO symbol for the gene (HUGO symbols are always in all caps). "Unknown" is used for regions that do not correspond to a gene
+Gene,Stable Ensembl ID of affected gene
+Transcript_ID,Ensembl ID of the transcript affected by the variant
+ENSP,The Ensembl protein identifier of the affected transcript
+Variant_Classification,Translational effect of variant allele
+Variant_Type,Type of mutation (SNP DNP TNP ONP INS DEL or Consolidated)
+Chromosome,The affected chromosome (chr1)
+Start_Position,Lowest numeric position of the reported variant on the genomic reference sequence
+End_Position,Highest numeric genomic position of the reported variant on the genomic reference sequence
+Tumor_Seq_Allele1,Primary data genotype for tumor sequencing (discovery) allele 1.
+Reference_Allele,The plus strand reference allele at this position. Includes the deleted sequence for a deletion or "-" for an insertion
+Tumor_Seq_Allele2,Primary data genotype for tumor sequencing (discovery) allele 2.
+Allele,The variant allele used to calculate the consequence
+SIFT,The SIFT prediction and/or score, with both given as prediction (score)
+Polyphen,The PolyPhen prediction and/or score
+GMAF,Non-reference allele and frequency of existing variant in 1000 Genomes
+EXAC_AF,Global Allele Frequency from ExAC
+Amino_acids,Only given if the variation affects the protein-coding sequence
+CDS_position,Relative position of base pair in coding sequence
+Protein_position,Relative position of affected amino acid in protein
+dbSNP_RS,The rs-IDs from the dbSNP database "novel" if not found in any database used, or null if there is no dbSNP record, but it is found in other databases
