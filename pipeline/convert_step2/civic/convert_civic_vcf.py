@@ -87,11 +87,9 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
     # Convert each line in the mutation data to json format
     for line in data: 
 
-
         # Count the number of sub_fields in the info column
         # Formula compensates for the number of '|' being always 1 fewer for each annotation added
         sub_field_count = str(line).count('|') + int((str(line).count('|')/(sub_field_total - 1 ))) 
-        #print(sub_field_count)
 
         # A dictionary to hold all mutation data
         mut_dict = {}
@@ -101,8 +99,6 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
 
         # Link each column in the mutation line with a field
         for field, mutation_info in zip(mut_fields, line):
-
-            #mut_dict[field] = mutation_info
             
             # A list to capture all annotations and subfield data
             mut_annotation_list = []
@@ -111,64 +107,35 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
             if field == "INFO":
 
                 # Annotation information is delimited by a "|"
-                #annotation_info = mutation_info.split('|')
                 annotation_stop_index = str(mutation_info).count(',') + 1
                 annotations = mutation_info.split(',')
 
                 # Check if row has additional commas that will break annotation separator
-
                 if annotation_stop_index > (sub_field_count/sub_field_total):
                     bad_row_list.append(line)
                     break
-
 
                 # Store the subfields as a list in each annotation object in the annotation dict
                 for annotation_index in range(annotation_stop_index):
 
                     if annotation_index == annotation_stop_index:
                         break
-
-                    #print("Processing annotation " + str(annotation_index) + " out of " + str(range(annotation_stop_index)))
-
-                    #annotation_info_dict[annotation_index] = annotations[annotation_index]
-
                     annotation_info = annotations[annotation_index].split('|')
-
-                    #annotation = annotation_info[annotation_index*(sub_field_total):(annotation_index+1)*(sub_field_total)]
-
-
-                    #print(mutation_info)
-                    #print(annotation_info)
-                    #print(annotation)
-
                     sub_field = 0
-
                     sub_field_dict = {}
-
-
 
                     # Use the schema to assign each annotation information to a key
                     for key in annotation_schema_template:
                         sub_field_dict[key]= annotation_info[sub_field]
                         sub_field += 1
-                        #print(key)
-                        #print(sub_field)
-                        #if sub_field == (sub_field_total): 
-                        #    break
-                        #else:
-                        #    print(sub_field)
-                        #    print(annotation[sub_field])
-                        #    sub_field_dict[key]= annotation[sub_field]
-                        
 
                     annotation_info_dict[annotation_index] = sub_field_dict
-                    #annotation_info_dict[annotation_index] = annotation
                 
                 # Add the annotation dictionary to the annotation list
                 mut_annotation_list.append(annotation_info_dict)
 
             else:
-                # Convert each mutation row into a dictionary with keys as fields mutation info as values
+                # Convert each mutation row into a dictionary with keys as fields, mutation info as values
                 mut_dict[field] = mutation_info
             
             # Add the annotation list to the mutation dictionary
@@ -176,11 +143,6 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
         
         dict_list.append(mut_dict)
 
-        # Only go through a limited number of rows for troubleshooting
-        #count += 1
-        #if count > stop_count:
-        #    break
-    
     # Create a a bad row error report
     if len(bad_row_list) > 0:
         print(str(len(bad_row_list)) + " entries contained additional commas could not be processed.")
@@ -200,7 +162,6 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
     output_json.close()
 
     # Export a csv file with one annotation per row
-
     # Organize the csv headers
     csv_headers = []
     general_info_fields = []
@@ -224,15 +185,8 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
         writer = csv.writer(output_csv)
         writer.writerow(csv_headers)
         # Iterate through the mutation objects to fill the csv row
-
-        #count = 0 
-        #stop_count = 5
-        
         # Iterate through each mutation
         for mutation in dict_list:
-            #if count > stop_count:
-            #    break
-            #count += 1
 
             # Iterate through each field then find the INFO column
             for field, general_value in mutation.items():
@@ -264,9 +218,6 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
                             else:
                                 # Write the row to the csv if it passes check
                                 writer.writerow(row)
-
-
-                            
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Commands for civic vcf to csv convertor.')

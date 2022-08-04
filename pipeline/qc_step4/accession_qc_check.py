@@ -23,6 +23,7 @@ Usage:
 '''
 
 import argparse
+from locale import D_T_FMT
 import pandas as pd
 import glob
 import re
@@ -42,21 +43,24 @@ def main(biomuta_csv, accession, glyco_file_folder, output_folder):
     for file in glob.glob(glyco_file_path):
         glyco_file_list.append(file)
 
-    print(glyco_file_list)
     
     # Set up dataframes to hold the glycosylation comparison
     for file in glyco_file_list:
         if re.search(r'loss', file):
             print('Glycoloss file: ' + file)
             glyco_loss_df = pd.read_csv(file, dtype = str)
+            print('Rows in file: ' + str(len(glyco_loss_df.index)))
         elif re.search(r'effect', file):
             print('Glycoeffect file ' + file)
             glyco_effect_df = pd.read_csv(file, dtype=str)
+            print('Rows in file: ' + str(len(glyco_effect_df.index)))
         else:
             print('Glycosylation dataset ' + file + ' not used for comparison')
     
     glyco_loss_overlap_df = pd.DataFrame()
     glyco_effect_overlap_df = pd.DataFrame()
+    glyco_loss_unique_df = pd.DataFrame()
+    glyco_effect_unique_df = pd.DataFrame()
     acc_glyco_loss_overlap_df = pd.DataFrame()
     acc_glyco_effect_overlap_df = pd.DataFrame()
 
@@ -73,32 +77,77 @@ def main(biomuta_csv, accession, glyco_file_folder, output_folder):
         acc_chunk_df = biomuta_df_chunk[biomuta_df_chunk['uniprotkb_canonical_ac'] == accession]
         
         # Run the glycosylation dataset comparison and add mutations to glycoloss or glycoeffect for the accession
-        glyco_loss_overlap_df = pd.concat([glyco_loss_overlap_df, compare_glyco_file(biomuta_df_chunk, glyco_loss_df)])
-        glyco_effect_overlap_df = pd.concat([glyco_effect_overlap_df, compare_glyco_file(biomuta_df_chunk, glyco_effect_df)])
-        acc_glyco_loss_overlap_df = pd.concat([glyco_loss_overlap_df, compare_glyco_file(acc_chunk_df, glyco_loss_df)])
-        acc_glyco_effect_overlap_df = pd.concat([glyco_effect_overlap_df, compare_glyco_file(acc_chunk_df, glyco_effect_df)])
+        glyco_loss_overlap_df = pd.concat([glyco_loss_overlap_df, compare_shared_glyco_file(biomuta_df_chunk, glyco_loss_df)])
+        glyco_effect_overlap_df = pd.concat([glyco_effect_overlap_df, compare_shared_glyco_file(biomuta_df_chunk, glyco_effect_df)])
+        acc_glyco_loss_overlap_df = pd.concat([glyco_loss_overlap_df, compare_shared_glyco_file(acc_chunk_df, glyco_loss_df)])
+        acc_glyco_effect_overlap_df = pd.concat([glyco_effect_overlap_df, compare_shared_glyco_file(acc_chunk_df, glyco_effect_df)])        
 
+        # Glyco mutations not covered by the biomuta mutations
+        glyco_loss_unique_df = pd.concat([glyco_loss_unique_df, compare_unique_glyco_file(biomuta_df_chunk, glyco_loss_df)])
+        glyco_effect_unique_df = pd.concat([glyco_effect_unique_df, compare_unique_glyco_file(biomuta_df_chunk, glyco_effect_df)])
+        acc_glyco_loss_unique_df = pd.concat([glyco_loss_unique_df, compare_unique_glyco_file(acc_chunk_df, glyco_loss_df)])
+        acc_glyco_effect_unique_df = pd.concat([glyco_effect_unique_df, compare_unique_glyco_file(acc_chunk_df, glyco_effect_df)])
+
+        
+
+        
+        
         # Add mutations for the specified accession
         accession_df = pd.concat([accession_df, acc_chunk_df])
+    
+
+    # Remove duplicate lines
+    glyco_loss_overlap_df.drop_duplicates(keep='first', inplace=True)  
+    glyco_effect_overlap_df.drop_duplicates(keep='first', inplace=True)
+    glyco_loss_unique_df.drop_duplicates(keep='first', inplace=True)  
+    glyco_effect_unique_df.drop_duplicates(keep='first', inplace=True)
+    accession_df.drop_duplicates(keep='first', inplace=True) 
     
 
     # Finalize the glycosylation comparison
     glyco_report_dict = {}
     glyco_report_dict['Glycoloss shared'] = len(glyco_loss_overlap_df.index)
-    glyco_report_dict['Glycoloss missing'] = len(glyco_loss_df.index) - len(glyco_loss_overlap_df.index)
+    glyco_report_dict['Glycoloss missing'] = len(glyco_loss_unique_df.index)
     glyco_report_dict['Glycoeffect shared'] = len(glyco_effect_overlap_df.index)
-    glyco_report_dict['Glycoeffect missing'] = len(glyco_effect_df.index) - len(glyco_effect_overlap_df.index)
+    glyco_report_dict['Glycoeffect missing'] = len(glyco_effect_unique_df.index)
+    
+    print(glyco_report_dict)
+    
+    # Export the shared and unique mutations for the biomuta vs. glyco datasets comparison
+    glyco_loss_shared_path = output_folder + 'glyco_loss_overlap.csv'
+    glyco_loss_unique_path = output_folder + 'glyco_loss_unique.csv'
+    print("Exporting overall glycoloss shared and  mutations to: ")
+    print(glyco_loss_shared_path)
+    print(glyco_loss_unique_path)
+    glyco_loss_overlap_df.to_csv(glyco_loss_shared_path, index = False)
+    glyco_loss_unique_df.to_csv(glyco_loss_unique_path, index = False)
 
-    glyco_loss_path = output_folder + accession + '_glyco_loss_overlap.csv'
-    print("Exporting glycoloss overlapping mutations for to " + glyco_loss_path)
-    glyco_loss_overlap_df.to_csv(glyco_loss_path, index = False)
+    glyco_effect_shared_path = output_folder + 'glyco_effect_overlap.csv'
+    glyco_effect_unique_path = output_folder + 'glyco_effect_unique.csv'
+    print("Exporting overall glycoeffect shared and missing mutations to:")
+    print(glyco_effect_shared_path)
+    print(glyco_effect_unique_path)
+    glyco_effect_overlap_df.to_csv(glyco_effect_shared_path, index = False)
+    glyco_effect_unique_df.to_csv(glyco_effect_unique_path, index = False)
 
-    glyco_effect_path = output_folder + accession + '_glyco_effect_overlap.csv'
-    print("Exporting glycoeffect overlapping mutations for to " + glyco_loss_path)
-    glyco_effect_overlap_df.to_csv(glyco_effect_path, index = False)
-        
+    acc_glyco_loss_shared_path = output_folder + accession + '_glyco_loss_overlap.csv'
+    acc_glyco_loss_unique_path = output_folder + accession + '_glyco_loss_unique.csv'
+    print("Exporting glycoloss overlapping mutations for " + accession + " to: ")
+    print(acc_glyco_loss_shared_path)
+    print(acc_glyco_loss_unique_path)
+    acc_glyco_loss_overlap_df.to_csv(acc_glyco_loss_shared_path, index = False)
+    acc_glyco_loss_unique_df.to_csv(acc_glyco_loss_unique_path, index = False)
+
+    acc_glyco_effect_shared_path = output_folder + accession + '_glyco_effect_overlap.csv'
+    acc_glyco_effect_unique_path = output_folder + accession + '_glyco_effect_unique.csv'
+    print("Exporting glycoeffect overlapping mutations for " + accession + " to:")
+    print(acc_glyco_effect_shared_path)
+    print(acc_glyco_effect_unique_path)
+    acc_glyco_effect_overlap_df.to_csv(acc_glyco_effect_shared_path, index = False)
+    acc_glyco_effect_unique_df.to_csv(acc_glyco_effect_unique_path, index = False)
+
     final_file_path = output_folder + accession + '.csv'
-    print("Exporting mutations for " + accession + " to " + final_file_path)
+    print("Exporting all mutations for " + accession + " to " + final_file_path)
     accession_df.to_csv(final_file_path, index = False)
 
 
@@ -107,7 +156,9 @@ def main(biomuta_csv, accession, glyco_file_folder, output_folder):
 #    glycosylation_aa_list = ['T', 'S']
 
 # Compare the AA mutations in biomuta to the glycosylation effect datasets from Glygen
-def compare_glyco_file(biomuta_df, glyco_df):
+def compare_shared_glyco_file(biomuta_df, glyco_df):
+
+    # The compare field list is used to find overlapping data with the glyco datasets
     compare_field_list = [
         'uniprotkb_canonical_ac', 
         'aa_pos', 
@@ -116,21 +167,60 @@ def compare_glyco_file(biomuta_df, glyco_df):
         'do_name'
         ]
     
+    # The output fields for the overlapping rows 
     output_field_list = [
         'uniprotkb_canonical_ac', 
         'aa_pos', 
         'ref_aa', 
         'alt_aa', 
-        'do_name'
+        'do_name',
+        'source'
         ]
 
     glyco_compare = glyco_df[compare_field_list].copy()
     
     biomuta_compare = biomuta_df[output_field_list].copy()
     
-    shared_df = glyco_compare.merge(biomuta_compare,left_on=compare_field_list,right_on=compare_field_list,how='left')
+    shared_df = glyco_compare.merge(biomuta_compare,left_on=compare_field_list,right_on=compare_field_list,how='inner', indicator=True)
 
     return shared_df
+
+def compare_unique_glyco_file(biomuta_df, glyco_df):
+
+    # The compare field list is used to find overlapping data with the glyco datasets
+    compare_field_list = [
+        'uniprotkb_canonical_ac', 
+        'aa_pos', 
+        'ref_aa', 
+        'alt_aa', 
+        'do_name'
+        ]
+    
+    # The output fields for the overlapping rows 
+    output_field_list = [
+        'uniprotkb_canonical_ac', 
+        'aa_pos', 
+        'ref_aa', 
+        'alt_aa', 
+        'do_name',
+        ]
+
+    glyco_compare = glyco_df[compare_field_list].copy()
+    
+    biomuta_compare = biomuta_df[output_field_list].copy()
+    
+    unique_df = glyco_compare.merge(biomuta_compare,left_on=compare_field_list,right_on=compare_field_list,how='left', indicator=True)
+    unique_df.query("_merge == 'left_only'", inplace=True)
+
+    return unique_df
+
+def remove_duplicates(df):
+    # Remove duplicate lines
+    with_dup_total = len(df.index)
+    df_out = df.drop_duplicates(keep='first')
+    dup_number = len(df_out.index) - with_dup_total
+    print("Removed " + str(dup_number) + " duplicate rows") 
+
                         
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Commands for csv combine script')

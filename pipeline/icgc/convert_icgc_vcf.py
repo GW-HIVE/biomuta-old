@@ -52,10 +52,6 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
             # Pull out VCF headers
             if re.search(r'##', str(row)):
                 vcf_headers.append(row)
-                
-                # Record number of subfields in the INFO column
-                if re.search(r'##INFO=<ID=CONSEQUENCE', str(row)):
-                    csq_sub_field_total = str(row).count('|') + 1
             
             # Pull out header for mutation data
             elif re.search(r'#CHROM', str(row)):
@@ -64,177 +60,102 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
             
             else:
                 data.append(row)
-    
-    # A list of mutation dictionaries that will be converted into the output json
-    dict_list = []
 
-    # Load the annotation subfield schema and save the keys in a list
+    # Create section schemas to be used for separating annotations
     with open(schema) as schema_file: 
-        annotation_schema_template = json.load(schema_file)
+        schema_template = json.load(schema_file)
     
-    
-    schema_key_list = []
-    for key in annotation_schema_template:
-        schema_key_list.append(key)
+    consequence_subfield_schema = schema_template['schema'][0]['consequence_subfields']
+    consequence_subfield_count = len(consequence_subfield_schema)
+    occurrence_subfield_schema = schema_template['schema'][0]['occurrence_subfields']
+    occurrence_subfield_count = len(occurrence_subfield_schema)
+
+    out_header = ['chr_id','id','start_pos','ref_nt','alt_nt','qual','filter']
+    for subfield in consequence_subfield_schema:
+        out_header.append(subfield)
+    for subfield in occurrence_subfield_schema:
+        out_header.append(subfield)
 
     # A list of mutation entries with additional commas in the info which breaks the annotation separator
     bad_row_list = []
-    
-    # Convert each line in the mutation data to json format
-    for line in data: 
 
-        # Check that any of the annotations for the mutation are non-silent
-        if re.search(r'missense_variant', str(line)) or re.search(r'stop_gained', str(line)) or re.search(r'stop_lost', str(line)):
+    output_csv = output_folder + '/' + 'icgc_converted_mutations.csv'
+    
+    index = 0
+    total_rows = len(data)
 
-            # Separate the INFO column into 
+    with open(output_csv, 'w', encoding='utf-8') as output_csv: 
+        writer = csv.writer(output_csv)
+        writer.writerow(out_header)
     
-    
-            # Count the number of sub_fields in the info column
-            # Formula compensates for the number of '|' being always 1 fewer for each annotation added
-            sub_field_count = str(line).count('|') + int((str(line).count('|')/(csq_sub_field_total - 1 ))) 
-            #print(sub_field_count)
-    
-            # A dictionary to hold all mutation data
-            mut_dict = {}
-    
-            # A dictionary to hold the annotation subfields
-            annotation_info_dict = {}
-    
-            # Link each column in the mutation line with a field
-            for field, mutation_info in zip(mut_fields, line):
-    
-                #mut_dict[field] = mutation_info
-                
-                # A list to capture all annotations and subfield data
-                mut_annotation_list = []
-                mut_occurrence_list = []
-                
-                # For the field "INFO" store annotation information as a list of dicts
-                if field == "INFO":
-    
-    
-                    # Split the INFO field into the categories
-                    info_cat_stop_index = str(mutation_info).count(';') + 1
-    
-                    for info_cat_index in range(info_cat_stop_index):
-                        if info_cat_index == info_cat_stop_index:
-                            break
-                    
-                    # Separate the info data by category
-                    info_cat_all = mutation_info.count(';')
-    
-                    annotations_cat = info_cat_all[1]
-    
-                    # Annotation information is delimited by a "|"
-                    #annotation_info = mutation_info.split('|')
-                    annotation_stop_index = str(annotations_cat).count(',') + 1
-                    annotations = annotations_cat.split(',')
-    
-                    # Check if row has additional commas that will break annotation separator
-                    #sub_field_count = str(annotations_cat).count('|') + int((str(annotations_cat).count('|')/(csq_sub_field_total - 1 )))
-                    
-    
-                    #if annotation_stop_index > (sub_field_count/csq_sub_field_total):
-                    #    bad_row_list.append(line)
-                    #    break
-    
-    
-                    # Store the subfields as a list in each annotation object in the annotation dict
-                    for annotation_index in range(annotation_stop_index):
-    
-                        if annotation_index == annotation_stop_index:
-                            break
-    
-                        #print("Processing annotation " + str(annotation_index) + " out of " + str(range(annotation_stop_index)))
-    
-                        #annotation_info_dict[annotation_index] = annotations[annotation_index]
-    
-                        annotation_info = annotations[annotation_index].split('|')
-
-                        # Check if the specific annotation is a non-silent mutation
-                        if re.search(r'missense_variant', str(annotation_info)) or re.search(r'stop_gained', str(annotation_info)) or re.search(r'stop_lost', str(annotation_info)):
-
-    
-                            #annotation = annotation_info[annotation_index*(sub_field_total):(annotation_index+1)*(sub_field_total)]
-        
-        
-                            #print(mutation_info)
-                            #print(annotation_info)
-                            #print(annotation)
-        
-                            sub_field = 0
-        
-                            sub_field_dict = {}
-        
-        
-        
-                            # Use the schema to assign each annotation information to a key
-                            for key in annotation_schema_template:
-                                sub_field_dict[key]= annotation_info[sub_field]
-                                sub_field += 1
-                                #print(key)
-                                #print(sub_field)
-                                #if sub_field == (sub_field_total): 
-                                #    break
-                                #else:
-                                #    print(sub_field)
-                                #    print(annotation[sub_field])
-                                #    sub_field_dict[key]= annotation[sub_field]
-                                
-        
-                            annotation_info_dict[annotation_index] = sub_field_dict
-                            #annotation_info_dict[annotation_index] = annotation
-                    
-                    # Add the annotation dictionary to the annotation list
-                    mut_annotation_list.append(annotation_info_dict)
-    
-                    occurrences_cat = info_cat_all[2]
-    
-                    occ_stop_index = str(occurrences_cat).count(',') + 1
-                    occurrences = occurrences_cat.split(',')
-
-                    occurrence_dict = {}
-
-                    for occurrence_index in range(occ_stop_index):
-                        
-                        if occurrence_index == occ_stop_index:
-                            break
-
-                        occurence_info = occurrences.split('|')
-
-                        for key in annotation_schema_template:
-                            sub_field_dict[key]= occurence_info[sub_field]
-                            sub_field += 1
-                            occurrence_dict[occurrence_index] = sub_field_dict
-                    
-                    mut_occurrence_list.append(occurrence_dict)
-                    
-
-    
-    
-                    # Add the additional INFO categories as main fields
-                    mut_dict["affected_donors"] = info_cat_all[3]
-                    mut_dict["mutation"] = info_cat_all[4]
-                    mut_dict["project_count"] = info_cat_all[5]
-                    mut_dict["studies"] = info_cat_all[6]
-                    mut_dict["tested_donors"] = info_cat_all[7]
-    
-                else:
-                    # Convert each mutation row into a dictionary with keys as fields mutation info as values
-                    mut_dict[field] = mutation_info
-    
-                
-                # Add the annotation and occurrence list to the mutation dictionary
-                mut_dict["INFO"] = mut_annotation_list
-                mut_dict["Occurrence"] = mut_occurrence_list
+        # Convert each line in the mutation data to json format
+        for line in data: 
             
-            dict_list.append(mut_dict)
-    
-            # Only go through a limited number of rows for troubleshooting
-            #count += 1
-            #if count > stop_count:
-            #    break
+            index += 1
 
+            print('Processing row ' + str(index) + ' out of ' + str(total_rows), end ='\r')
+    
+            # Check that any of the annotations for the mutation are non-silent
+            if re.search(r'missense_variant', str(line)) or re.search(r'stop_gained', str(line)) or re.search(r'stop_lost', str(line)):
+    
+                # Separate the INFO column into 
+
+                mut_general_info = []
+        
+                # Link each column in the mutation line with a field
+                for field, mutation_info in zip(mut_fields, line):
+
+                    if field != "INFO":
+                        mut_general_info.append(mutation_info)
+                    
+                    # For the field "INFO" store annotation information as a list of dicts
+                    if field == "INFO":
+                        
+                        # Split the INFO field into the categories
+                        section_list = mutation_info.split(';')
+    
+                        if len(section_list) != 7:
+                            print(line + ' contains irregular section count')
+                            continue
+    
+                        consequence_section_info = section_list[0]
+
+                        occurrence_section_info = section_list[1]
+
+                        additional_info = []
+                        affected_donors = section_list[2]
+                        additional_info.append(affected_donors)
+                        mutation = section_list[3]
+                        additional_info.append(mutation)
+                        project_info = section_list[4]
+                        additional_info.append(project_info)
+                        study_info = section_list[5]
+                        additional_info.append(study_info)
+                        tested_donors = section_list[6]
+                        additional_info.append(tested_donors)
+                            
+                        consequence_dict = process_section(consequence_section_info, consequence_subfield_schema)
+                        occurrence_dict = process_section(occurrence_section_info, occurrence_subfield_schema)
+    
+                        for consequence_number, consequence_info in consequence_dict.items():
+    
+                            for  occurrence_number, occurrence_info in occurrence_dict.items():
+
+                                out_row = []
+
+                                for info in mut_general_info:
+                                    out_row.append(info)
+    
+                                for subfield, value in consequence_info.items():
+                                    out_row.append(value)
+                                
+                                for subfield, value in occurrence_info.items():
+                                    out_row.append(value)
+                                
+                                for info in additional_info:
+                                    out_row.append(info)
+
+                                writer.writerow(out_row)
     
     # Create a a bad row error report
     if len(bad_row_list) > 0:
@@ -247,6 +168,7 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
         print("----------------------------------")
         print("Please only replace additional commas in these rows and rerun convertor. Leave commas that separate annotations unaltered.")
     
+    '''
     # Export the mutation and their annotations as a json file
     output_json = str(output_folder) + "/" + str(output_prefix) + ".json"
 
@@ -319,7 +241,61 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
                             else:
                                 # Write the row to the csv if it passes check
                                 writer.writerow(row)
+    '''
                             
+
+def process_section(section_info, section_subfields):
+
+    subfields_per_annotation = len(section_subfields)
+
+    subfield_total = str(section_info).count('|') + int((str(section_info).count('|')/(subfields_per_annotation - 1 )))
+
+    annotation_info_dict = {}
+
+    annotation_stop_index = str(section_info).count(',') + 1
+    annotations = section_info.split(',')
+
+    for annotation_index in range(annotation_stop_index):
+        if annotation_index == annotation_stop_index:
+            break
+        annotation_info = annotations[annotation_index].split('|')
+        subfield_index = 0
+        subfield_dict = {}
+
+        for subfield in section_subfields:
+            subfield_dict[subfield] = annotation_info[subfield_index]
+            subfield_index +=1
+        
+        annotation_info_dict[annotation_index] = subfield_dict
+    
+    return annotation_info_dict
+
+    # Check if row has additional commas that will break annotation separator
+    #if annotation_stop_index > (sub_field_count/sub_field_total):
+        #bad_row_list.append(line)
+
+    # Store the subfields as a list in each annotation object in the annotation dict
+    #for annotation_index in range(annotation_stop_index
+        #if annotation_index == annotation_stop_index:
+        #    break
+        #annotation_info = annotations[annotation_index].split('|')
+        #sub_field = 0
+        #sub_field_dict = 
+        # Use the schema to assign each annotation information to a key
+        #for key in annotation_schema_template:
+        #    sub_field_dict[key]= annotation_info[sub_field]
+        #    sub_field +=
+        #annotation_info_dict[annotation_index] = sub_field_dict
+    
+    # Add the annotation dictionary to the annotation list
+    #mut_annotation_list.append(annotation_info_dict)
+
+
+
+    
+
+
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Commands for civic vcf to csv convertor.')
@@ -334,3 +310,5 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     main(args.input_vcf_file, args.schema, args.output_prefix, args.output_folder)
+
+    #python convert_icgc_vcf.py -i /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/icgc/EGFR_missense_icgc38.vcf -s /mnt/c/Users/caule/github_general/biomuta/pipeline/icgc/subfield_schema.json -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/icgc/
