@@ -1,7 +1,15 @@
 {
     "schema": [
         {
-            "source": "cosmic",
+            "general_fields": [
+                "chr_id",
+                "start_pos",
+                "id",
+                "ref_nt",
+                "alt_nt",
+                "qual",
+                "filter"
+            ],
             "consequence_subfields": [
                 "gene_symbol",
                 "gene_affected",
@@ -18,6 +26,13 @@
                 "affected_donors",
                 "tested_donors",
                 "frequency"
+            ],
+            "additional_fields": [
+                "affected_donors_all",
+                "mutation",
+                "project_count",
+                "studies",
+                "tested_donors_all"
             ]
         }
     ]
