@@ -2,12 +2,12 @@
 Input:
 ########
     * -i : A path to the ICGC .vcf file
-    * -p : A prefix used for naming the output files
+    * -s : A schema file containing the field names to use for the output file
     * -o : A path to the output folder, where the data csv and vcf headers will go
 
 Output:
 ########
-    * A .csv file with mutation data and a .txt file with the .vcf headers
+    * A .csv file with mutation data where each row contains one mutation and one unique combination of transcript and study 
 
 Usage:
 ########
@@ -23,14 +23,10 @@ Usage:
 
 import argparse
 import csv
-from distutils.log import INFO
 import re
 import json
-import numpy as np
 
-
-
-def main(input_vcf_file, schema, output_prefix, output_folder):
+def main(input_vcf_file, schema, output_folder):
     '''
     Loads an input .vcf and converts rows to csv format 
     '''
@@ -41,7 +37,8 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
     # A list to hold the mutation data
     data = []    
 
-    # Separate the VCF headers and mutation data
+    # Separate the VCF headers and mutation data, store vcf headers for optional output
+    print('Loading the input VCF...')
     with open(input_vcf_file, 'r') as vcf:
         
         reader = csv.reader(vcf, delimiter="\t")
@@ -60,30 +57,38 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
             
             else:
                 data.append(row)
+        
+        print('Loaded ' + str(len(data)) + ' rows from input VCF')
 
-    # Create section schemas to be used for separating annotations
+    # Use the field schema file to create the output header
+    print('Creating the output header...')
     with open(schema) as schema_file: 
         schema_template = json.load(schema_file)
-    
+
+    general_fields_schema = schema_template['schema'][0]['general_fields']
     consequence_subfield_schema = schema_template['schema'][0]['consequence_subfields']
     consequence_subfield_count = len(consequence_subfield_schema)
     occurrence_subfield_schema = schema_template['schema'][0]['occurrence_subfields']
     occurrence_subfield_count = len(occurrence_subfield_schema)
+    additional_subfield_schema = schema_template['schema'][0]['additional_fields']
 
-    out_header = ['chr_id','id','start_pos','ref_nt','alt_nt','qual','filter']
+    out_header = []
+    for field in general_fields_schema:
+        out_header.append(field)
     for subfield in consequence_subfield_schema:
         out_header.append(subfield)
     for subfield in occurrence_subfield_schema:
         out_header.append(subfield)
-
-    # A list of mutation entries with additional commas in the info which breaks the annotation separator
-    bad_row_list = []
+    for field in additional_subfield_schema:
+        out_header.append(field)
 
     output_csv = output_folder + '/' + 'icgc_converted_mutations.csv'
     
+    # Used to show progress of script
     index = 0
     total_rows = len(data)
-
+    
+    # Write to the output file row by row
     with open(output_csv, 'w', encoding='utf-8') as output_csv: 
         writer = csv.writer(output_csv)
         writer.writerow(out_header)
@@ -117,11 +122,11 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
                         if len(section_list) != 7:
                             print(line + ' contains irregular section count')
                             continue
-    
+
+
+                        # Separate the list of all row information into sections
                         consequence_section_info = section_list[0]
-
                         occurrence_section_info = section_list[1]
-
                         additional_info = []
                         affected_donors = section_list[2]
                         additional_info.append(affected_donors)
@@ -133,16 +138,19 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
                         additional_info.append(study_info)
                         tested_donors = section_list[6]
                         additional_info.append(tested_donors)
-                            
+                        
+                        # Process sections containing subfields that can have multiple annotations
                         consequence_dict = process_section(consequence_section_info, consequence_subfield_schema)
                         occurrence_dict = process_section(occurrence_section_info, occurrence_subfield_schema)
-    
+                        
+                        # Add a row for each unique combination of a consequence and occurrence annotation combined with annotation-independent information
                         for consequence_number, consequence_info in consequence_dict.items():
     
                             for  occurrence_number, occurrence_info in occurrence_dict.items():
 
                                 out_row = []
-
+                                
+                                # Add the row information so that it matches the order of the output header fields
                                 for info in mut_general_info:
                                     out_row.append(info)
     
@@ -156,108 +164,24 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
                                     out_row.append(info)
 
                                 writer.writerow(out_row)
-    
-    # Create a a bad row error report
-    if len(bad_row_list) > 0:
-        print(str(len(bad_row_list)) + " entries contained additional commas could not be processed.")
-        print("Entries are listed below:")
-        print("----------------------------------")
-        indexed_bad_row_list = ["%i: %s" % (index, value) for index, value in enumerate(bad_row_list)]
-        formatted_bad_row_list = "\n\n".join(indexed_bad_row_list)
-        print(formatted_bad_row_list)
-        print("----------------------------------")
-        print("Please only replace additional commas in these rows and rerun convertor. Leave commas that separate annotations unaltered.")
-    
-    '''
-    # Export the mutation and their annotations as a json file
-    output_json = str(output_folder) + "/" + str(output_prefix) + ".json"
-
-    with open(output_json, 'w', encoding = 'utf-8') as output_json:
-        json.dump(dict_list, output_json, indent=4)
-    output_json.close()
-
-    # Export a csv file with one annotation per row
-
-    # Organize the csv headers
-    csv_headers = []
-    general_info_fields = []
-
-    for field in mut_fields:
-        csv_headers.append(field)
-        general_info_fields.append(field)
-    
-    for key in schema_key_list:
-        csv_headers.append(key)
-    
-    # The INFO field will be replace by the annotation information fields
-    csv_headers.remove('INFO')
-    general_info_fields.remove('INFO')
-
-    # Create the csv file to populate with data
-    output_csv = str(output_folder) + "/" + str(output_prefix) + ".csv"
-    
-    # Write the data dict to the csv
-    with open(output_csv, 'w', encoding='utf-8') as output_csv: 
-        writer = csv.writer(output_csv)
-        writer.writerow(csv_headers)
-        # Iterate through the mutation objects to fill the csv row
-
-        #count = 0 
-        #stop_count = 5
-        
-        # Iterate through each mutation
-        for mutation in dict_list:
-            #if count > stop_count:
-            #    break
-            #count += 1
-
-            # Iterate through each field then find the INFO column
-            for field, general_value in mutation.items():
-                if field == "INFO":
-
-                    # Iterate through each annotation
-                    for annotation in mutation["INFO"]:
-
-                        # For each annotation in the INFO field create a new row
-                        for annotation_number, annotation_info in annotation.items():
-
-                            # Create a new empty row
-                            row = []
-
-                            # Add general information
-                            for field in general_info_fields:
-                                row.append(mutation[field])
-                                
-                            # Add annotation specific information
-                            for subfield, value in annotation_info.items():
-                                row.append(value)
-                    
-                            # Check that each row has the same number of columns
-                            if len(row) != len(csv_headers):
-                                print("Bad row: does not match  number of fields")
-                                print("Row length is " + str(len(row)) + " and should be " + str(len(csv_headers)))
-                                print(row) 
-                                continue
-                            else:
-                                # Write the row to the csv if it passes check
-                                writer.writerow(row)
-    '''
-                            
-
+                             
+# A function for processing each section of a VCF row
 def process_section(section_info, section_subfields):
-
-    subfields_per_annotation = len(section_subfields)
-
-    subfield_total = str(section_info).count('|') + int((str(section_info).count('|')/(subfields_per_annotation - 1 )))
-
+    
+    # A dictionary to hold each unqique annotation given in a section
     annotation_info_dict = {}
 
+    # Annotations are deliited by commas
     annotation_stop_index = str(section_info).count(',') + 1
     annotations = section_info.split(',')
-
+    
+    # Loop through a list of all subfields for all annotations
+    # Separate annotations in the dictionary based on the number of the number of subfields per annotation for the section 
     for annotation_index in range(annotation_stop_index):
         if annotation_index == annotation_stop_index:
             break
+
+        # Subfields in each annotation are delimited by pipes
         annotation_info = annotations[annotation_index].split('|')
         subfield_index = 0
         subfield_dict = {}
@@ -268,47 +192,19 @@ def process_section(section_info, section_subfields):
         
         annotation_info_dict[annotation_index] = subfield_dict
     
+    # Return a dictionary where the key is an annotation number and the values are key:value pairs of subfields and annotation speficic information
     return annotation_info_dict
 
-    # Check if row has additional commas that will break annotation separator
-    #if annotation_stop_index > (sub_field_count/sub_field_total):
-        #bad_row_list.append(line)
-
-    # Store the subfields as a list in each annotation object in the annotation dict
-    #for annotation_index in range(annotation_stop_index
-        #if annotation_index == annotation_stop_index:
-        #    break
-        #annotation_info = annotations[annotation_index].split('|')
-        #sub_field = 0
-        #sub_field_dict = 
-        # Use the schema to assign each annotation information to a key
-        #for key in annotation_schema_template:
-        #    sub_field_dict[key]= annotation_info[sub_field]
-        #    sub_field +=
-        #annotation_info_dict[annotation_index] = sub_field_dict
-    
-    # Add the annotation dictionary to the annotation list
-    #mut_annotation_list.append(annotation_info_dict)
-
-
-
-    
-
-
-
-
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Commands for civic vcf to csv convertor.')
+    parser = argparse.ArgumentParser(description='Commands for icgc vcf to csv convertor.')
     parser.add_argument('--input_vcf_file', '-i',
-                        help='An absolute path to the vcf file from CIVIC')
+                        help='An absolute path to the vcf file from ICGC')
     parser.add_argument('--schema', '-s',
-                        help='A schema file of the subfields')                       
-    parser.add_argument('--output_prefix', '-p',
-                        help='A prefix for naming the output files')
+                        help='A schema file of the fields and section subfields')                       
     parser.add_argument('--output_folder', '-o',
                         help='An absolute path to the output folder')
     args = parser.parse_args()
 
-    main(args.input_vcf_file, args.schema, args.output_prefix, args.output_folder)
+    main(args.input_vcf_file, args.schema, args.output_folder)
 
-    #python convert_icgc_vcf.py -i /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/icgc/EGFR_missense_icgc38.vcf -s /mnt/c/Users/caule/github_general/biomuta/pipeline/icgc/subfield_schema.json -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/icgc/
+    #python convert_icgc_vcf.py -i /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/icgc/icgc_missense_mutations_38.vcf -s /mnt/c/Users/caule/github_general/biomuta/pipeline/icgc/subfield_schema.json -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/icgc/
