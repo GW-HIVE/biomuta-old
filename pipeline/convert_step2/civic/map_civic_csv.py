@@ -1,5 +1,5 @@
 '''
-Input:
+Inp++ut:
 ########
     * -i : A path to the CIVIC .csv file
     * -m : A path to the folder containing mapping files
@@ -46,7 +46,6 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
 
         # Set up the mapping dictionary
         doid_mapping_dict = {}
-
         # Populate the mapping dict
         for row in doid_mapping:
             doid_mapping_dict[row[0]] = row[1]
@@ -71,7 +70,7 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
 
         # Populate the mapping dictionary with keys as ensg IDs and values as the gene symbol.
         for row in enst_mapping:
-            ensp_mapping_dict[row[2]] = row[0]
+            ensp_mapping_dict[row[2]] = row[1]
     
     ##################################
     # Load the civic csv file and map, then export
@@ -108,7 +107,7 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     civic_df['uniprotkb_canonical_ac'] = civic_df['ENST'].map(ensp_mapping_dict)
 
     # Select and rename fields for integration with other sources
-    final_fields = [
+    final_fields = (
         'sample_name',
         '#CHROM',
         'POS',
@@ -121,9 +120,11 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
         'do_name',
         'uniprotkb_canonical_ac',
         'source'
-    ]
+    )
 
-    final_df = civic_df[final_fields]
+    final_df = civic_df.loc[:, final_fields]
+
+    #Final processing for the output df
 
     # Name the fields in the exported file according tot he BioMuta convention
     final_df.rename(columns={
@@ -132,10 +133,10 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
         'REF': 'ref_nt', 
         'ALT': 'alt_nt'
     }, inplace=True)
-
+    
     final_df['end_pos'] = final_df['start_pos']
-
     final_df.dropna(inplace=True)
+    final_df.drop_duplicates(keep='first',inplace=True)
 
     mapped_new_file_path = output_folder + "/civic_missense_biomuta_v5.csv"
     print("Exporting mapped file to " + mapped_new_file_path)
@@ -160,12 +161,7 @@ def aa_format(aa_info):
 
     # Format the amino acid change
     if exception_flag == 0:
-        aa_list = re.findall(r'[A-Z]',aa_info)
-        # Account for nonsense mutations
-        if re.search(r'\*',aa_info):
-            stop_character = re.findall(r'\*',aa_info)
-            aa_list.append(stop_character[0])
-        
+        aa_list = re.findall(r'[A-Z\*]',aa_info)
         aa_position = re.findall(r'\d+',aa_info)
         aa_list.append(aa_position[0])
 
