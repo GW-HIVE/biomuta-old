@@ -62,7 +62,7 @@ def main(cosmic_tsv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_
 
         # Populate the mapping dictionary with keys as ensg IDs and values as the gene symbol.
         for row in enst_mapping:
-            ensp_mapping_dict[row[2]] = row[0]
+            ensp_mapping_dict[row[2]] = row[1]
     
     ##################################
     # Load the cosmic tsv file and map, then export
@@ -131,7 +131,7 @@ def main(cosmic_tsv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_
         cosmic_df.dropna(subset=['ref_nt', 'ref_aa', 'chr_id'],inplace=True)
      
         # Select and rename fields for integration with other sources
-        final_fields = [
+        final_fields = (
             'sample_name',
             'chr_id',
             'start_pos',
@@ -143,9 +143,9 @@ def main(cosmic_tsv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_
             'alt_aa',
             'do_name',
             'uniprotkb_canonical_ac'
-        ]
+        )
     
-        final_df = cosmic_df[final_fields]
+        final_df = cosmic_df.loc[:, final_fields]
     
         final_df['source'] = 'cosmic'
     
@@ -184,20 +184,12 @@ def nt_format(nt_info):
 
 # Format the amino acid infomation
 def aa_format(aa_info):
-    aa_list = re.findall(r'[A-Z]',aa_info)
-    # Account for nonsense mutations
-    if re.search(r'\*',aa_info):
-        stop_character = re.findall(r'\*',aa_info)
-        aa_list.append(stop_character[0])
-    
+    aa_list = re.findall(r'[A-Z\*]',aa_info)
     aa_position = re.findall(r'\d+',aa_info)
     aa_list.append(aa_position[0])
     if len(aa_list) != 3:
-        #print('Excluding entry: ' + str(aa_info))
-        #return pd.Series([nan,nan,nan]) 
         return [nan,nan,nan]
     else:
-        #return pd.Series(aa_list, index=['ref_aa', 'alt_aa', 'aa_pos'])
         return aa_list
 
 # Format the genomic location
