@@ -1,6 +1,3 @@
-Biomuta Downloader
-==================
-
 **Resource: COSMIC**
 --------------------
 
@@ -36,9 +33,6 @@ A 'simplified' version of the file was used by selecting specific columns from t
 
 **Fields in Simplified Version**
 
-
-**Fields Included in Simplified**
-
 +--------------------------+------------------------+
 | Field Name               | Example                |
 +==========================+========================+
@@ -56,6 +50,7 @@ A 'simplified' version of the file was used by selecting specific columns from t
 +--------------------------+------------------------+
 
 **All Fields from Download and Descriptions**
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 From 'File Description' drop down menu below 'Cosmic Mutation Data' (on downloads page)
 
