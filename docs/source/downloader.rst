@@ -1,4 +1,4 @@
-Step 1: Biomuta Download
+Step 1: Download
 ========================
 
 The download step is the first step of the Biomuta pipeline. Files containing mutations are gethered directly from the four resouces:
