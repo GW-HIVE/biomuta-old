@@ -9,8 +9,8 @@ process_tcga_download.py
 **Procedure**
 -------------
 
-*Convert TCGA Step 1* : Run process_tcga_download.py
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+*Run process_tcga_download.py*
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 *Summary*
 """""""""
@@ -25,27 +25,28 @@ The python script process_tcga_download.py will take the output of the TCGA down
         - chromosome id
     - Filter out unnecessary fields 
 
-*Method*
-""""""""
+*Script Specifications*
+"""""""""""""""""""""""
 
 **Running process_tcga_download.py**
+####################################
 
-The script must be called form the command line and takes specific command line arguments
+The script must be called from the command line and takes specific command line arguments
 
-Input:
-######
+Input
+#####
     * -i : A path to the input csv to reformat
     * -m : A path to the folder containing mapping files
     * -d : A path to the tcga study to doid mapping file
     * -e : A path to the ENSP to uniprot mapping file
     * -o : A path to the output folder
 
-Output:
-#######
+Output
+######
     * A data report comparing new AA sites to old AA sites for Biomuta
 
-Usage:
-######
+Usage
+#####
     * python process_tcga_download.py -h
 
     *Gives a description of the neccessary commands
@@ -58,7 +59,7 @@ Usage:
 ------------------
 
 **Mapping**
-"""""""""""
+###########
 
 All the mapping files are available in the scripts repository in the folder pipeline/convert_step2/mapping
 

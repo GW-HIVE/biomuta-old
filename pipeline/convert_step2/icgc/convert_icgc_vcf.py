@@ -2,12 +2,12 @@
 Input:
 ########
     * -i : A path to the ICGC .vcf file
-    * -s : A schema file containing the field names to use for the output file
-    * -o : A path to the output folder, where the data csv and vcf headers will go
+    * -s : A schema file containing the field names in the annotations and to use for the output file
+    * -o : A path to the output folder, where the transformed CSV data will go
 
 Output:
 ########
-    * A .csv file with mutation data where each row contains one mutation and one unique combination of transcript and study 
+    * A .csv file with mutation data where each row contains one mutation and one unique annotation
 
 Usage:
 ########
@@ -15,9 +15,9 @@ Usage:
 
     *Gives a description of the neccessary commands
 
-    * python convert_icgc_vcf.py -i <path/input_file.vcf> -s <path/schema.json> -p output_prefix_name -o <path/>
+    * python convert_icgc_vcf.py -i <path/input_file.vcf> -s <path/schema.json> -o <path/>
 
-    *Runs the script with the given input vcf and outputs a json file.
+    *Runs the script with the given input vcf and schema json and outputs a csv file.
 
 '''
 
