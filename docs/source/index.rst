@@ -1,7 +1,7 @@
 BioMuta Pipeline v-5.0 README
 ===================================
 
-Last Updated May 2022 by Ned Cauley
+Last Updated August 2022 by Ned Cauley
 
 Description
 -----------

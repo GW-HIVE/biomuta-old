@@ -10,17 +10,17 @@ Input:
 
 Output:
 ########
-    * A mutation file with COSMIC mutations mapped to 
+    * A mutation file with COSMIC mutations mapped to doid terms and uniprot accessions
 
 Usage:
 ########
-    * python process_tcga_download.py -h
+    * map_cosmic_tsv -h
 
     *Gives a description of the neccessary commands
 
-    * python process_tcga_download.py -c <path/cosmic_file_name.tsv> -m <path/mapping_folder> -d <doid_mapping_file_name> -e <enst_mapping_file_name> -s <path/schema.json> -p output_prefix_name -o <path/output_folder>
+    * python map_cosmic_tsv.py -c <path/cosmic_file_name.tsv> -m <path/mapping_folder> -d <doid_mapping_file_name> -e <enst_mapping_file_name> -o <path/output_folder>
 
-    *Runs the script with the given input vcf and outputs a json file.
+    *Runs the script with the given input tsv and outputs a csv with Biomuta formatting.
 
 '''
 
