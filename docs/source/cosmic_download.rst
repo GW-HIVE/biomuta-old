@@ -1,4 +1,4 @@
-**Resource: COSMIC**
+**Download: COSMIC**
 --------------------
 
 There are three COSMIC mutation datasets for coding mutations:

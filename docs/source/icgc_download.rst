@@ -1,4 +1,4 @@
-**Resource: ICGC**
+**Download: ICGC**
 --------------------
 A VCF for release 28 was downloaded from https://dcc.icgc.org/releases/release_28/Summary
 

@@ -1,4 +1,4 @@
-**Resource: CIVIC**
+**Download: CIVIC**
 --------------------
 A VCF for the monthly relaease of accapted variants was downloaded from: https://civicdb.org/releases/main
 
