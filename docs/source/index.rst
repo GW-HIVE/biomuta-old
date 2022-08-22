@@ -43,11 +43,30 @@ To run the BioMuta pipeine, download the scripts from the HIVE Lab github repo:
 Pipeline Overview
 -----------------
 
-**Downloader**
+**Step 1: Download**
 
 In the downloader step, mutation lists will be downloaded from each source. Refer to each individual source below for downloading instructions.
 
-Downloader page:
+Index for download step:
 
 .. toctree::
-   downloader
+   download
+
+**Step 2: Convert**
+
+In the convert step, all resources are formatted to the Biomuta standard for both data and field structure.
+
+Index for convert step:
+
+.. toctree::
+    convert
+
+**Step 3: Combine**
+
+In the combined step, all resources are combined into a master dataset.
+
+Index for combined step:
+
+.. toctree::
+    combine
+   

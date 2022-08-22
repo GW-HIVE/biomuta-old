@@ -1,4 +1,4 @@
-**Resource: TCGA**
+**Download: TCGA**
 ------------------
 
 Annotated variant files are downloaded from the ISB-CGC Big Query repository.

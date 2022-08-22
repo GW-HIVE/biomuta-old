@@ -2,7 +2,7 @@
 --------------------
 A VCF for the monthly relaease of accapted variants was downloaded from: https://civicdb.org/releases/main
 
-**Downloaded File:**01-Aug-2022-civic_accepted.vcf 
+**Downloaded File:** 01-Aug-2022-civic_accepted.vcf 
 
 
 **Fields** 
