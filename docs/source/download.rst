@@ -9,6 +9,8 @@ The download step is the first step of the Biomuta pipeline. Files containing mu
     - **Catalogue of Somatic Mutations in Cancer (COSMIC)** : https://cancer.sanger.ac.uk/cosmic
 
 
+See the individual resource pages for details on the download:
+
 .. toctree::
     tcga_download
     civic_download
