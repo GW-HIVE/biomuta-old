@@ -26,15 +26,8 @@ import csv
 from distutils.log import INFO
 import re
 import json
-import numpy as np
 
-
-import os
-import shutil
-import sys
-
-
-def main(input_vcf_file, schema, output_prefix, output_folder):
+def main(input_vcf_file, schema, output_folder):
     '''
     Loads an input .vcf and converts rows to csv format 
     '''
@@ -112,6 +105,8 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
 
                 # Check if row has additional commas that will break annotation separator
                 if annotation_stop_index > (sub_field_count/sub_field_total):
+                    print("annotation_stop_index = " + str(annotation_stop_index))
+                    print("sub_fields = " + str(sub_field_count/sub_field_total))
                     bad_row_list.append(line)
                     break
 
@@ -152,14 +147,7 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
         formatted_bad_row_list = "\n\n".join(indexed_bad_row_list)
         print(formatted_bad_row_list)
         print("----------------------------------")
-        print("Please only replace additional commas in these rows and rerun convertor. Leave commas that separate annotations unaltered.")
-    
-    # Export the mutation and their annotations as a json file
-    output_json = str(output_folder) + "/" + str(output_prefix) + ".json"
-
-    with open(output_json, 'w', encoding = 'utf-8') as output_json:
-        json.dump(dict_list, output_json, indent=4)
-    output_json.close()
+        print("Please only replace additional commas in these rows and rerun convertor (check DOID terms separated by commas). Leave commas that separate annotations unaltered.")
 
     # Export a csv file with one annotation per row
     # Organize the csv headers
@@ -178,7 +166,7 @@ def main(input_vcf_file, schema, output_prefix, output_folder):
     general_info_fields.remove('INFO')
 
     # Create the csv file to populate with data
-    output_csv = str(output_folder) + "/" + str(output_prefix) + ".csv"
+    output_csv = str(output_folder) + "/civic_missense_biomuta_v5.csv"
     
     # Write the data dict to the csv
     with open(output_csv, 'w', encoding='utf-8') as output_csv: 
@@ -225,10 +213,8 @@ if __name__ == "__main__":
                         help='An absolute path to the vcf file from CIVIC')
     parser.add_argument('--schema', '-s',
                         help='A schema file of the subfields')                       
-    parser.add_argument('--output_prefix', '-p',
-                        help='A prefix for naming the output files')
     parser.add_argument('--output_folder', '-o',
                         help='An absolute path to the output folder')
     args = parser.parse_args()
 
-    main(args.input_vcf_file, args.schema, args.output_prefix, args.output_folder)
+    main(args.input_vcf_file, args.schema, args.output_folder)
