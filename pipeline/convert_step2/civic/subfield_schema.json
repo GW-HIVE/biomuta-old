@@ -1,8 +1,18 @@
 {
     "schema": [
         {
-            "source": "civic mutation",
-            "subfields": [
+            "general_fields": [
+                "chr_id",
+                "start_pos",
+                "id",
+                "ref_nt",
+                "alt_nt",
+                "qual",
+                "filter",
+                "gene",
+                "aa_change"
+            ],
+            "annotation_subfields": [
                 "Allele",
                 "Consequence",
                 "SYMBOL",

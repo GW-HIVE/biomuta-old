@@ -1,7 +1,7 @@
 '''
 Input:
 ########
-    * -c : A path to the cosmic tsv mutation file
+    * -i : A path to the cosmic tsv mutation file
     * -m : A path to the folder containing mapping files
     * -d : The name of the doid to cosmic cancer type mapping file
     * -e : The name of the enst to uniprot accession mapping file
@@ -18,7 +18,7 @@ Usage:
 
     *Gives a description of the neccessary commands
 
-    * python map_cosmic_tsv.py -c <path/cosmic_file_name.tsv> -m <path/mapping_folder> -d <doid_mapping_file_name> -e <enst_mapping_file_name> -o <path/output_folder>
+    * python map_cosmic_tsv.py -i <path/cosmic_file_name.tsv> -m <path/mapping_folder> -d <doid_mapping_file_name> -e <enst_mapping_file_name> -o <path/output_folder>
 
     *Runs the script with the given input tsv and outputs a csv with Biomuta formatting.
 
@@ -175,11 +175,8 @@ def nt_format(nt_info):
     nuc_list = re.findall(r'[A-Z]',nt_info)
     # Remove indels
     if len(nuc_list) != 2:
-        #print('Excluding entry: ' + str(nt_info))
-        #return pd.Series([nan,nan])
         nuc_list = [nan,nan]
     else:
-        #return pd.Series(nuc_list, index=['ref_nt', 'alt_nt'])
         return (nuc_list)
 
 # Format the amino acid infomation
@@ -212,7 +209,7 @@ def gen_location_format(gl_info):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Commands for civic mapping to doid and uniprot accessions.')
-    parser.add_argument('--cosmic_tsv', '-c',
+    parser.add_argument('--cosmic_tsv', '-i',
                         help='An absolute path to the cosmic tsv')
     parser.add_argument('--mapping_folder', '-m',
                         help='A path to the folder containing mapping files')                       
@@ -226,4 +223,4 @@ if __name__ == "__main__":
 
     main(args.cosmic_tsv, args.mapping_folder, args.doid_mapping, args.enst_mapping, args.output_folder)
         
-#python map_cosmic_tsv.py -c /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/cosmic/Cosmic_SNPs_June_2022.tsv -m /mnt/c/Users/caule/github_general/biomuta/pipeline/convert_step2/mapping -d cosmic_doid_mapping.csv -e human_protein_transcriptlocus.csv -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/compiled
+#python map_cosmic_tsv.py -i /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/cosmic/Cosmic_SNPs_June_2022.tsv -m /mnt/c/Users/caule/github_general/biomuta/pipeline/convert_step2/mapping -d cosmic_doid_mapping.csv -e human_protein_transcriptlocus.csv -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/compiled

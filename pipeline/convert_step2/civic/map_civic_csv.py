@@ -1,5 +1,5 @@
 '''
-Inp++ut:
+Input:
 ########
     * -i : A path to the CIVIC .csv file
     * -m : A path to the folder containing mapping files
@@ -9,7 +9,7 @@ Inp++ut:
 
 Output:
 ########
-    * A .csv file with mutation data and a .txt file with the .vcf headers
+    * A .csv file with mutation data mapped to doid terms and uniprot accessions
 
 Usage:
 ########
@@ -17,9 +17,9 @@ Usage:
 
     *Gives a description of the neccessary commands
 
-    * python map_civic_csv.py -i <path/input_file.vcf> -s <path/schema.json> -p output_prefix_name -o <path/>
+    * python map_civic_csv.py -i <path/input_file.vcf> -m <path/mapping_folder> -d <doid_mapping_file_name> -e <enst_mapping_file_name> -o <path/>
 
-    *Runs the script with the given input vcf and outputs a json file.
+    *Runs the script with the given input csv and outputs a csv with mutation mapped to doid terms and uniprot accession
 
 '''
 
@@ -91,7 +91,7 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     civic_df['end_pos'] = ''
 
     # Check for indels and remove
-    civic_df['REF'] = civic_df['REF'].apply(remove_indels)
+    civic_df['ref_nt'] = civic_df['ref_nt'].apply(remove_indels)
 
     # Format the amino acid change and position
     print('Formatting amino acid information')
@@ -109,11 +109,11 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     # Select and rename fields for integration with other sources
     final_fields = (
         'sample_name',
-        '#CHROM',
-        'POS',
+        'chr_id',
+        'start_pos',
         'end_pos',
-        'REF',
-        'ALT',
+        'ref_nt',
+        'alt_nt',
         'aa_pos',
         'ref_aa',
         'alt_aa',
@@ -125,14 +125,6 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     final_df = civic_df.loc[:, final_fields]
 
     #Final processing for the output df
-
-    # Name the fields in the exported file according tot he BioMuta convention
-    final_df.rename(columns={
-        '#CHROM': 'chr_id', 
-        'POS': 'start_pos', 
-        'REF': 'ref_nt', 
-        'ALT': 'alt_nt'
-    }, inplace=True)
     
     final_df['end_pos'] = final_df['start_pos']
     final_df.dropna(inplace=True)
