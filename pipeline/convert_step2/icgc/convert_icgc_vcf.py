@@ -67,9 +67,7 @@ def main(input_vcf_file, schema, output_folder):
 
     general_fields_schema = schema_template['schema'][0]['general_fields']
     consequence_subfield_schema = schema_template['schema'][0]['consequence_subfields']
-    consequence_subfield_count = len(consequence_subfield_schema)
     occurrence_subfield_schema = schema_template['schema'][0]['occurrence_subfields']
-    occurrence_subfield_count = len(occurrence_subfield_schema)
     additional_subfield_schema = schema_template['schema'][0]['additional_fields']
 
     out_header = []

@@ -36,7 +36,7 @@ The script must be called from the command line and takes specific command line 
 
 Input
 #####
-    * -c : A path to the cosmic tsv mutation file
+    * -i : A path to the cosmic tsv mutation file
     * -m : A path to the folder containing mapping files
     * -d : The name of the doid to cosmic cancer type mapping file
     * -e : The name of the enst to uniprot accession mapping file
@@ -53,7 +53,7 @@ Usage
 
     *Gives a description of the neccessary commands
 
-    * python map_cosmic_tsv.py -c <path/cosmic_file_name.tsv> -m <path/mapping_folder> -d <doid_mapping_file_name> -e <enst_mapping_file_name> -o <path/output_folder>
+    * python map_cosmic_tsv.py -i <path/cosmic_file_name.tsv> -m <path/mapping_folder> -d <doid_mapping_file_name> -e <enst_mapping_file_name> -o <path/output_folder>
 
     *Runs the script with the given input tsv and outputs a tsv with Biomuta formatting.
 
