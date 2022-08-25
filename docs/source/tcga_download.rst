@@ -142,6 +142,8 @@ Download a list of all field names for the mutation data, many fields are exclud
 
 Download clinical information for all patients included in the mutation file download. 
 
+The downloaded file will contain both sample ID and patient ID, that can be mapped together in the final mutation file to calculate patient frequency for mutations from TCGA.
+
 **get_field_names_clinical_info.R**
 
 Download a list of all field names for the corresponding clinical data, many fields are excluded in the clinical information downloader script. 
