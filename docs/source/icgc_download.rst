@@ -7,4 +7,4 @@ A VCF for release 28 was downloaded from https://dcc.icgc.org/releases/release_2
 
 **Fields** 
 ^^^^^^^^^^
-Fields used are convered in the mapping section during the VCF to CSV conversion process.
+Fields used are covered in the convert step.

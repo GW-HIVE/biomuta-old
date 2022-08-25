@@ -18,10 +18,9 @@ genomic liftover > convert_civic_vcf.py > map_civic_csv.py
 The most recent data release for CIVIC is aligned to the GRCH37 human reference genome. For this update however, we are using the human reference genome GRCh38.
 
 To convert coordinates between the two reference genomes, we use a 'liftover' tool to remap the genomic coordinates. 
-
 The CIVIC file is very small in size, so we can use the ENSEMBL online liftover tool: https://useast.ensembl.org/Homo_sapiens/Tools/AssemblyConverter?db=core
 
-Run the downloaded VCF throught the tool with the default parameters (except chnaging the file type to VCF)
+Run the downloaded VCF through the tool with the default parameters (change the file type to VCF).
 
 Redownload the transformed VCF and use that VCF for the next step. 
 
@@ -61,9 +60,6 @@ mutation B info,annotation 3 info
 
 *Script Specifications*
 """""""""""""""""""""""
-
-**Running convert_civic_vcf.py**
-################################
 
 The script must be called from the command line and takes specific command line arguments
 
@@ -109,10 +105,30 @@ The python script map_cosmic_tsv.py will take the output of the TCGA download st
 *Script Specifications*
 """""""""""""""""""""""
 
-**Running map_civic_vcf.py**
-################################
-
 The script must be called from the command line and takes specific command line arguments
+
+Input
+#####
+    * -i : A path to the CIVIC .csv file
+    * -m : A path to the folder containing mapping files
+    * -d : The name of the doid mapping file
+    * -e : The name of the ensp to uniprot accession mapping file
+    * -o : A path to the output folder
+
+Output
+######
+    * A .csv file with mutation data mapped to doid terms and uniprot accessions
+
+Usage
+#####
+    * python map_civic_csv.py -h
+
+    *Gives a description of the neccessary commands
+
+    * python map_civic_csv.py -i <path/input_file.vcf> -m <path/mapping_folder> -d <doid_mapping_file_name> -e <enst_mapping_file_name> -o <path/>
+
+    *Runs the script with the given input csv and outputs a csv with mutation mapped to doid terms and uniprot accession
+
 
 *Additional Notes*
 ------------------
@@ -126,7 +142,7 @@ The mapping files used for converting CIVIC are:
 
 **DOID:** tcga_doid_mapping.csv
 
-TCIVIC DOID child terms were mapped to DOID parent terms using the following table (generated from the OncoMX DOID mapping table):
+CIVIC DOID child terms were mapped to DOID parent terms using the following table (generated from the OncoMX DOID mapping table):
 
 +--------------------------------------------------------------------------------------------------------------+--------------------------------------------+
 | CIViC Entity Disease                                                                                         | DOID Term                                  |

@@ -92,12 +92,12 @@ For complete documentation, see the `ISB-CGC Read the Docs pages <https://isb-ca
 """"""""""""""""""""""""""""""""""""""""""""
 
 Contact Dr. Fabian Seidle and ask for access to the ISB-CGC Big Query repository
-    - For the run in Spring 2022 my (Ned) personal gwu account was added to the project 'isb-cgc-training-001'
-    - All users have up to 1 TB of downloads free, for our ourporposes we are well under this limit so should not need to pay
+    - Example: For the run in Spring-Summer 2022 my (Ned's) personal gwu account was added to the project 'isb-cgc-training-001'
+    - All users have up to 1 TB of downloads free, for our purposes we are well under this limit so should not need to pay
 
 Gain access to dbGaP data
     - Apply for access to controlled data at `this website <https://dbgap.ncbi.nlm.nih.gov/aa/wga.cgi?page=login>`_
-    - You will need to be approved a PI that already has access to dbGaP controlled data
+    - You will need to be approved by a PI that already has access to dbGaP controlled data
 
 For further information see the `ISB-CGC documentation on gaining access <https://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/Gaining-Access-To-Controlled-Access-Data.html>`_
 
@@ -105,6 +105,7 @@ For further information see the `ISB-CGC documentation on gaining access <https:
 """"""""""""""""""""""""""""""""""""""""""""""""""""
 
 **TCGA_mutation_download.R**
+
 Run each line one after the other, instead of the whole script together
 
 Running `library(bigrquery)` and calling this library with `bq_project_query()` (later in the script) will open a browser to login with google credentials
@@ -134,10 +135,13 @@ For 'Github repository name or URL' enter https://github.com/isb-cgc/ISB-CGC-Dem
 The methods in this tutorial were used to generate the R scripts used to download the data.
 
 **get_field_names.R**
+
 Download a list of all field names for the mutation data, many fields are excluded in the mutation downloader script.
 
 **TCGA_clinical_info_download.R**
+
 Download clinical information for all patients included in the mutation file download. 
 
 **get_field_names_clinical_info.R**
+
 Download a list of all field names for the corresponding clinical data, many fields are excluded in the clinical information downloader script. 

@@ -28,9 +28,6 @@ The python script process_tcga_download.py will take the output of the TCGA down
 *Script Specifications*
 """""""""""""""""""""""
 
-**Running process_tcga_download.py**
-####################################
-
 The script must be called from the command line and takes specific command line arguments
 
 Input
@@ -61,7 +58,7 @@ Usage
 **Mapping**
 ###########
 
-All the mapping files are available in the scripts repository in the folder pipeline/convert_step2/mapping
+All the mapping files are available in the repository folder *pipeline/convert_step2/mapping*
 
 The mapping files used for converting TCGA are:
 

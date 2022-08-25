@@ -29,9 +29,6 @@ The python script map_cosmic_tsv.py will take the output of the TCGA download st
 *Script Specifications*
 """""""""""""""""""""""
 
-**Running map_cosmic_tsv.py**
-#############################
-
 The script must be called from the command line and takes specific command line arguments
 
 Input
@@ -57,7 +54,7 @@ Usage
 
     *Runs the script with the given input tsv and outputs a tsv with Biomuta formatting.
 
-'''
+
 *Additional Notes*
 ------------------
 
