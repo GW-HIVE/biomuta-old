@@ -51,6 +51,12 @@ Pipeline Overview
 
 In the downloader step, mutation lists will be downloaded from each source. Refer to each individual source below for downloading instructions.
 
+*Note*
+
+An account is needed for the resources TCGA and COSMIC (see download pages for more info).
+
+Sample name (ID) is available for the resources TCGA and COSMIC
+
 Index for download step:
 
 .. toctree::
