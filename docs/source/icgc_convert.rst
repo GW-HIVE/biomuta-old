@@ -62,6 +62,8 @@ Common fields for VCF files include:
 
 CrossMap is a program that can convert genome coordinates between different assemblies, such as hg18 (GRCh36) to hg19 (GRCh37). It is made in python and offered as a webtool, by Ensembl in limited capacity or as a local script For full functionality. This gives extra customizability and the option to convert files over 50 mb, it is necessary to run a local edition of CrossMap.
 
+Crossmap Documentation: http://crossmap.sourceforge.net/
+
 *Requirements* 
 
 - Python2 or Python3 installed on a linux server
