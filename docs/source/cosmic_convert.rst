@@ -70,7 +70,7 @@ The mapping files used for converting the COSMIC tsv are:
 
 **DOID:** cosmic_doid_mapping.csv
 
-COSMIC tissue site terms were mapped to DOID parent terms using the following table:
+COSMIC tissue site terms were mapped to DOID parent terms using the following table (generated from previous Biomuta mapping):
 
 +---------------------------------------------+--------------------------------------------+
 | Primary Site                                | Top_Level_Organ_system                     |

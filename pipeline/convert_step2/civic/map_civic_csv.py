@@ -20,7 +20,6 @@ Usage:
     * python map_civic_csv.py -i <path/input_file.vcf> -m <path/mapping_folder> -d <doid_mapping_file_name> -e <enst_mapping_file_name> -o <path/>
 
     *Runs the script with the given input csv and outputs a csv with mutation mapped to doid terms and uniprot accession
-
 '''
 
 import argparse
