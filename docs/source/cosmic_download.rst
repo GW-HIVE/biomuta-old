@@ -29,7 +29,7 @@ Downloading the mutation datasets requires a COSMIC login. With an academic emai
 ^^^^^^^^^^
 The COSMIC dataset contains a large number of fields, many of which were filtered out in order to speed up processing in subsequent steps.
 
-A 'simplified' version of the file was used by selecting specific columns from the orginal downloaded file:
+A 'simplified' version of the file was used by selecting specific columns from the orginal downloaded file using the command line tool *awk*
 
 **Fields in Simplified Version**
 
@@ -49,8 +49,7 @@ A 'simplified' version of the file was used by selecting specific columns from t
 | Mutation genome position | 12:124466234-124466234 |
 +--------------------------+------------------------+
 
-**All Fields from Download and Descriptions**
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**All Fields from COSMIC and Field Descriptions**
 
 From 'File Description' drop down menu below 'Cosmic Mutation Data' (on downloads page)
 

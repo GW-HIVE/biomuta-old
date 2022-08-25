@@ -20,8 +20,9 @@ To convert coordinates between the two reference genomes, we use a 'liftover' to
 
 Seun performed the liftover and provided the notes listed below.
 
-**Notes from Seun**
-^^^^^^^^^^^^^^^^^^^
+**Genomic Liftover Notes**
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+Step performed and notes provided by Seun Agbaje
 
 **VCF**
 
@@ -30,19 +31,31 @@ A VCF (Variant Call Format) file is a text file used to store gene sequence vari
 
 **Fields**
 """"""""""
-Common fields for VCF files include 
-* Chrom - chromosome that the variation is being called on
-* Pos - 1 base position of the variant
-* ID - identifier of the variant
-* Ref - reference base at the position of variance
-* Alt - alternate alleles at the position
-* Qual - quality score ofthe given alleles
-* Filter - indicates which set of filters failed or passed
-* Info - descriptions ofthe variation
-* Format - (optional) fields fordescribing the sample
-* Samples - values for each of the samples listed under format
+Common fields for VCF files include:
 
-Conversion
++---------+----------------------------------------------------+
+| Field   | Description                                        |
++=========+====================================================+
+| Chrom   | chromosome that the variation is being called on   |
++---------+----------------------------------------------------+
+| Pos     | 1 base position of the variant                     |
++---------+----------------------------------------------------+
+| ID      | identifier of the variant                          |
++---------+----------------------------------------------------+
+| Ref     | reference base at the position of variance         |
++---------+----------------------------------------------------+
+| Alt     | alternate alleles at the position                  |
++---------+----------------------------------------------------+
+| Qual    | quality score ofthe given alleles                  |
++---------+----------------------------------------------------+
+| Filter  | indicates which set of filters failed or passed    |
++---------+----------------------------------------------------+
+| Info    | descriptions of the variation                      |
++---------+----------------------------------------------------+
+| Format  | (optional) fields describing the sample            |
++---------+----------------------------------------------------+
+| Samples | values for each of the samples listed under format |
++---------+----------------------------------------------------+
 
 **Converting with CrossMap**
 """"""""""""""""""""""""""""
@@ -50,17 +63,19 @@ Conversion
 CrossMap is a program that can convert genome coordinates between different assemblies, such as hg18 (GRCh36) to hg19 (GRCh37). It is made in python and offered as a webtool, by Ensembl in limited capacity or as a local script For full functionality. This gives extra customizability and the option to convert files over 50 mb, it is necessary to run a local edition of CrossMap.
 
 *Requirements* 
-* Python2 or Python3 installed on a linux server
-* Chain file - describes a pairwise alignment between two reference assemblies
-** They can be found through UCSC, Ensembl, and other sources
-** compressed files are allowed
-** hg19ToHg38.over.chain was best tested
-* target, input file - file to be converted in format compatible with CrossMap
-** CrossMap supports vcf, bam/cram/sam, maf, and other formats torelay genomic data
-** compressed files are allowed
-* referencefile - fasta format of the wanted genome assembly
+
+- Python2 or Python3 installed on a linux server
+- Chain file - describes a pairwise alignment between two reference assemblies
+- They can be found through UCSC, Ensembl, and other sources
+- compressed files are allowed
+- hg19ToHg38.over.chain was best tested
+- target, input file - file to be converted in format compatible with CrossMap
+- CrossMap supports vcf, bam/cram/sam, maf, and other formats torelay genomic data
+- compressed files are allowed
+- referencefile - fasta format of the wanted genome assembly
 
 *Other files used*
+
 - mapvcf is the script from the package that does the conversion. attachedis the version I used. I believe commenting out lines 100:109 is what allowed it to work
 - hg19ToHg38 is the chain file that I used
 - this is the command I used to get the assembly file, which is from UCSC "wget http://hgdownload.soe.ucsc.edu/goldenPath/hg38/bigZips/hg38.fa.gz &"
@@ -69,10 +84,11 @@ CrossMap is a program that can convert genome coordinates between different asse
 - of note, there are numerous other assembly and chain files. I tried 3 or 4 of each and the ones linked here were the best. I determined best by both what the script relays and how big the final vcf file were
 
 **Output**
+
 Two output files were generated from the liftover and stored on the OncoMX-tst server at /software/pipeline/integrator/downloads/biomuta/v-5.0/icgc/
-* icgc_missense_mutations_38.vcf
+- icgc_missense_mutations_38.vcf
   - All mutations with converted coordinates
-* icgc_missense_mutations_38_fail.vcf
+- icgc_missense_mutations_38_fail.vcf
   - Mutations whose coordinates could not be converted
 
 Only the mutations whose coordinates were successfully converted were carried forward in the pipeline
@@ -113,9 +129,6 @@ mutation B info,annotation 3 info
 
 *Script Specifications*
 """""""""""""""""""""""
-
-**Running convert_icgc_vcf.py**
-###############################
 
 The script must be called from the command line and takes specific command line arguments
 
@@ -160,9 +173,6 @@ The python script map_icgc.py will take the output of the vcf convertor script a
 *Script Specifications*
 """""""""""""""""""""""
 
-**Running map_icgc.py**
-###############################
-
 The script must be called from the command line and takes specific command line arguments
 
 Input
@@ -199,7 +209,7 @@ The mapping files used for converting the ICGC csv are:
 
 **DOID:** tcga_doid_mapping.csv
 
-ICGC uses TCGA study terms, so the TCGA to DOID parent terms are used for mapping (generated from previous Biomuta mapping):
+ICGC uses TCGA study terms, so the same TCGA to DOID parent terms are used for mapping (generated from previous Biomuta mapping):
 
 +------------+------------------------+--------------+
 | DO_slim_id | DO_slim_name           | TCGA_project |
