@@ -44,14 +44,19 @@ In order to know how the information for the mutation and annotation fields are 
 *Input VCF lines*
 
 mutation A info | mutation A annotation 1 info | mutation A annotation 2 info
+
 mutation B info | mutation B annotation 1 info | mutation B annotation 2 info | mutation B annotation 3 info
 
 *Output CSV lines*
 
 mutation A info,annotation 1 info
+
 mutation A info,annotation 2 info
+
 mutation B info,annotation 1 info
+
 mutation B info,annotation 2 info
+
 mutation B info,annotation 3 info
 
 *Script Specifications*

@@ -67,7 +67,7 @@ The mapping files used for converting TCGA are:
 
 **DOID:** tcga_doid_mapping.csv
 
-TCGA Projects were mapped to DOID parent terms using the following table:
+TCGA Projects were mapped to DOID parent terms using the following table (generated from previous Biomuta mapping):
 
 +------------+------------------------+--------------+
 | DO_slim_id | DO_slim_name           | TCGA_project |
