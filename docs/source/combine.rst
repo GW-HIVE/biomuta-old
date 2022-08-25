@@ -53,17 +53,31 @@ Usage
 **Final fields**
 ^^^^^^^^^^^^^^^^
 
-Field,Description
-sample_name,Sample ID provided by the original resource (for v-5.0 only applies to TCGA and COSMIC)
-chr_id,Chromosome number only (no 'chr')
-start_pos,Genomic coordinates (For v-5.0 these are all with ref GRCh38)
-end_pos,Identical to the start positoon because all mutations are Specifications
-ref_nt,Reference nucleotide
-alt_nt,Nucleotide mutation
-aa_pos,Amino acide number of the amino acide change in the human_protein_transcriptlocus
-ref_aa,Reference amino acid
-alt_aa,Amino acid variation caused by the mutation
-do_name,DO parent term
-uniprot_canonical_ac,Uniprot accession for the specific ENST or ENSP listed from the source
-source,Original data source of the mutation
++----------------------+-----------------------------------------------------------------------------------------+
+| Field                | Description                                                                             |
++======================+=========================================================================================+
+| sample_name          | Sample ID provided by the original resource (for v-5.0 only applies to TCGA and COSMIC) |
++----------------------+-----------------------------------------------------------------------------------------+
+| chr_id               | Chromosome number only (no 'chr')                                                       |
++----------------------+-----------------------------------------------------------------------------------------+
+| start_pos            | Genomic coordinates (For v-5.0 these are all with ref GRCh38)                           |
++----------------------+-----------------------------------------------------------------------------------------+
+| end_pos              | Identical to the start positoon because all mutations are Specifications                |
++----------------------+-----------------------------------------------------------------------------------------+
+| ref_nt               | Reference nucleotide                                                                    |
++----------------------+-----------------------------------------------------------------------------------------+
+| alt_nt               | Nucleotide mutation                                                                     |
++----------------------+-----------------------------------------------------------------------------------------+
+| aa_pos               | Amino acide number of the amino acide change in the human_protein_transcriptlocus       |
++----------------------+-----------------------------------------------------------------------------------------+
+| ref_aa               | Reference amino acid                                                                    |
++----------------------+-----------------------------------------------------------------------------------------+
+| alt_aa               | Amino acid variation caused by the mutation                                             |
++----------------------+-----------------------------------------------------------------------------------------+
+| do_name              | DO parent term                                                                          |
++----------------------+-----------------------------------------------------------------------------------------+
+| uniprot_canonical_ac | Uniprot accession for the specific ENST or ENSP listed from the source                  |
++----------------------+-----------------------------------------------------------------------------------------+
+| source               | Original data source of the mutation                                                    |
++----------------------+-----------------------------------------------------------------------------------------+
 
