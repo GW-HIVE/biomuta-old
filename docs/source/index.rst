@@ -10,7 +10,11 @@ The Biomuta pipeline gathers mutation data from various sources and combines the
 
 The sources included in BioMuta are: 
 
-- **The Cancer Genome Atlas (TCGA)**
+ - **The Cancer Genome Atlas (TCGA)** : https://www.cancer.gov/about-nci/organization/ccg/research/structural-genomics/tcga
+ - **International Cancer Genome Consortium (ICGC)** : https://dcc.icgc.org/
+ - **Clinical Interpretation of Variants in Cancer (CIVIC)** : https://civicdb.org/welcome
+ - **Catalogue of Somatic Mutations in Cancer (COSMIC)** : https://cancer.sanger.ac.uk/cosmic
+
 
 BioMuta gathers mutation data for the following cancers:
 
