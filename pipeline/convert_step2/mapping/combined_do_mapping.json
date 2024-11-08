@@ -1,0 +1,694 @@
+{
+    "civic": [
+        {
+            "cancer_name": "acral lentiginous melanoma",
+            "do_term": "DOID:4159 / skin cancer "
+        },
+        {
+            "cancer_name": "acute lymphoblastic leukemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "acute myeloid leukemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "acute promyelocytic leukemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "adrenal gland pheochromocytoma",
+            "do_term": "DOID:3953 / adrenal gland cancer"
+        },
+        {
+            "cancer_name": "angiosarcoma",
+            "do_term": "DOID:175 / vascular cancer"
+        },
+        {
+            "cancer_name": "basal cell carcinoma",
+            "do_term": "DOID:4159 / skin cancer "
+        },
+        {
+            "cancer_name": "biliary tract cancer",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "bladder carcinoma",
+            "do_term": "DOID:11054 / urinary bladder cancer"
+        },
+        {
+            "cancer_name": "bladder urothelial carcinoma",
+            "do_term": "DOID:11054 / urinary bladder cancer"
+        },
+        {
+            "cancer_name": "bone marrow cancer",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "brain glioma",
+            "do_term": "DOID:1319 / brain cancer"
+        },
+        {
+            "cancer_name": "breast cancer",
+            "do_term": "DOID:1612 / breast cancer"
+        },
+        {
+            "cancer_name": "breast carcinoma",
+            "do_term": "DOID:1612 / breast cancer"
+        },
+        {
+            "cancer_name": "bronchiolo-alveolar adenocarcinoma",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "cancer",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "cervical cancer",
+            "do_term": "DOID:4362 / cervical cancer"
+        },
+        {
+            "cancer_name": "cervix carcinoma",
+            "do_term": "DOID:4362 / cervical cancer"
+        },
+        {
+            "cancer_name": "childhood acute lymphocytic leukemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "childhood low-grade glioma",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "childhood pilocytic astrocytoma",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "cholangiocarcinoma",
+            "do_term": "DOID:4606 / bile duct cancer"
+        },
+        {
+            "cancer_name": "chromophobe renal cell carcinoma",
+            "do_term": "DOID:263 / kidney cancer"
+        },
+        {
+            "cancer_name": "chronic leukemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "chronic lymphocytic leukemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "chronic myeloid leukemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "chronic neutrophilic leukemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "chuvash polycythemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "clear cell renal cell carcinoma",
+            "do_term": "DOID:263 / kidney cancer"
+        },
+        {
+            "cancer_name": "colon cancer",
+            "do_term": "DOID:9256 / colorectal cancer"
+        },
+        {
+            "cancer_name": "colon mucinous adenocarcinoma",
+            "do_term": "DOID:9253 / gastrointestinal stromal tumor"
+        },
+        {
+            "cancer_name": "colorectal adenocarcinoma",
+            "do_term": "DOID:9256 / colorectal cancer"
+        },
+        {
+            "cancer_name": "colorectal cancer",
+            "do_term": "DOID:9256 / colorectal cancer"
+        },
+        {
+            "cancer_name": "desmoid tumor",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "diffuse midline glioma h3 k27m-mutant",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "endometrial adenocarcinoma",
+            "do_term": "DOID:363 / uterine cancer"
+        },
+        {
+            "cancer_name": "endometrial cancer",
+            "do_term": "DOID:363 / uterine cancer"
+        },
+        {
+            "cancer_name": "endometrial hyperplasia",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "endometrioid ovary carcinoma",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "epithelial ovarian cancer",
+            "do_term": "DOID:2394 / ovarian cancer"
+        },
+        {
+            "cancer_name": "esophageal cancer",
+            "do_term": "DOID:5041 / esophageal cancer"
+        },
+        {
+            "cancer_name": "esophagus squamous cell carcinoma",
+            "do_term": "DOID:5041 / esophageal cancer"
+        },
+        {
+            "cancer_name": "estrogen-receptor positive breast cancer",
+            "do_term": "DOID:1612 / breast cancer"
+        },
+        {
+            "cancer_name": "ewing sarcoma of bone",
+            "do_term": "DOID:184 / bone cancer"
+        },
+        {
+            "cancer_name": "follicular lymphoma",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "gastrointestinal neuroendocrine tumor",
+            "do_term": "DOID:9253 / gastrointestinal stromal tumor"
+        },
+        {
+            "cancer_name": "gastrointestinal stromal tumor",
+            "do_term": "DOID:9253 / gastrointestinal stromal tumor"
+        },
+        {
+            "cancer_name": "glioblastoma",
+            "do_term": "DOID:1319 / brain cancer"
+        },
+        {
+            "cancer_name": "hairy cell leukemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "head and neck cancer",
+            "do_term": "DOID:11934 / head and neck cancer"
+        },
+        {
+            "cancer_name": "head and neck squamous cell carcinoma",
+            "do_term": "DOID:11934 / head and neck cancer"
+        },
+        {
+            "cancer_name": "hematologic cancer",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "hepatocellular carcinoma",
+            "do_term": "DOID:3571 / liver cancer"
+        },
+        {
+            "cancer_name": "her2-receptor positive breast cancer",
+            "do_term": "DOID:1612 / breast cancer"
+        },
+        {
+            "cancer_name": "high grade glioma",
+            "do_term": "DOID:1319 / brain cancer"
+        },
+        {
+            "cancer_name": "inflammatory myofibroblastic tumor",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "intrahepatic cholangiocarcinoma",
+            "do_term": "DOID:4606 / bile duct cancer"
+        },
+        {
+            "cancer_name": "langerhans cell sarcoma",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "laryngeal squamous cell carcinoma",
+            "do_term": "DOID:2596 / larynx cancer"
+        },
+        {
+            "cancer_name": "leukemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "li-fraumeni syndrome",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "lung adenocarcinoma",
+            "do_term": "DOID:1324 / lung cancer"
+        },
+        {
+            "cancer_name": "lung cancer",
+            "do_term": "DOID:1324 / lung cancer"
+        },
+        {
+            "cancer_name": "lung carcinoma",
+            "do_term": "DOID:1324 / lung cancer"
+        },
+        {
+            "cancer_name": "lung non-small cell carcinoma",
+            "do_term": "DOID:1324 / lung cancer"
+        },
+        {
+            "cancer_name": "lung small cell carcinoma",
+            "do_term": "DOID:1324 / lung cancer"
+        },
+        {
+            "cancer_name": "lymphoid leukemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "lymphoma",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "malignant exocrine pancreas neoplasm",
+            "do_term": "DOID:1793 / pancreatic cancer"
+        },
+        {
+            "cancer_name": "malignant mesothelioma",
+            "do_term": "DOID:1790 / malignant mesothelioma"
+        },
+        {
+            "cancer_name": "mammary analogue secretory carcinoma",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "medulloblastoma",
+            "do_term": "DOID:1319 / brain cancer"
+        },
+        {
+            "cancer_name": "melanoma",
+            "do_term": "DOID:4159 / skin cancer"
+        },
+        {
+            "cancer_name": "merkel cell carcinoma",
+            "do_term": "DOID:4159 / skin cancer"
+        },
+        {
+            "cancer_name": "mucosal melanoma",
+            "do_term": "DOID:4159 / skin cancer"
+        },
+        {
+            "cancer_name": "multiple myeloma",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "myelodysplastic syndrome",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "myeloid and lymphoid neoplasms with eosinophilia and abnormalities of pdgfra pdgfrb and fgfr1",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "neuroblastoma",
+            "do_term": "DOID:1192 / peripheral nervous system neoplasm"
+        },
+        {
+            "cancer_name": "oligodendroglioma",
+            "do_term": "DOID:3070 / malignant glioma"
+        },
+        {
+            "cancer_name": "osteosarcoma",
+            "do_term": "DOID:184 / bone cancer"
+        },
+        {
+            "cancer_name": "ovarian cancer",
+            "do_term": "DOID:2394 / ovarian cancer"
+        },
+        {
+            "cancer_name": "ovarian clear cell carcinoma",
+            "do_term": "DOID:2394 / ovarian cancer"
+        },
+        {
+            "cancer_name": "ovarian granulosa cell tumor",
+            "do_term": "DOID:2394 / ovarian cancer"
+        },
+        {
+            "cancer_name": "ovarian serous carcinoma",
+            "do_term": "DOID:2394 / ovarian cancer"
+        },
+        {
+            "cancer_name": "ovarian sex-cord stromal tumor",
+            "do_term": "DOID:2394 / ovarian cancer"
+        },
+        {
+            "cancer_name": "ovary serous adenocarcinoma",
+            "do_term": "DOID:2394 / ovarian cancer"
+        },
+        {
+            "cancer_name": "pten hamartoma tumor syndrome",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "pancreatic adenocarcinoma",
+            "do_term": "DOID:1793 / pancreatic cancer"
+        },
+        {
+            "cancer_name": "pancreatic cancer",
+            "do_term": "DOID:1793 / pancreatic cancer"
+        },
+        {
+            "cancer_name": "pancreatic carcinoma",
+            "do_term": "DOID:1793 / pancreatic cancer"
+        },
+        {
+            "cancer_name": "pancreatic ductal adenocarcinoma",
+            "do_term": "DOID:1793 / pancreatic cancer"
+        },
+        {
+            "cancer_name": "pancreatic ductal carcinoma",
+            "do_term": "DOID:1793 / pancreatic cancer"
+        },
+        {
+            "cancer_name": "paraganglioma",
+            "do_term": "DOID:3953 / adrenal gland cancer"
+        },
+        {
+            "cancer_name": "parietal lobe ependymoma",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "peritoneal mesothelioma",
+            "do_term": "DOID:1725 / peritoneum cancer"
+        },
+        {
+            "cancer_name": "polycythemia vera",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "prostate cancer",
+            "do_term": "DOID:10283 / prostate cancer"
+        },
+        {
+            "cancer_name": "rectum cancer",
+            "do_term": "DOID:9256 / colorectal cancer"
+        },
+        {
+            "cancer_name": "renal carcinoma",
+            "do_term": "DOID:263 / kidney cancer"
+        },
+        {
+            "cancer_name": "renal cell carcinoma",
+            "do_term": "DOID:263 / kidney cancer"
+        },
+        {
+            "cancer_name": "rhabdomyosarcoma",
+            "do_term": "DOID:4045 / muscle cancer"
+        },
+        {
+            "cancer_name": "sertoli-leydig cell tumor",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "skin melanoma",
+            "do_term": "DOID:4159 / skin cancer"
+        },
+        {
+            "cancer_name": "skin squamous cell carcinoma",
+            "do_term": "DOID:4159 / skin cancer"
+        },
+        {
+            "cancer_name": "solid tumor",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "spindle cell rhabdomyosarcoma",
+            "do_term": "DOID:4045 / muscle cancer"
+        },
+        {
+            "cancer_name": "stomach cancer",
+            "do_term": "DOID:10534 / stomach cancer"
+        },
+        {
+            "cancer_name": "stomach carcinoma",
+            "do_term": "DOID:10534 / stomach cancer"
+        },
+        {
+            "cancer_name": "systemic mastocytosis",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "t-cell acute lymphoblastic leukemia",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "thymic carcinoma",
+            "do_term": "DOID:3277 / thymus cancer"
+        },
+        {
+            "cancer_name": "thyroid gland anaplastic carcinoma",
+            "do_term": "DOID:1781 / thyroid gland cancer"
+        },
+        {
+            "cancer_name": "thyroid gland cancer",
+            "do_term": "DOID:1781 / thyroid gland cancer"
+        },
+        {
+            "cancer_name": "thyroid gland carcinoma",
+            "do_term": "DOID:1781 / thyroid gland cancer"
+        },
+        {
+            "cancer_name": "thyroid gland hurthle cell carcinoma",
+            "do_term": "DOID:1781 / thyroid gland cancer"
+        },
+        {
+            "cancer_name": "thyroid gland medullary carcinoma",
+            "do_term": "DOID:1781 / thyroid gland cancer"
+        },
+        {
+            "cancer_name": "thyroid gland papillary carcinoma",
+            "do_term": "DOID:1781 / thyroid gland cancer"
+        },
+        {
+            "cancer_name": "transitional cell carcinoma",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "tuberous sclerosis",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "villous adenoma",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "von hippel-lindau disease",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "waldenstroem's macroglobulinemia",
+            "do_term": "DOID:2531 / hematologic cancer"
+        }
+    ],
+    "cosmic": [
+        {
+            "cancer_name": "ns",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "adrenal gland",
+            "do_term": "DOID:3953 / adrenal gland cancer"
+        },
+        {
+            "cancer_name": "autonomic ganglia",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "biliary tract",
+            "do_term": "DOID:4606 / bile duct cancer"
+        },
+        {
+            "cancer_name": "bone",
+            "do_term": "DOID:184 / bone cancer"
+        },
+        {
+            "cancer_name": "breast",
+            "do_term": "DOID:1612 / breast cancer"
+        },
+        {
+            "cancer_name": "central nervous system",
+            "do_term": "DOID:1319 / brain cancer"
+        },
+        {
+            "cancer_name": "cervix",
+            "do_term": "DOID:4362 / cervical cancer"
+        },
+        {
+            "cancer_name": "endometrium",
+            "do_term": "DOID:363 / uterine cancer"
+        },
+        {
+            "cancer_name": "eye",
+            "do_term": "DOID:2174 / ocular cancer"
+        },
+        {
+            "cancer_name": "fallopian tube",
+            "do_term": "DOID:1964 / fallopian tube cancer"
+        },
+        {
+            "cancer_name": "female genital tract",
+            "do_term": ""
+        },
+        {
+            "cancer_name": "female genitourinary system",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "gastrointestinal tract",
+            "do_term": "DOID:3119 / gastrointestinal system cancer"
+        },
+        {
+            "cancer_name": "genital tract",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "haematopoietic and lymphoid tissue",
+            "do_term": "DOID:2531 / hematologic cancer"
+        },
+        {
+            "cancer_name": "kidney",
+            "do_term": "DOID:263 / kidney cancer"
+        },
+        {
+            "cancer_name": "large intestine",
+            "do_term": "DOID:9256 / colorectal cancer"
+        },
+        {
+            "cancer_name": "liver",
+            "do_term": "DOID:3571 / liver cancer"
+        },
+        {
+            "cancer_name": "lung",
+            "do_term": "DOID:1324 / lung cancer"
+        },
+        {
+            "cancer_name": "mediastinum",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "meninges",
+            "do_term": "DOID:3565 / meningioma"
+        },
+        {
+            "cancer_name": "oesophagus",
+            "do_term": "DOID:5041 / esophageal cancer"
+        },
+        {
+            "cancer_name": "ovary",
+            "do_term": "DOID:2394 / ovarian cancer"
+        },
+        {
+            "cancer_name": "pancreas",
+            "do_term": "DOID:1793 / pancreatic cancer"
+        },
+        {
+            "cancer_name": "paratesticular tissues",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "parathyroid",
+            "do_term": "DOID:1540 / parathyroid carcinoma"
+        },
+        {
+            "cancer_name": "penis",
+            "do_term": "DOID:11615 / penile cancer"
+        },
+        {
+            "cancer_name": "pericardium",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "perineum",
+            "do_term": "DOID:4045 / muscle cancer"
+        },
+        {
+            "cancer_name": "peritoneum",
+            "do_term": "DOID:1725 / peritoneum cancer"
+        },
+        {
+            "cancer_name": "pituitary",
+            "do_term": "DOID:1785 / pituitary cancer"
+        },
+        {
+            "cancer_name": "placenta",
+            "do_term": "DOID:2021 / placenta cancer"
+        },
+        {
+            "cancer_name": "pleura",
+            "do_term": "DOID:5158 / pleural cancer"
+        },
+        {
+            "cancer_name": "prostate",
+            "do_term": "DOID:10283 / prostate cancer"
+        },
+        {
+            "cancer_name": "retroperitoneum",
+            "do_term": "DOID:5875 / retroperitoneal cancer"
+        },
+        {
+            "cancer_name": "salivary gland",
+            "do_term": "DOID:8618 / oral cavity cancer"
+        },
+        {
+            "cancer_name": "skin",
+            "do_term": "DOID:4159 / skin cancer"
+        },
+        {
+            "cancer_name": "small intestine",
+            "do_term": "DOID:9253 / gastrointestinal stromal tumor"
+        },
+        {
+            "cancer_name": "soft tissue",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "stomach",
+            "do_term": "DOID:10534 / stomach cancer"
+        },
+        {
+            "cancer_name": "testis",
+            "do_term": "DOID:2998 / testicular cancer"
+        },
+        {
+            "cancer_name": "thymus",
+            "do_term": "DOID:3277 / thymus cancer"
+        },
+        {
+            "cancer_name": "thyroid",
+            "do_term": "DOID:1781 / thyroid gland cancer"
+        },
+        {
+            "cancer_name": "upper aerodigestive tract",
+            "do_term": "DOID:8618 / oral cavity cancer"
+        },
+        {
+            "cancer_name": "urinary tract",
+            "do_term": "DOID:11054 / urinary bladder cancer"
+        },
+        {
+            "cancer_name": "uterine adnexa",
+            "do_term": "NA"
+        },
+        {
+            "cancer_name": "vagina",
+            "do_term": "DOID:119 / vaginal cancer"
+        },
+        {
+            "cancer_name": "vulva",
+            "do_term": "DOID:1245 / vulva cancer"
+        }
+    ]
+}

@@ -1,0 +1,10 @@
+import json
+import os
+with open("filepath_to_config", "r") as f:
+  config = json.load(f)
+
+#do something
+
+with open(os.path.join(config["download_path"], "filename.json"), "w") as out_file:
+  json.dump(data, out_file, indent = 4)
+save to os.path.join(config["download_path"], "filename.json")
