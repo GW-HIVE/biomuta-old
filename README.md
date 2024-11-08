@@ -1,18 +1,26 @@
-# Requirements
+# Updated requirements
+
+## Setting config parameters
+After cloning this repo, you will need to set the parameters given in pipline/config.json. Change the 
+
+
+
+# Deprecated documentation
+## Requirements
 The following must be available on your server:
 
 * Node.js and npm
 * docker
 
 
-## Setting config parameters
-After cloning this repo, you will need to set the paramters given in
-conf/config.json. The "server" paramater can be "tst" or "prd" for
+### Setting config parameters
+After cloning this repo, you will need to set the parameters given in
+cof/config.json. The "server" paramater can be "tst" or "prd" for
 test or production server respectively. The "app_port" is the port
 in the host that should map to docker container for the app.
 
 
-## Creating and starting docker container for the APP
+### Creating and starting docker container for the APP
 
 From the "app" subdirectory, run the python script given to build and start container:
   ```
@@ -49,7 +57,7 @@ that the container will start on server reboot.
   ```
 
 
-## Mapping APP and API containers to public domains
+### Mapping APP and API containers to public domains
 To map the APP and API containers to public domains (e.g. www.hivelab.org and api.hivelab.org),
 add apache VirtualHost directives. This VirtualHost directive can be in a new f
 ile (e.g. /etc/httpd/conf.d/hivelab.conf).
