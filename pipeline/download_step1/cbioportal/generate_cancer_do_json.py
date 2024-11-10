@@ -1,14 +1,14 @@
-from pathlib import Path
 import json
 import logging
 import os
 import sys
+from pathlib import Path
 from typing import Optional
 
 logging.basicConfig(filename="cancer_mapping.log",
                     filemode='a',
                     format='%(asctime)s %(levelname)s %(message)s',
-                    datefmt='%H:%M:%S',
+                    datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO)
 
 # Logging levels
@@ -21,6 +21,10 @@ logging.basicConfig(filename="cancer_mapping.log",
 # *.log
 
 logging.info("Logger started ----------------------")
+# Put this code into a utils file, define frequently used variables in a util python script
+
+#sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+#from utils import ROOT_DIR #__init__.py, ROOT_DIR is a global var
 
 # Define paths
 
@@ -52,7 +56,9 @@ def ask_confirmation(prompt):
             print(f"Invalid input. Please enter 'y' for yes or 'n' for no.")
 if ask_confirmation(f"The latest created directory is: {latest_dir}. Proceed?"):
     input_file = Path(latest_dir) / "unique_cancer_names.txt"
-    output_file = Path(latest_dir) / "cancer_types_with_do.json"
+    cancer_types_with_do = Path(latest_dir) / "cancer_types_with_do.json"
+    cancer_type_per_study = Path(latest_dir) / "cancer_type_per_study.json"
+    study_ids_with_do = Path(latest_dir) / "study_ids_with_do.json"
     print(f"Using {latest_dir}/unique_cancer_names.txt and writing out to {latest_dir}/cancer_types_with_do.json")
 else:
     sys.exit("Aborted by user.")
@@ -78,7 +84,8 @@ def check_do_mapping(cancer_type: str) -> str:
     keywords = map2.keys()
     for keyword in keywords:
         if keyword == cancer_type:
-            matches.append(map2[keyword])
+            matches = [map2[keyword]]
+            break
         elif keyword in cancer_type.split():
             matches.append(map2[keyword])
     if len(matches) > 1:
@@ -86,7 +93,7 @@ def check_do_mapping(cancer_type: str) -> str:
         return "Too many cancer type matches."
     elif not matches:
         logging.warning(f"No matches for {cancer_type}")
-        return "unknown"
+        return "NA"
     else:
         return matches[0]
 
@@ -100,10 +107,10 @@ with open(input_file, "r") as f:
             cancer_list.append({"cancerType": cancer_type, "do_name": do_name})
 
 # Write the JSON data to the output file
-with open(output_file, "w") as f:
+with open(cancer_types_with_do, "w") as f:
     json.dump(cancer_list, f, indent=2)
 
-logging.info(f"JSON file generated: {output_file}")
+logging.info(f"JSON file generated: {cancer_types_with_do}")
 
 """
 if keyword in cancer_type:
@@ -116,3 +123,29 @@ if keyword in cancer_type:
 """
 #make a Venn diagram for EGFR with mutations and see which mutations in the gene are in BioMuta and which are in cBio and how many are overlapping
 #how many new slim did I find?
+
+# Load cancer_types_with_do
+with open(cancer_types_with_do, 'r') as f:
+    cancer_do_data = json.load(f)
+
+# Load cancer_type_per_study
+with open(cancer_type_per_study, 'r') as f:
+    cancer_study_data = json.load(f)
+
+# Create a dictionary to map 'cancerType' to 'do_name' from cancer_types_with_do
+do_name_map = {entry['cancerType']: entry['do_name'] for entry in cancer_do_data}
+
+# Create the result list with "studyId" and corresponding "do_name"
+result = [
+    {
+        "studyId": entry['studyId'],
+        "do_name": do_name_map.get(entry['cancerType'])
+    }
+    for entry in cancer_study_data if entry['cancerType'] in do_name_map
+]
+
+# Save the result to a new JSON file
+with open(study_ids_with_do, 'w') as f:
+    json.dump(result, f, indent=2)
+
+logging.info(f"Output JSON file {study_ids_with_do} created with 'studyId' and 'do_name'")

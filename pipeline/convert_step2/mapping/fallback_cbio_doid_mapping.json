@@ -1,9 +1,10 @@
 {
+  "hepatocellular carcinoma plus intrahepatic cholangiocarcinoma": "DOID:3571 / liver cancer & DOID:4606 / bile duct cancer",
   "adenoid cystic carcinoma": "DOID:8618 / oral cavity cancer",
   "adrenocortical": "DOID:3953 / adrenal gland cancer",
   "ampullary": "DOID:1793 / pancreatic cancer",
   "appendiceal": "DOID:11239 / appendix cancer",
-  "astrocytoma": "DOID:4706 / brain cancer",
+  "astrocytoma": "DOID:1319 / brain cancer",
   "basal cell": "DOID:4159 / skin cancer",
   "b-cell": "DOID:2531 / hematologic cancer",
   "bladder/urinary": "DOID:11054 / urinary bladder cancer",
