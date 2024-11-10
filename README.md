@@ -4,7 +4,7 @@
 The BioMuta pipeline gathers mutation data from various sources and combines them into a single dataset under common field structure.
 
 The sources included in BioMuta are:
-- **[cBioPortal]**(https://www.cbioportal.org)
+- **[cBioPortal](https://www.cbioportal.org)**
 
 BioMuta gathers mutation data for the following cancers:
 - DOID:4045 / muscle cancer
@@ -56,9 +56,10 @@ Formats all resources to the BioMuta standard for both data and field structure.
 ## Project Structure
 ## License
 ## Acknowledgements
+The liftover from GRCh37 to GRCh38 was performed with the [LiftOver](https://genome-euro.ucsc.edu/cgi-bin/hgLiftOver?hgsid=346179925_bFhSTQmbua17iNFkjSMh5Lou4CSU) command line tool developed by UCSC (insert link).
 
 ## Setting config parameters
-After cloning this repo, you will need to set the parameters given in pipeline/config.json. Change the 
+After cloning this repo, you will need to set the parameters given in pipeline/config.json.
 
 
 
