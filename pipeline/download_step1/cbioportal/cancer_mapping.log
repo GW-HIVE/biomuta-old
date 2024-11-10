@@ -640,3 +640,274 @@
 14:58:09 INFO thyroid matched
 14:58:09 WARNING No matches for wilms' tumor
 14:58:09 INFO JSON file generated: /data/shared/biomuta/generated/datasets/2024_10_22/cancer_types_with_do.json
+08:46:31 INFO Logger started ----------------------
+08:46:35 INFO acute myeloid leukemia matched
+08:46:35 INFO angiosarcoma matched
+08:46:35 INFO basal cell carcinoma matched
+08:46:35 INFO biliary tract matched
+08:46:35 INFO bladder urothelial carcinoma matched
+08:46:35 INFO breast matched
+08:46:35 INFO cervix matched
+08:46:35 INFO cholangiocarcinoma matched
+08:46:35 INFO chromophobe renal cell carcinoma matched
+08:46:35 INFO colorectal adenocarcinoma matched
+08:46:35 INFO gastrointestinal stromal tumor matched
+08:46:35 INFO head and neck squamous cell carcinoma matched
+08:46:35 INFO hepatocellular carcinoma matched
+08:46:35 WARNING Cancer type: hepatocellular carcinoma plus intrahepatic cholangiocarcinoma matched on ['DOID:4606 / bile duct cancer', 'DOID:3571 / liver cancer']
+08:46:35 INFO intrahepatic cholangiocarcinoma matched
+08:46:35 INFO lung matched
+08:46:35 INFO lung adenocarcinoma matched
+08:46:35 INFO medulloblastoma matched
+08:46:35 INFO melanoma matched
+08:46:35 WARNING No matches for mixed cancer types
+08:46:35 INFO neuroblastoma matched
+08:46:35 INFO oligodendroglioma matched
+08:46:35 INFO pancreas matched
+08:46:35 INFO pancreatic adenocarcinoma matched
+08:46:35 INFO prostate matched
+08:46:35 INFO renal cell carcinoma matched
+08:46:35 INFO rhabdomyosarcoma matched
+08:46:35 INFO soft tissue matched
+08:46:35 WARNING No matches for soft tissue myoepithelial carcinoma
+08:46:35 INFO testis matched
+08:46:35 INFO thyroid matched
+08:46:35 WARNING No matches for wilms' tumor
+08:46:35 INFO JSON file generated: /data/shared/biomuta/generated/datasets/2024_10_22/cancer_types_with_do.json
+08:49:39 INFO Logger started ----------------------
+08:49:41 INFO acute myeloid leukemia matched
+08:49:41 INFO angiosarcoma matched
+08:49:41 INFO basal cell carcinoma matched
+08:49:41 INFO biliary tract matched
+08:49:41 INFO bladder urothelial carcinoma matched
+08:49:41 INFO breast matched
+08:49:41 INFO cervix matched
+08:49:41 INFO cholangiocarcinoma matched
+08:49:41 INFO chromophobe renal cell carcinoma matched
+08:49:41 INFO colorectal adenocarcinoma matched
+08:49:41 INFO gastrointestinal stromal tumor matched
+08:49:41 INFO head and neck squamous cell carcinoma matched
+08:49:41 INFO hepatocellular carcinoma matched
+08:49:41 WARNING Cancer type: hepatocellular carcinoma plus intrahepatic cholangiocarcinoma matched on ['DOID:4606 / bile duct cancer', 'DOID:3571 / liver cancer']
+08:49:41 INFO intrahepatic cholangiocarcinoma matched
+08:49:41 INFO lung matched
+08:49:41 INFO lung adenocarcinoma matched
+08:49:41 INFO medulloblastoma matched
+08:49:41 INFO melanoma matched
+08:49:41 WARNING No matches for mixed cancer types
+08:49:41 INFO neuroblastoma matched
+08:49:41 INFO oligodendroglioma matched
+08:49:41 INFO pancreas matched
+08:49:41 INFO pancreatic adenocarcinoma matched
+08:49:41 INFO prostate matched
+08:49:41 INFO renal cell carcinoma matched
+08:49:41 INFO rhabdomyosarcoma matched
+08:49:41 INFO soft tissue matched
+08:49:41 WARNING No matches for soft tissue myoepithelial carcinoma
+08:49:41 INFO testis matched
+08:49:41 INFO thyroid matched
+08:49:41 WARNING No matches for wilms' tumor
+08:49:41 INFO JSON file generated: /data/shared/biomuta/generated/datasets/2024_10_22/cancer_types_with_do.json
+09:04:55 INFO Logger started ----------------------
+09:04:56 INFO acute myeloid leukemia matched
+09:04:56 INFO angiosarcoma matched
+09:04:56 INFO basal cell carcinoma matched
+09:04:56 INFO biliary tract matched
+09:04:56 INFO bladder urothelial carcinoma matched
+09:04:56 INFO breast matched
+09:04:56 INFO cervix matched
+09:04:56 INFO cholangiocarcinoma matched
+09:04:56 INFO chromophobe renal cell carcinoma matched
+09:04:56 INFO colorectal adenocarcinoma matched
+09:04:56 INFO gastrointestinal stromal tumor matched
+09:04:56 INFO head and neck squamous cell carcinoma matched
+09:04:56 INFO hepatocellular carcinoma matched
+09:04:56 WARNING Cancer type: hepatocellular carcinoma plus intrahepatic cholangiocarcinoma matched on ['DOID:4606 / bile duct cancer', 'DOID:3571 / liver cancer', 'DOID:3571 / liver cancer & DOID:4606 / bile duct cancer']
+09:04:56 INFO intrahepatic cholangiocarcinoma matched
+09:04:56 INFO lung matched
+09:04:56 INFO lung adenocarcinoma matched
+09:04:56 INFO medulloblastoma matched
+09:04:56 INFO melanoma matched
+09:04:56 WARNING No matches for mixed cancer types
+09:04:56 INFO neuroblastoma matched
+09:04:56 INFO oligodendroglioma matched
+09:04:56 INFO pancreas matched
+09:04:56 INFO pancreatic adenocarcinoma matched
+09:04:56 INFO prostate matched
+09:04:56 INFO renal cell carcinoma matched
+09:04:56 INFO rhabdomyosarcoma matched
+09:04:56 INFO soft tissue matched
+09:04:56 WARNING No matches for soft tissue myoepithelial carcinoma
+09:04:56 INFO testis matched
+09:04:56 INFO thyroid matched
+09:04:56 WARNING No matches for wilms' tumor
+09:04:57 INFO JSON file generated: /data/shared/biomuta/generated/datasets/2024_10_22/cancer_types_with_do.json
+2024-11-09 09:08:01 INFO Logger started ----------------------
+2024-11-09 09:08:03 INFO acute myeloid leukemia matched
+2024-11-09 09:08:03 INFO angiosarcoma matched
+2024-11-09 09:08:03 INFO basal cell carcinoma matched
+2024-11-09 09:08:03 INFO biliary tract matched
+2024-11-09 09:08:03 INFO bladder urothelial carcinoma matched
+2024-11-09 09:08:03 INFO breast matched
+2024-11-09 09:08:03 INFO cervix matched
+2024-11-09 09:08:03 INFO cholangiocarcinoma matched
+2024-11-09 09:08:03 INFO chromophobe renal cell carcinoma matched
+2024-11-09 09:08:03 INFO colorectal adenocarcinoma matched
+2024-11-09 09:08:03 INFO gastrointestinal stromal tumor matched
+2024-11-09 09:08:03 INFO head and neck squamous cell carcinoma matched
+2024-11-09 09:08:03 INFO hepatocellular carcinoma matched
+2024-11-09 09:08:03 WARNING Cancer type: hepatocellular carcinoma plus intrahepatic cholangiocarcinoma matched on ['DOID:4606 / bile duct cancer', 'DOID:3571 / liver cancer', 'DOID:3571 / liver cancer & DOID:4606 / bile duct cancer']
+2024-11-09 09:08:03 INFO intrahepatic cholangiocarcinoma matched
+2024-11-09 09:08:03 INFO lung matched
+2024-11-09 09:08:03 INFO lung adenocarcinoma matched
+2024-11-09 09:08:03 INFO medulloblastoma matched
+2024-11-09 09:08:03 INFO melanoma matched
+2024-11-09 09:08:03 WARNING No matches for mixed cancer types
+2024-11-09 09:08:03 INFO neuroblastoma matched
+2024-11-09 09:08:03 INFO oligodendroglioma matched
+2024-11-09 09:08:03 INFO pancreas matched
+2024-11-09 09:08:03 INFO pancreatic adenocarcinoma matched
+2024-11-09 09:08:03 INFO prostate matched
+2024-11-09 09:08:03 INFO renal cell carcinoma matched
+2024-11-09 09:08:03 INFO rhabdomyosarcoma matched
+2024-11-09 09:08:03 INFO soft tissue matched
+2024-11-09 09:08:03 WARNING No matches for soft tissue myoepithelial carcinoma
+2024-11-09 09:08:03 INFO testis matched
+2024-11-09 09:08:03 INFO thyroid matched
+2024-11-09 09:08:03 WARNING No matches for wilms' tumor
+2024-11-09 09:08:03 INFO JSON file generated: /data/shared/biomuta/generated/datasets/2024_10_22/cancer_types_with_do.json
+2024-11-09 09:09:38 INFO Logger started ----------------------
+2024-11-09 09:09:40 INFO acute myeloid leukemia matched
+2024-11-09 09:09:40 INFO angiosarcoma matched
+2024-11-09 09:09:40 INFO basal cell carcinoma matched
+2024-11-09 09:09:40 INFO biliary tract matched
+2024-11-09 09:09:40 INFO bladder urothelial carcinoma matched
+2024-11-09 09:09:40 INFO breast matched
+2024-11-09 09:09:40 INFO cervix matched
+2024-11-09 09:09:40 INFO cholangiocarcinoma matched
+2024-11-09 09:09:40 INFO chromophobe renal cell carcinoma matched
+2024-11-09 09:09:40 INFO colorectal adenocarcinoma matched
+2024-11-09 09:09:40 INFO gastrointestinal stromal tumor matched
+2024-11-09 09:09:40 INFO head and neck squamous cell carcinoma matched
+2024-11-09 09:09:40 INFO hepatocellular carcinoma matched
+2024-11-09 09:09:40 WARNING Cancer type: hepatocellular carcinoma plus intrahepatic cholangiocarcinoma matched on ['DOID:4606 / bile duct cancer', 'DOID:3571 / liver cancer & DOID:4606 / bile duct cancer', 'DOID:3571 / liver cancer']
+2024-11-09 09:09:40 INFO intrahepatic cholangiocarcinoma matched
+2024-11-09 09:09:40 INFO lung matched
+2024-11-09 09:09:40 INFO lung adenocarcinoma matched
+2024-11-09 09:09:40 INFO medulloblastoma matched
+2024-11-09 09:09:40 INFO melanoma matched
+2024-11-09 09:09:40 WARNING No matches for mixed cancer types
+2024-11-09 09:09:40 INFO neuroblastoma matched
+2024-11-09 09:09:40 INFO oligodendroglioma matched
+2024-11-09 09:09:40 INFO pancreas matched
+2024-11-09 09:09:40 INFO pancreatic adenocarcinoma matched
+2024-11-09 09:09:40 INFO prostate matched
+2024-11-09 09:09:40 INFO renal cell carcinoma matched
+2024-11-09 09:09:40 INFO rhabdomyosarcoma matched
+2024-11-09 09:09:40 INFO soft tissue matched
+2024-11-09 09:09:40 WARNING No matches for soft tissue myoepithelial carcinoma
+2024-11-09 09:09:40 INFO testis matched
+2024-11-09 09:09:40 INFO thyroid matched
+2024-11-09 09:09:40 WARNING No matches for wilms' tumor
+2024-11-09 09:09:40 INFO JSON file generated: /data/shared/biomuta/generated/datasets/2024_10_22/cancer_types_with_do.json
+2024-11-09 09:10:16 INFO Logger started ----------------------
+2024-11-09 09:10:17 INFO acute myeloid leukemia matched
+2024-11-09 09:10:17 INFO angiosarcoma matched
+2024-11-09 09:10:17 INFO basal cell carcinoma matched
+2024-11-09 09:10:17 INFO biliary tract matched
+2024-11-09 09:10:17 INFO bladder urothelial carcinoma matched
+2024-11-09 09:10:17 INFO breast matched
+2024-11-09 09:10:17 INFO cervix matched
+2024-11-09 09:10:17 INFO cholangiocarcinoma matched
+2024-11-09 09:10:17 INFO chromophobe renal cell carcinoma matched
+2024-11-09 09:10:17 INFO colorectal adenocarcinoma matched
+2024-11-09 09:10:17 INFO gastrointestinal stromal tumor matched
+2024-11-09 09:10:17 INFO head and neck squamous cell carcinoma matched
+2024-11-09 09:10:17 INFO hepatocellular carcinoma matched
+2024-11-09 09:10:17 WARNING Cancer type: hepatocellular carcinoma plus intrahepatic cholangiocarcinoma matched on ['DOID:3571 / liver cancer & DOID:4606 / bile duct cancer', 'DOID:4606 / bile duct cancer', 'DOID:3571 / liver cancer']
+2024-11-09 09:10:17 INFO intrahepatic cholangiocarcinoma matched
+2024-11-09 09:10:17 INFO lung matched
+2024-11-09 09:10:17 INFO lung adenocarcinoma matched
+2024-11-09 09:10:17 INFO medulloblastoma matched
+2024-11-09 09:10:17 INFO melanoma matched
+2024-11-09 09:10:17 WARNING No matches for mixed cancer types
+2024-11-09 09:10:17 INFO neuroblastoma matched
+2024-11-09 09:10:17 INFO oligodendroglioma matched
+2024-11-09 09:10:17 INFO pancreas matched
+2024-11-09 09:10:17 INFO pancreatic adenocarcinoma matched
+2024-11-09 09:10:17 INFO prostate matched
+2024-11-09 09:10:17 INFO renal cell carcinoma matched
+2024-11-09 09:10:17 INFO rhabdomyosarcoma matched
+2024-11-09 09:10:17 INFO soft tissue matched
+2024-11-09 09:10:17 WARNING No matches for soft tissue myoepithelial carcinoma
+2024-11-09 09:10:17 INFO testis matched
+2024-11-09 09:10:17 INFO thyroid matched
+2024-11-09 09:10:17 WARNING No matches for wilms' tumor
+2024-11-09 09:10:17 INFO JSON file generated: /data/shared/biomuta/generated/datasets/2024_10_22/cancer_types_with_do.json
+2024-11-09 09:20:02 INFO Logger started ----------------------
+2024-11-09 09:20:03 INFO acute myeloid leukemia matched
+2024-11-09 09:20:03 INFO angiosarcoma matched
+2024-11-09 09:20:03 INFO basal cell carcinoma matched
+2024-11-09 09:20:03 INFO biliary tract matched
+2024-11-09 09:20:03 INFO bladder urothelial carcinoma matched
+2024-11-09 09:20:03 INFO breast matched
+2024-11-09 09:20:03 INFO cervix matched
+2024-11-09 09:20:03 INFO cholangiocarcinoma matched
+2024-11-09 09:20:03 INFO chromophobe renal cell carcinoma matched
+2024-11-09 09:20:03 INFO colorectal adenocarcinoma matched
+2024-11-09 09:20:03 INFO gastrointestinal stromal tumor matched
+2024-11-09 09:20:03 INFO head and neck squamous cell carcinoma matched
+2024-11-09 09:20:03 INFO hepatocellular carcinoma matched
+2024-11-09 09:20:03 INFO intrahepatic cholangiocarcinoma matched
+2024-11-09 09:20:03 INFO lung matched
+2024-11-09 09:20:03 INFO lung adenocarcinoma matched
+2024-11-09 09:20:03 INFO medulloblastoma matched
+2024-11-09 09:20:03 INFO melanoma matched
+2024-11-09 09:20:03 WARNING No matches for mixed cancer types
+2024-11-09 09:20:03 INFO neuroblastoma matched
+2024-11-09 09:20:03 INFO oligodendroglioma matched
+2024-11-09 09:20:03 INFO pancreas matched
+2024-11-09 09:20:03 INFO pancreatic adenocarcinoma matched
+2024-11-09 09:20:03 INFO prostate matched
+2024-11-09 09:20:03 INFO renal cell carcinoma matched
+2024-11-09 09:20:03 INFO rhabdomyosarcoma matched
+2024-11-09 09:20:03 INFO soft tissue matched
+2024-11-09 09:20:03 WARNING No matches for soft tissue myoepithelial carcinoma
+2024-11-09 09:20:03 INFO testis matched
+2024-11-09 09:20:03 INFO thyroid matched
+2024-11-09 09:20:03 WARNING No matches for wilms' tumor
+2024-11-09 09:20:03 INFO JSON file generated: /data/shared/biomuta/generated/datasets/2024_10_22/cancer_types_with_do.json
+2024-11-09 19:16:29 INFO Logger started ----------------------
+2024-11-09 19:16:31 INFO acute myeloid leukemia matched
+2024-11-09 19:16:31 INFO angiosarcoma matched
+2024-11-09 19:16:31 INFO basal cell carcinoma matched
+2024-11-09 19:16:31 INFO biliary tract matched
+2024-11-09 19:16:31 INFO bladder urothelial carcinoma matched
+2024-11-09 19:16:31 INFO breast matched
+2024-11-09 19:16:31 INFO cervix matched
+2024-11-09 19:16:31 INFO cholangiocarcinoma matched
+2024-11-09 19:16:31 INFO chromophobe renal cell carcinoma matched
+2024-11-09 19:16:31 INFO colorectal adenocarcinoma matched
+2024-11-09 19:16:31 INFO gastrointestinal stromal tumor matched
+2024-11-09 19:16:31 INFO head and neck squamous cell carcinoma matched
+2024-11-09 19:16:31 INFO hepatocellular carcinoma matched
+2024-11-09 19:16:31 INFO intrahepatic cholangiocarcinoma matched
+2024-11-09 19:16:31 INFO lung matched
+2024-11-09 19:16:31 INFO lung adenocarcinoma matched
+2024-11-09 19:16:31 INFO medulloblastoma matched
+2024-11-09 19:16:31 INFO melanoma matched
+2024-11-09 19:16:31 WARNING No matches for mixed cancer types
+2024-11-09 19:16:31 INFO neuroblastoma matched
+2024-11-09 19:16:31 INFO oligodendroglioma matched
+2024-11-09 19:16:31 INFO pancreas matched
+2024-11-09 19:16:31 INFO pancreatic adenocarcinoma matched
+2024-11-09 19:16:31 INFO prostate matched
+2024-11-09 19:16:31 INFO renal cell carcinoma matched
+2024-11-09 19:16:31 INFO rhabdomyosarcoma matched
+2024-11-09 19:16:31 INFO soft tissue matched
+2024-11-09 19:16:31 WARNING No matches for soft tissue myoepithelial carcinoma
+2024-11-09 19:16:31 INFO testis matched
+2024-11-09 19:16:31 INFO thyroid matched
+2024-11-09 19:16:31 WARNING No matches for wilms' tumor
+2024-11-09 19:16:31 INFO JSON file generated: /data/shared/biomuta/generated/datasets/2024_10_22/cancer_types_with_do.json
+2024-11-09 19:16:31 INFO Output JSON file /data/shared/biomuta/generated/datasets/2024_10_22/study_ids_with_do.json created with 'studyId' and 'do_name'

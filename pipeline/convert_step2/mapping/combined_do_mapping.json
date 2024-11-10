@@ -2,7 +2,7 @@
     "civic": [
         {
             "cancer_name": "acral lentiginous melanoma",
-            "do_term": "DOID:4159 / skin cancer "
+            "do_term": "DOID:4159 / skin cancer"
         },
         {
             "cancer_name": "acute lymphoblastic leukemia",
@@ -26,7 +26,7 @@
         },
         {
             "cancer_name": "basal cell carcinoma",
-            "do_term": "DOID:4159 / skin cancer "
+            "do_term": "DOID:4159 / skin cancer"
         },
         {
             "cancer_name": "biliary tract cancer",
@@ -450,27 +450,27 @@
         },
         {
             "cancer_name": "thyroid gland anaplastic carcinoma",
-            "do_term": "DOID:1781 / thyroid gland cancer"
+            "do_term": "DOID:1781 / thyroid cancer"
         },
         {
             "cancer_name": "thyroid gland cancer",
-            "do_term": "DOID:1781 / thyroid gland cancer"
+            "do_term": "DOID:1781 / thyroid cancer"
         },
         {
             "cancer_name": "thyroid gland carcinoma",
-            "do_term": "DOID:1781 / thyroid gland cancer"
+            "do_term": "DOID:1781 / thyroid cancer"
         },
         {
             "cancer_name": "thyroid gland hurthle cell carcinoma",
-            "do_term": "DOID:1781 / thyroid gland cancer"
+            "do_term": "DOID:1781 / thyroid cancer"
         },
         {
             "cancer_name": "thyroid gland medullary carcinoma",
-            "do_term": "DOID:1781 / thyroid gland cancer"
+            "do_term": "DOID:1781 / thyroid cancer"
         },
         {
             "cancer_name": "thyroid gland papillary carcinoma",
-            "do_term": "DOID:1781 / thyroid gland cancer"
+            "do_term": "DOID:1781 / thyroid cancer"
         },
         {
             "cancer_name": "transitional cell carcinoma",
@@ -668,7 +668,7 @@
         },
         {
             "cancer_name": "thyroid",
-            "do_term": "DOID:1781 / thyroid gland cancer"
+            "do_term": "DOID:1781 / thyroid cancer"
         },
         {
             "cancer_name": "upper aerodigestive tract",
