@@ -3,10 +3,9 @@ import sys
 import os
 import decimal
 import subprocess
-from typing import Union, Literal, overload, Optional, NoReturn
 
 
-def load_json(filepath: str) -> Union[dict, list]:
+def load_json(filepath: str):
     """Loads a JSON file.
 
     Parameters
@@ -24,40 +23,6 @@ def load_json(filepath: str) -> Union[dict, list]:
     return json_obj
 
 
-@overload
-def load_json_type_safe(filepath: str, return_type: Literal["dict"]) -> dict:
-    pass
-
-
-@overload
-def load_json_type_safe(filepath: str, return_type: Literal["list"]) -> list:
-    pass
-
-
-def load_json_type_safe(
-    filepath: str, return_type: Literal["dict", "list"]
-) -> Union[dict, list]:
-    """Handles the type checking for the expected return types.
-
-    Parameters
-    ----------
-    filepath: str
-        The filepath to the JSON file to laod.
-    return_type: Literal["dict", "list"]
-        The expected return type.
-    """
-    loaded_json = load_json(filepath)
-    if return_type == "dict" and not isinstance(loaded_json, dict):
-        raise ValueError(
-            f"Expected type `dict` for file {filepath}, got type `{type(loaded_json)}`."
-        )
-    elif return_type == "list" and not isinstance(loaded_json, list):
-        raise ValueError(
-            f"Expected type `list` for file {filepath}, got type `{type(loaded_json)}`."
-        )
-    return loaded_json
-
-
 def _json_serialize_default(item):
     if isinstance(item, decimal.Decimal):
         return float(item)
@@ -67,7 +32,7 @@ def _json_serialize_default(item):
 
 
 def write_json(
-    filepath: str, data: Union[list, dict], include_default: bool = False
+    filepath: str, data, include_default: bool = False
 ) -> None:
     """Writes a JSON file.
 
@@ -87,7 +52,7 @@ def write_json(
             json.dump(data, f, indent=4)
 
 
-def get_user_confirmation() -> None | NoReturn:
+def get_user_confirmation() -> None:
     """Prompts the user for a confirmation or denial."""
     while True:
         user_input = input("Continue? (y/n) ").strip().lower()
@@ -99,7 +64,7 @@ def get_user_confirmation() -> None | NoReturn:
             print("Please enter 'y' for yes or 'n' for no.")
 
 
-def resolve_symlink(path: str) -> Optional[str]:
+def resolve_symlink(path: str):
     """Takes a symlink path (i.e. the `current/` symlink) and returns the version that
     it points to.
 

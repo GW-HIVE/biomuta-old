@@ -1,0 +1,75 @@
+# Workflow: Mapping hg19 Genomic Positions to UniProt Accession
+
+# Step 1: Define Inputs
+INPUT:
+    hg19_positions  # List of genomic positions in hg19 format from cBioPortal mutation datasets
+
+# Step 2: Map hg19 positions to hg38
+FUNCTION map_hg19_to_hg38(hg19_positions):
+    Initialize empty list hg38_positions
+    
+    FOR each position in hg19_positions:
+        # Use UCSC LiftOver or Ensembl API to map hg19 position to hg38
+        hg38_position = liftOver(position, from_build="hg19", to_build="hg38")
+        
+        IF hg38_position is not None:
+            Append hg38_position to hg38_positions
+        ELSE:
+            Print("Mapping failed for position:", position)
+    
+    RETURN hg38_positions
+
+# Step 3: Retrieve Ensembl Transcript IDs for hg38 positions
+FUNCTION get_ensembl_transcript_ids(hg38_positions):
+    Initialize empty list ensembl_transcripts
+    
+    FOR each position in hg38_positions:
+        # Query Ensembl database for transcript ID using hg38 position
+        transcript_id = query_ensembl(position=position, query_type="transcript")
+        
+        IF transcript_id is not None:
+            Append transcript_id to ensembl_transcripts
+        ELSE:
+            Print("No transcript ID found for position:", position)
+    
+    RETURN ensembl_transcripts
+
+# Step 4: Map Ensembl Transcript IDs to Ensembl Protein IDs
+FUNCTION get_ensembl_protein_ids(ensembl_transcripts):
+    Initialize empty list ensembl_proteins
+    
+    FOR each transcript_id in ensembl_transcripts:
+        # Query Ensembl database to get corresponding protein ID
+        protein_id = query_ensembl(transcript_id=transcript_id, query_type="protein")
+        
+        IF protein_id is not None:
+            Append protein_id to ensembl_proteins
+        ELSE:
+            Print("No protein ID found for transcript:", transcript_id)
+    
+    RETURN ensembl_proteins
+
+# Step 5: Map Ensembl Protein IDs to UniProt Accessions
+FUNCTION get_uniprot_accessions(ensembl_proteins):
+    Initialize empty list uniprot_accessions
+    
+    FOR each protein_id in ensembl_proteins:
+        # Query UniProt database to get UniProt accession for Ensembl protein ID
+        uniprot_id = query_uniprot(protein_id=protein_id)
+        
+        IF uniprot_id is not None:
+            Append uniprot_id to uniprot_accessions
+        ELSE:
+            Print("No UniProt accession found for protein ID:", protein_id)
+    
+    RETURN uniprot_accessions
+
+# Step 6: Execute Workflow
+hg38_positions = map_hg19_to_hg38(hg19_positions)
+ensembl_transcripts = get_ensembl_transcript_ids(hg38_positions)
+ensembl_proteins = get_ensembl_protein_ids(ensembl_transcripts)
+uniprot_accessions = get_uniprot_accessions(ensembl_proteins)
+
+# Output final results
+OUTPUT:
+    uniprot_accessions  # List of UniProt accession IDs corresponding to input hg19 positions
