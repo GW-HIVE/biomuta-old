@@ -1,3 +1,4 @@
 ../downloads
+*.gff3
 *.log
 env
