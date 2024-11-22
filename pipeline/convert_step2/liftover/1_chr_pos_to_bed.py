@@ -1,40 +1,3 @@
-import os
-import json
-import glob
-import sys
-from pathlib import Path
-
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
-from utils import ROOT_DIR
-from utils.config import get_config
-
-def process_json_to_bed(input_directory, output_bed_file):
-    buffer = []
-    buffer_size = 1000  # Adjust based on memory availability
-    file_count = 0
-    error_count = 0
-
-    with open(output_bed_file, 'w') as bed_file:
-        for json_file_path in glob.glob(os.path.join(input_directory, '*.json')):
-            file_count += 1
-            try:
-                with open(json_file_path, 'r') as json_file:
-                    # Load JSON data
-                    data = json.load(json_file)
-                    
-                    # Process each JSON object in the file
-                    for record in data:
-                        try:
-                            # Check genome build and position length criteria
-                            if record.get('ncbiBuild') not in ['GRCh37', '37']:
-                                continue
-                            if record.get('variantType') != 'SNP': #take SNPs only
-                                continue
-                            if record['endPosition'] - record['startPosition'] != 0: #additional check to confirm SNP
-                                continue
-                            if 'splice' in record.get('proteinChange', ''):  # check if 'proteinChange' contains 'splice'
-                                continue
-
 #To see all available values for a given json key such as 'ncbiBuild': GRCh37, 37, 'variantType': SNP..., run extract_records.py
 #variantType counts:
 #SNP: 34247933
@@ -53,12 +16,51 @@ def process_json_to_bed(input_directory, output_bed_file):
 #GRCh37: 30925146
 #NA: 3143
 #GRCh38: 6253932
-                            
+
+import os
+import json
+import glob
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
+from utils import ROOT_DIR
+from utils.config import get_config
+
+
+def process_json_to_bed(input_directory, output_bed_file):
+    buffer = []
+    unique_rows = set()  # Set to keep track of unique rows
+    buffer_size = 1000
+    file_count = 0
+    error_count = 0
+
+    with open(output_bed_file, 'w') as bed_file:
+        for json_file_path in glob.glob(os.path.join(input_directory, '*.json')):
+            file_count += 1
+            try:
+                with open(json_file_path, 'r') as json_file:
+                    # Load JSON data
+                    data = json.load(json_file)
+
+                    # Process each JSON object in the file
+                    for record in data:
+                        try:
+                            # Check genome build and SNP criteria
+                            if record.get('ncbiBuild') == 'NA':
+                                continue
+                            if record.get('variantType') != 'SNP': #take SNPs only
+                                continue
+                            if record['endPosition'] - record['startPosition'] != 0: #additional check to confirm SNP
+                                continue
+                            if 'splice' in record.get('proteinChange', ''): #no splice site mutations
+                                continue
+
                             # Extract chromosome, start position, and end position
 
                             chr_ = record['chr']
                             # Convert specific chromosome values and exclude unwanted chromosomes
-                            if chr_ == '23':
+                            if chr_ == '23': 
                                 chr_ = 'X'
                             if chr_ == '24':
                                 chr_ = 'Y'
@@ -66,16 +68,19 @@ def process_json_to_bed(input_directory, output_bed_file):
                                 continue # Skip records with 'MT' (mitochondrial) or 'NA' as chromosome values
                             if not chr_.startswith('chr'):
                                 chr_ = 'chr' + chr_
-                            start_pos = record['startPosition'] - 1  # Convert to 0-based for BED
+                            start_pos = record['startPosition'] - 1 # Convert to 0-based for BED
                             end_pos = record['endPosition']
+                            entrez_gene_id = record['entrezGeneId']
+                            ncbi_build = record['ncbiBuild']
                             protein_change = record['proteinChange']
-                            unique_sample_key = record['uniqueSampleKey']
 
-                            # Append line to buffer
-                            buffer.append(f"{chr_}\t{start_pos}\t{end_pos}\t{protein_change}\t{unique_sample_key}\n")
+                            row = f"{chr_}\t{start_pos}\t{end_pos}\t{entrez_gene_id}\t{ncbi_build}\t{protein_change}\n"
+                            if row not in unique_rows:  # Only add unique rows
+                                unique_rows.add(row)
+                                buffer.append(row) # Append row to buffer
 
                             # Write buffer to file when it reaches the specified size
-                            if len(buffer) >= buffer_size:
+                            if len(buffer) >= buffer_size: 
                                 bed_file.writelines(buffer)
                                 buffer.clear()
 
@@ -103,10 +108,11 @@ def process_json_to_bed(input_directory, output_bed_file):
 
     print(f"Processing complete. Total files processed: {file_count}, errors encountered: {error_count}")
 
+
 # Run the function
 config_obj = get_config()
 dl_dir = Path(config_obj["relevant_paths"]["downloads"])
 out_dir = Path(config_obj["relevant_paths"]["generated_datasets"])
 input_directory = dl_dir / 'cbioportal' / '2024_10_21' / 'mutations'  # Write a util to get latest dir
-output_bed_file = out_dir / '2024_10_22' / 'liftover' / 'hg19withID.bed' #Write a util to get latest dir
+output_bed_file = out_dir / '2024_10_22' / 'liftover' / 'hg19entrez_build_protChange.bed' #Write a util to get latest dir
 process_json_to_bed(input_directory, output_bed_file)

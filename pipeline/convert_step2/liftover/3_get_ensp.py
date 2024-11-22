@@ -1,5 +1,4 @@
 import csv
-import os
 import sys
 from pathlib import Path
 
@@ -12,19 +11,20 @@ from utils.config import get_config
 # Set input directory for JSON files and output file for BED format
 config_obj = get_config()
 wd = Path(config_obj["relevant_paths"]["generated_datasets"])
-chr_pos = wd / '2024_10_22' / 'hg38positions.bed'  # Write a util to get latest dir
-ann = '/data/shared/repos/biomuta-old/pipeline/convert_step2/liftover/Homo_sapiens.GRCh38.113.gff3'  # GFF file with genomic features
-output_file = wd / '2024_10_22' / 'chr_pos_to_ensp.csv'
+chr_pos = wd / '2024_10_22' / 'liftover' / 'hg38_combined.bed'  # Write a util to get latest dir
+ann_dir = Path(config_obj["relevant_paths"]["downloads"])
+ann = ann_dir / 'ensembl' / 'Homo_sapiens.GRCh38.113.gff3'  # GFF file with genomic features
+output_file = wd / '2024_10_22' / 'mapping_ids' / 'chr_pos_to_ensp.csv'
 
 print("Starting process...")
 
 # Read positions from chr_pos
 positions = []
-print("Loading SNP positions from h38positions.bed...")
+print(f"Loading SNP positions from {chr_pos}...")
 with open(chr_pos, 'r') as f:
     for line in f:
-        chrom, start, end = line.strip().split('\t')
-        positions.append((chrom, int(start), int(end)))
+        chr, start, end = line.strip().split('\t')
+        positions.append((chr, int(start), int(end)))
 print(f"Loaded {len(positions)} SNP positions.")
 
 # Parse ann and group by chromosome
