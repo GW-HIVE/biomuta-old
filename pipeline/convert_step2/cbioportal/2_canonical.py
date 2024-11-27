@@ -2,7 +2,7 @@ import json
 import pandas as pd
 
 # Load the ENSP to UniProt mapping JSON
-with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/ensp_to_uniprot_mappings.json", "r") as f:
+with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/ensp_to_uniprot_mappings_toy.json", "r") as f:
     ensp_to_uniprot = json.load(f)
 
 # Load the isoform data CSV
@@ -34,5 +34,5 @@ for ensp, uniprot in ensp_to_uniprot.items():
             break  # Exit inner loop once the first match is found
 
 # Write the result to a JSON file
-with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/canonical.json", "w") as json_file:
+with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/canonical_toy.json", "w") as json_file:
     json.dump(result, json_file, indent=4)
