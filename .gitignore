@@ -1,5 +1,7 @@
 generated_datasets
+pipeline/convert_step2/liftover/annotations.pkl
 pipeline/convert_step2/liftover/Homo_sapiens.GRCh38.113.gff3
+utils/__pycache__/
 .*/
 ../downloads
 *.log

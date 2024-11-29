@@ -2,7 +2,7 @@ import json
 import pandas as pd
 
 # Load the ENSP to UniProt mapping JSON
-with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/ensp_to_uniprot_mappings.json", "r") as f:
+with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/ensp_to_uniprot_mappings_toy.json", "r") as f:
     ensp_to_uniprot = json.load(f)
 
 # Load the isoform data CSV
@@ -19,6 +19,9 @@ def strip_suffix(identifier):
 
 # Iterate over each ENSP and its corresponding UniProt ID
 for ensp, uniprot in ensp_to_uniprot.items():
+    # Default to "no" for canonical until proven otherwise
+    is_canonical = "no"
+    
     # Check for matching UniProt IDs in either reviewed_isoforms or unreviewed_isoforms
     for _, entry in isoform_data.iterrows():
         # Strip suffixes from isoform IDs before comparison
@@ -29,10 +32,15 @@ for ensp, uniprot in ensp_to_uniprot.items():
         if uniprot == reviewed_isoforms or uniprot == unreviewed_isoforms:
             # If a match is found, add the uniprotkb_canonical_ac to the result
             uniprotkb_ac = strip_suffix(entry.get("uniprotkb_canonical_ac"))
-            # Store the first match found for each ENSP identifier
-            result[ensp] = uniprotkb_ac
+            
+            # Check if the UniProt ID matches the canonical version
+            if uniprot == uniprotkb_ac:
+                is_canonical = "yes"
+            
+            # Store the result with canonical status
+            result[ensp] = {"uniprotkb_canonical_ac": uniprotkb_ac, "canonical": is_canonical}
             break  # Exit inner loop once the first match is found
 
 # Write the result to a JSON file
-with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/canonical.json", "w") as json_file:
+with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/canonical_toy.json", "w") as json_file:
     json.dump(result, json_file, indent=4)
