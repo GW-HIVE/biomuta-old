@@ -1,12 +1,25 @@
 import json
 import pandas as pd
+from pathlib import Path
+
+# Load config.json
+config_path = Path(__file__).resolve().parent.parent / "config.json"
+with open(config_path, "r") as config_file:
+    config = json.load(config_file)
+
+# Retrieve paths from updated config
+repos_generated_datasets = Path(config["relevant_paths"]["repos_generated_datasets"])
+repos_downloads = Path(config["relevant_paths"]["repos_downloads"])
+isoform_data_path = repos_downloads / "glygen/human_protein_masterlist.csv"
+ensp_to_uniprot_path = repos_generated_datasets / "2024_10_22/mapping_ids/ensp_to_uniprot_mappings_toy.json"
+canonical_toy_output_path = repos_generated_datasets / "2024_10_22/mapping_ids/canonical_toy.json"
 
 # Load the ENSP to UniProt mapping JSON
-with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/ensp_to_uniprot_mappings_toy.json", "r") as f:
+with open(ensp_to_uniprot_path, "r") as f:
     ensp_to_uniprot = json.load(f)
 
 # Load the isoform data CSV
-isoform_data = pd.read_csv("/data/shared/repos/biomuta-old/downloads/glygen/human_protein_masterlist.csv")
+isoform_data = pd.read_csv(isoform_data_path)
 
 # Prepare a dictionary to store the results
 result = {}
@@ -42,5 +55,5 @@ for ensp, uniprot in ensp_to_uniprot.items():
             break  # Exit inner loop once the first match is found
 
 # Write the result to a JSON file
-with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/canonical_toy.json", "w") as json_file:
+with open(canonical_toy_output_path, "w") as json_file:
     json.dump(result, json_file, indent=4)

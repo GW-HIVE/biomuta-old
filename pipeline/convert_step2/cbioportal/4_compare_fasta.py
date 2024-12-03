@@ -1,13 +1,22 @@
 import requests
 import json
+from pathlib import Path
+
+# Load config.json
+config_path = Path(__file__).resolve().parent.parent / "config.json"
+with open(config_path, "r") as config_file:
+    config = json.load(config_file)
+
+# Retrieve  paths from config.json
+repos_base = Path(config["relevant_paths"]["repos"])
+ensembl_uniprot_map_path = repos_base / "2024_10_22/mapping_ids/canonical_toy.json"
 
 # Load your JSON file containing ENSEMBL to UniProt mappings
-with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/canonical_toy.json") as file:
+with open(ensembl_uniprot_map_path, "r") as file:
     ensembl_uniprot_map = json.load(file)
 
-def fetch_ensembl_sequence(ensembl_id): #it works
+def fetch_ensembl_sequence(ensembl_id):  # Fetch ENSEMBL sequence
     url = f"https://rest.ensembl.org/sequence/id/{ensembl_id}?content-type=text/plain"
-    #https://rest.ensembl.org/sequence/id/{ensembl_id}?content-type=text/x-fasta"
     response = requests.get(url)
     if response.status_code == 200:
         return response.text.strip()
@@ -15,7 +24,7 @@ def fetch_ensembl_sequence(ensembl_id): #it works
         print(f"Failed to fetch ENSEMBL sequence for {ensembl_id}")
         return None
 
-def fetch_uniprot_sequence(uniprot_id): #it works
+def fetch_uniprot_sequence(uniprot_id):  # Fetch UniProt sequence
     url = f"https://rest.uniprot.org/uniprotkb/{uniprot_id}.fasta"
     response = requests.get(url)
     if response.status_code == 200:

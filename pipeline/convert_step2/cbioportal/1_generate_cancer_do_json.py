@@ -5,12 +5,12 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+# Configure logging
 logging.basicConfig(filename="cancer_mapping.log",
                     filemode='a',
                     format='%(asctime)s %(levelname)s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
                     level=logging.INFO)
-
 # Logging levels
 # 1. error
 # 2. warning
@@ -27,24 +27,27 @@ logging.info("Logger started ----------------------")
 #from utils import ROOT_DIR #__init__.py, ROOT_DIR is a global var
 
 # Define paths
-
 # Get the directory of this script
 script_dir = Path(__file__).resolve().parent
 # Navigate to config.json location relative to script
 config_dir = script_dir.parent.parent
-# Load config
-with open(config_dir/'config.json') as config_file:
+
+# Load config.json
+with open(config_dir / 'config.json') as config_file:
     config = json.load(config_file)
+
 # Access paths from config
+
 mapping_dir = Path(config["relevant_paths"]["mapping"])
 doid_mapping = mapping_dir / "combined_do_mapping.json"
 fallback_do_map = mapping_dir / "fallback_cbio_doid_mapping.json"
 
 # Input and output file names
-# Get the latest directory
-directory_path = Path(config["relevant_paths"]["generated_datasets"])
-latest_dir = max([d for d in os.listdir(directory_path) if os.path.isdir(os.path.join(directory_path, d))], key=lambda d: os.path.getctime(os.path.join(directory_path, d)))
-latest_dir = Path(directory_path) / latest_dir
+# Get the latest directory in generated_datasets
+generated_datasets_dir = Path(config["relevant_paths"]["generated_datasets"])
+latest_dir = max([d for d in os.listdir(generated_datasets_dir) if os.path.isdir(os.path.join(generated_datasets_dir, d))], key=lambda d: os.path.getctime(os.path.join(generated_datasets_dir, d)))
+latest_dir = Path(generated_datasets_dir) / latest_dir
+
 def ask_confirmation(prompt):
     while True:
         user_input = input(f"{prompt} (y/n): ").strip().lower()
@@ -54,11 +57,12 @@ def ask_confirmation(prompt):
             return False
         else:
             print(f"Invalid input. Please enter 'y' for yes or 'n' for no.")
+
 if ask_confirmation(f"The latest created directory is: {latest_dir}. Proceed?"):
-    input_file = Path(latest_dir) / "unique_cancer_names.txt"
-    cancer_types_with_do = Path(latest_dir) / "cancer_types_with_do.json"
-    cancer_type_per_study = Path(latest_dir) / "cancer_type_per_study.json"
-    study_ids_with_do = Path(latest_dir) / "study_ids_with_do.json"
+    input_file = latest_dir / "unique_cancer_names.txt"
+    cancer_types_with_do = latest_dir / "cancer_types_with_do.json"
+    cancer_type_per_study = latest_dir / "cancer_type_per_study.json"
+    study_ids_with_do = latest_dir / "study_ids_with_do.json"
     print(f"Using {latest_dir}/unique_cancer_names.txt and writing out to {latest_dir}/cancer_types_with_do.json")
 else:
     sys.exit("Aborted by user.")
