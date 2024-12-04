@@ -1,7 +1,9 @@
 #!/bin/bash
 
-# Load paths from config.json
-CONFIG_FILE="/path/to/config.json"
+# Get this script's directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Load config.json
+CONFIG_FILE="$SCRIPT_DIR/../../config.json"
 DOWNLOADS_DIR=$(jq -r '.relevant_paths.generated_datasets' "$CONFIG_FILE")
 
 # Today's date

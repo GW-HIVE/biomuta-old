@@ -3,7 +3,7 @@ import pandas as pd
 from pathlib import Path
 
 # Load config.json
-config_path = Path(__file__).resolve().parent.parent / "config.json"
+config_path = Path(__file__).resolve().parent.parent.parent / "config.json"
 with open(config_path, "r") as config_file:
     config = json.load(config_file)
 

@@ -1,8 +1,11 @@
 #!/bin/bash
 
-# Load paths from config.json using jq
-config_file="/path/to/config.json" # Replace with the actual path to your config.json
-generated_datasets=$(jq -r '.relevant_paths.generated_datasets' $config_file)
+# Get this script's directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Load config.json
+CONFIG_FILE="$SCRIPT_DIR/../../config.json"
+
+generated_datasets=$(jq -r '.relevant_paths.generated_datasets' $CONFIG_FILE)
 liftover_dir="${generated_datasets}/2024_10_22/liftover"
 
 # Extract rows with GRCh38 and save as tab-separated:

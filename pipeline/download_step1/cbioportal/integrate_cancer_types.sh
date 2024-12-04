@@ -1,11 +1,15 @@
 #!/bin/bash
 
-# Load the config file to dynamically retrieve paths
-config_file="path/to/config.json"
+
+# Get this script's directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Load config.json
+CONFIG_FILE="$SCRIPT_DIR/../../config.json"
+
 
 # Get paths from config
-input_dir=$(jq -r '.relevant_paths.downloads + "/cbioportal/2024_10_21/cancer_types"' "$config_file")
-output_dir=$(jq -r '.relevant_paths.generated_datasets + "/2024_10_22"' "$config_file")
+input_dir=$(jq -r '.relevant_paths.downloads + "/cbioportal/2024_10_21/cancer_types"' "$CONFIG_FILE")
+output_dir=$(jq -r '.relevant_paths.generated_datasets + "/2024_10_22"' "$CONFIG_FILE")
 
 # Define the output files
 output_file="$output_dir/cancer_type_per_study.json"

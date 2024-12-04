@@ -1,8 +1,10 @@
 #!/bin/bash
 
-# Load config.json and extract paths
-config_file="$(dirname "$(dirname "$(realpath "$0")")")/config.json"
-repos_generated_datasets=$(jq -r '.relevant_paths.repos_generated_datasets' "$config_file")
+# Get this script's directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Load config.json
+CONFIG_FILE="$SCRIPT_DIR/../../config.json"
+repos_generated_datasets=$(jq -r '.relevant_paths.repos_generated_datasets' "$CONFIG_FILE")
 
 # Input and output file paths
 input_csv="$repos_generated_datasets/2024_10_22/mapping_ids/chr_pos_to_ensp.csv"      # Input CSV file

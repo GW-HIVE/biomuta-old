@@ -3,12 +3,12 @@ import json
 from pathlib import Path
 
 # Load config.json
-config_path = Path(__file__).resolve().parent.parent / "config.json"
+config_path = Path(__file__).resolve().parent.parent.parent / "config.json"
 with open(config_path, "r") as config_file:
     config = json.load(config_file)
 
 # Retrieve  paths from config.json
-repos_base = Path(config["relevant_paths"]["repos"])
+repos_base = Path(config["relevant_paths"]["repos_generated_datasets"])
 ensembl_uniprot_map_path = repos_base / "2024_10_22/mapping_ids/canonical_toy.json"
 
 # Load your JSON file containing ENSEMBL to UniProt mappings

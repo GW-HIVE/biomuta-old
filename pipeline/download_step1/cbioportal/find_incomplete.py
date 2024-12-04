@@ -35,7 +35,7 @@ def find_incomplete_json_files(directory, output_file="incomplete_files.txt"):
     print(f"Found {len(incomplete_files)} incomplete files. Results saved to '{output_file}'.")
 
 # Load config.json
-config_path = Path(__file__).resolve().parent.parent / "config.json"
+config_path = Path(__file__).resolve().parent.parent.parent / "config.json"
 with open(config_path, "r") as config_file:
     config = json.load(config_file)
 
