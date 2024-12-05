@@ -1,7 +1,16 @@
 import os
 import ijson
+import json
+from pathlib import Path
 
 def find_incomplete_json_files(directory, output_file="incomplete_files.txt"):
+    """
+    Function to find incomplete or corrupted JSON files in the specified directory.
+
+    Args:
+        directory (str): Directory containing JSON files.
+        output_file (str): File to save the names of incomplete JSON files.
+    """
     # List to store the names of incomplete files
     incomplete_files = []
 
@@ -25,8 +34,17 @@ def find_incomplete_json_files(directory, output_file="incomplete_files.txt"):
 
     print(f"Found {len(incomplete_files)} incomplete files. Results saved to '{output_file}'.")
 
-# Specify the directory containing your JSON files
-directory_path = "/data/shared/pipelines/cbioportal/mutations"
+# Load config.json
+config_path = Path(__file__).resolve().parent.parent.parent / "config.json"
+with open(config_path, "r") as config_file:
+    config = json.load(config_file)
+
+# Get base directory from config
+downloads_base = Path(config["relevant_paths"]["downloads"]) / "cbioportal /2024_10_21"
+
+
+directory_path = downloads_base / "mutations"
+
 
 # Run the function
 find_incomplete_json_files(directory_path)

@@ -1,8 +1,14 @@
 #!/bin/bash
 
+# Get this script's directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Load config.json
+CONFIG_FILE="$SCRIPT_DIR/../../config.json"
+repos_generated_datasets=$(jq -r '.relevant_paths.repos_generated_datasets' "$CONFIG_FILE")
+
 # Input and output file paths
-input_csv="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/chr_pos_to_ensp.csv"      # Input CSV file
-output_json="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/ensp_to_uniprot_mappings.json"   # Output JSON file
+input_csv="$repos_generated_datasets/2024_10_22/mapping_ids/chr_pos_to_ensp.csv"      # Input CSV file
+output_json="$repos_generated_datasets/2024_10_22/mapping_ids/ensp_to_uniprot_mappings.json"   # Output JSON file
 
 batch_size=5000            # Number of ENSP IDs per batch (adjustable)
 

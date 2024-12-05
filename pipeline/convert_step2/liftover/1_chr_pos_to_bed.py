@@ -16,17 +16,27 @@
 #GRCh37: 30925146
 #NA: 3143
 #GRCh38: 6253932
-
 import os
 import json
 import glob
 import sys
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
-from utils import ROOT_DIR
-from utils.config import get_config
+# Load config.json directly and ensure paths are resolved correctly
+CONFIG_FILE = Path(__file__).resolve().parent.parent.parent / "config.json"
+if not CONFIG_FILE.exists():
+    raise FileNotFoundError(f"Config file not found at {CONFIG_FILE}")
 
+with open(CONFIG_FILE, "r") as config_file:
+    config = json.load(config_file)
+
+# Retrieve paths from config
+downloads_dir = Path(config["relevant_paths"]["downloads"])
+generated_datasets_dir = Path(config["relevant_paths"]["generated_datasets"])
+
+# Define input and output directories
+input_directory = downloads_dir / "cbioportal" / "2024_10_21" / "mutations"
+output_bed_file = generated_datasets_dir / "2024_10_22" / "liftover" / "hg19entrez_build_protChange.bed"
 
 def process_json_to_bed(input_directory, output_bed_file):
     buffer = []
@@ -49,26 +59,25 @@ def process_json_to_bed(input_directory, output_bed_file):
                             # Check genome build and SNP criteria
                             if record.get('ncbiBuild') == 'NA':
                                 continue
-                            if record.get('variantType') != 'SNP': #take SNPs only
+                            if record.get('variantType') != 'SNP':  # Take SNPs only
                                 continue
-                            if record['endPosition'] - record['startPosition'] != 0: #additional check to confirm SNP
+                            if record['endPosition'] - record['startPosition'] != 0:  # Additional check to confirm SNP
                                 continue
-                            if 'splice' in record.get('proteinChange', ''): #no splice site mutations
+                            if 'splice' in record.get('proteinChange', ''):  # No splice site mutations
                                 continue
 
                             # Extract chromosome, start position, and end position
-
                             chr_ = record['chr']
                             # Convert specific chromosome values and exclude unwanted chromosomes
-                            if chr_ == '23': 
+                            if chr_ == '23':
                                 chr_ = 'X'
                             if chr_ == '24':
                                 chr_ = 'Y'
                             if chr_ in ['MT', 'NA']:
-                                continue # Skip records with 'MT' (mitochondrial) or 'NA' as chromosome values
+                                continue  # Skip records with 'MT' (mitochondrial) or 'NA' as chromosome values
                             if not chr_.startswith('chr'):
                                 chr_ = 'chr' + chr_
-                            start_pos = record['startPosition'] - 1 # Convert to 0-based for BED
+                            start_pos = record['startPosition'] - 1  # Convert to 0-based for BED
                             end_pos = record['endPosition']
                             entrez_gene_id = record['entrezGeneId']
                             ncbi_build = record['ncbiBuild']
@@ -77,10 +86,10 @@ def process_json_to_bed(input_directory, output_bed_file):
                             row = f"{chr_}\t{start_pos}\t{end_pos}\t{entrez_gene_id}\t{ncbi_build}\t{protein_change}\n"
                             if row not in unique_rows:  # Only add unique rows
                                 unique_rows.add(row)
-                                buffer.append(row) # Append row to buffer
+                                buffer.append(row)  # Append row to buffer
 
                             # Write buffer to file when it reaches the specified size
-                            if len(buffer) >= buffer_size: 
+                            if len(buffer) >= buffer_size:
                                 bed_file.writelines(buffer)
                                 buffer.clear()
 
@@ -110,9 +119,4 @@ def process_json_to_bed(input_directory, output_bed_file):
 
 
 # Run the function
-config_obj = get_config()
-dl_dir = Path(config_obj["relevant_paths"]["downloads"])
-out_dir = Path(config_obj["relevant_paths"]["generated_datasets"])
-input_directory = dl_dir / 'cbioportal' / '2024_10_21' / 'mutations'  # Write a util to get latest dir
-output_bed_file = out_dir / '2024_10_22' / 'liftover' / 'hg19entrez_build_protChange.bed' #Write a util to get latest dir
 process_json_to_bed(input_directory, output_bed_file)

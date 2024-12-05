@@ -1,17 +1,23 @@
 #!/bin/bash
 
+# Get this script's directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Load config.json
+CONFIG_FILE="$SCRIPT_DIR/../../config.json"
+DOWNLOADS_DIR=$(jq -r '.relevant_paths.generated_datasets' "$CONFIG_FILE")
+
 # Today's date
 TODAY=$(date +"%Y_%m_%d")
 
-# Download directory
-OUTPUT_DIR="/data/shared/biomuta/generated/datasets/${TODAY}"
+# Output directory
+OUTPUT_DIR="${DOWNLOADS_DIR}/${TODAY}"
 mkdir -p "${OUTPUT_DIR}/mutations"
 
 # Base URLs for the API
 STUDY_URL="https://www.cbioportal.org/api/studies"
 MUTATIONS_URL="https://www.cbioportal.org/api/molecular-profiles"
 
-#get study IDs
+# Get study IDs
 curl -G "${STUDY_URL}" \
      -H "accept: application/json" \
      -o "${OUTPUT_DIR}/all_studies.json"

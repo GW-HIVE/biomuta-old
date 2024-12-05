@@ -1,12 +1,22 @@
 #!/bin/bash
 
-# This script extracts study IDs and the corresponding cancer names. It takes as input the output of cancer_types.sh
 
-# Define the directory where your JSON files are located
-input_dir="/data/shared/biomuta/downloads/cbioportal/2024_10_21/cancer_types"
+# Get this script's directory
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Load config.json
+CONFIG_FILE="$SCRIPT_DIR/../../config.json"
 
-# Define the output TSV file
-output_file="/data/shared/biomuta/generated/datasets/2024_10_22/cancer_type_per_study.json"
+
+# Get paths from config
+input_dir=$(jq -r '.relevant_paths.downloads + "/cbioportal/2024_10_21/cancer_types"' "$CONFIG_FILE")
+output_dir=$(jq -r '.relevant_paths.generated_datasets + "/2024_10_22"' "$CONFIG_FILE")
+
+# Define the output files
+output_file="$output_dir/cancer_type_per_study.json"
+unique_cancer_names_file="$output_dir/unique_cancer_names.json"
+
+# Create the output directory if it doesn't exist
+mkdir -p "$output_dir"
 
 # Initialize the JSON array
 echo "[" > "$output_file"
@@ -42,5 +52,7 @@ echo "]" >> "$output_file"
 
 echo "Data successfully written to $output_file"
 
-# Make a list of unique cancer names in json format
-jq -r '.[].cancerType' $output_file | sort | uniq | jq -R . | jq -s . > unique_cancer_names.json
+# Make a list of unique cancer names in JSON format
+jq -r '.[].cancerType' "$output_file" | sort | uniq | jq -R . | jq -s . > "$unique_cancer_names_file"
+
+echo "Unique cancer names written to $unique_cancer_names_file"

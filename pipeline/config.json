@@ -1,5 +1,7 @@
 {
     "relevant_paths": {
+        "repos_generated_datasets": "/data/shared/repos/biomuta-old/generated_datasets",
+        "repos_downloads": "/data/shared/repos/biomuta-old/downloads",
         "downloads": "/data/shared/biomuta/downloads",
         "generated_datasets": "/data/shared/biomuta/generated/datasets",
         "mapping": "/data/shared/biomuta/pipeline/convert_step2/mapping"
