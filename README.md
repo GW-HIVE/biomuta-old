@@ -87,6 +87,8 @@ Example `config.json`:
 ```
 
 ## Usage
+(Provide info on each script: which file is used as input, what output is produced etc.)
+
 ### Step 1: Download
 1. Go to `pipeline/download_step1/cbioportal`
 2. 

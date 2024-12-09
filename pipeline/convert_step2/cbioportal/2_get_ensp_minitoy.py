@@ -1,4 +1,5 @@
 import csv
+import logging
 import pickle
 import sys
 from pathlib import Path
@@ -7,14 +8,22 @@ sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
 from utils import ROOT_DIR
 from utils.config import get_config
 
+logging.basicConfig(filename="cancer_mapping.log",
+                    filemode='a',
+                    format='%(asctime)s %(levelname)s %(message)s',
+                    datefmt='%Y-%m-%d %H:%M:%S',
+                    level=logging.INFO)
+
+logging.info("Logger started ----------------------")
+
 # Load input_bed and ann
 # Set input directory for JSON files and output file for BED format
 config_obj = get_config()
 wd = Path(config_obj["relevant_paths"]["generated_datasets"])
-input_bed = wd / '2024_10_22' / 'liftover' / 'hg38_combined.bed'  # Write a util to get latest dir
+input_bed = wd / '2024_10_22' / 'liftover' / 'hg38_combined_minitoy.bed'  # Write a util to get latest dir
 ann_dir = Path(config_obj["relevant_paths"]["downloads"])
 ann = ann_dir / 'ensembl' / 'Homo_sapiens.GRCh38.113.gff3'  # GFF file with genomic features
-output_file = wd / '2024_10_22' / 'mapping_ids' / 'chr_pos_to_ensp.csv'
+output_file = wd / '2024_10_22' / 'mapping_ids' / 'chr_pos_to_ensp_minitoy.csv'
 
 
 # Step 1: Load and Serialize 'ann' Annotations
