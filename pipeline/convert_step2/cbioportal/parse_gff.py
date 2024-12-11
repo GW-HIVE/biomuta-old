@@ -67,10 +67,21 @@ def get_ensp_for_position(chrom, start, end):
     start += 1
 
     # Query the database for 'CDS' features in the given region
-    for feature in db.region(region=(chrom, start, end), featuretype='CDS'): # Adjust feature type
+    for feature in db.region(region=(chrom, start, end), featuretype='CDS'):
         if 'protein_id' in feature.attributes:
             ensp_ids.extend(feature.attributes['protein_id'])
     return ensp_ids if ensp_ids else ['N/A']
+
+
+# Helper function to clean and map chromosome IDs back to their original format
+def clean_chr_id(chr_id):
+    chr_id = chr_id.lstrip("chr") # Remove 'chr' prefix
+    if chr_id == "X":
+        return "23"
+    elif chr_id == "Y":
+        return "24"
+    return chr_id # For numeric values, return as-is
+
 
 def process_bed_file(input_file, output_file):
     '''
@@ -78,7 +89,7 @@ def process_bed_file(input_file, output_file):
     '''
     with open(input_file, 'r') as infile, open(output_file, 'w', newline='') as outfile:
         reader = csv.reader(infile, delimiter='\t')
-        writer = csv.writer(outfile)
+        writer = csv.writer(outfile, delimiter='\t')
 
         # Write header to output file
         writer.writerow(['chr_id', 'start_pos', 'end_pos', 'entrez_gene_id', 'prot_change', 'ensp'])
@@ -95,7 +106,7 @@ def process_bed_file(input_file, output_file):
             # Write each ENSP as a separate row if there are more than 1
             if ensp_ids:
                 for ensp in ensp_ids:
-                    writer.writerow([chr_id, start_pos, end_pos, entrez_gene_id, prot_change, ensp])
+                    writer.writerow([clean_chr_id(chr_id), start_pos, end_pos, entrez_gene_id, prot_change, ensp])
 
 # Example usage
 '''
@@ -108,6 +119,6 @@ logging.info(f"ENSP IDs: {ensps}")
 config_obj = get_config()
 wd = Path(config_obj["relevant_paths"]["generated_datasets"])
 input_file = wd / '2024_10_22' / 'liftover' / 'hg38_combined.bed'  # Write a util to get latest dir
-output_file = wd / '2024_10_22' / 'mapping_ids' / 'chr_pos_to_ensp.csv'
+output_file = wd / '2024_10_22' / 'mapping_ids' / 'chr_pos_to_ensp.tsv'
 
 process_bed_file(input_file, output_file)
