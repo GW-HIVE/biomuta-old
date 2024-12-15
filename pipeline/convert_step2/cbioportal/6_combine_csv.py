@@ -4,9 +4,10 @@ import json
 import logging
 import os
 import glob
+import time
 
 # Logging
-logging.basicConfig(filename="combine_cbio.log",
+logging.basicConfig(filename="combine_cbio2.log",
                     filemode='a',
                     format='%(asctime)s %(levelname)s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
@@ -15,17 +16,18 @@ logging.basicConfig(filename="combine_cbio.log",
 logging.info("Logger started ----------------------")
 
 # Paths
-base_csv_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/chr_pos_to_ensp.csv'
+base_csv_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/chr_pos_to_ensp.tsv'
 json_dir_path = '/data/shared/biomuta/downloads/cbioportal/2024_10_21/mutations_toy'
 study_ids_with_do_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/study_ids_with_do.json'
 
 # Debugging
 import traceback
 
+'''
 # Check for unusually large fields
 # Check for rows with more than 6 columns in base_csv_path
 with open(base_csv_path, 'r') as file:
-    reader = csv.reader(file)
+    reader = csv.reader(file, delimiter="\t")
     i = 0
     try:
         for i, row in enumerate(reader):
@@ -40,14 +42,55 @@ with open(base_csv_path, 'r') as file:
         logging.error(traceback.format_exc)
 
 '''
-# Load base CSV into a dictionary for quick lookup
-base_df = pd.read_csv(base_csv_path)
+### Load base CSV into a dictionary for quick lookup
+start_time = time.time()
+logging.info("Starting to read the base CSV in chunks...")
+
+# Initialize base_dict
+base_dict = {}
+
+# Define chunk size
+chunk_size = 1000  # Adjust based on system's memory and processing speed
+
+# Read the CSV file in chunks
+for chunk_index, chunk in enumerate(
+    pd.read_csv(
+        base_csv_path,
+        sep='\t',
+        dtype={'chr_id': str, 'entrez_gene_id': str, 'prot_change': str},
+        low_memory=False,
+        chunksize=chunk_size,
+    )
+):
+    logging.info(f"Processing chunk {chunk_index + 1}...")
+
+    # Add chunk data to the dictionary
+    for _, row in chunk.iterrows():
+        key = (str(row['chr_id']), str(row['entrez_gene_id']), str(row['prot_change']))
+        base_dict[key] = row
+
+    logging.info(f"Chunk {chunk_index + 1} processed. Current dict size: {len(base_dict)}")
+
+logging.info(f"Finished processing CSV. Total keys in base_dict: {len(base_dict)}")
+logging.info(f"Base dictionary created in {time.time() - start_time:.2f} seconds.")
+
+
+
+
+
+''' This takes too long
+base_df = pd.read_csv(
+    base_csv_path, sep='\t', dtype={'chr_id': str, 'entrez_gene_id': str, 'prot_change': str}, low_memory=False
+)
+logging.info(f"Base CSV loaded with {len(base_df)} rows.")
 
 # Build the dictionary with updated chromosome IDs
 base_dict = {
-    (str(row['chr_id']), str(row['entrez']), str(row['prot_change'])): row # Convert all to string to avoid unexpected dtypes
+    (str(row['chr_id']), str(row['entrez_gene_id']), str(row['prot_change'])): row # Convert all to string to avoid unexpected dtypes
     for _, row in base_df.iterrows()
 }
+'''
+
 # Check the contents of the first 10 pairs and their dtypes
 for i, (key, value) in enumerate(base_dict.items()):
     if i >= 10:
@@ -76,6 +119,7 @@ processed_rows = []
 for i, json_file in enumerate(json_files, start=1):
     with open(json_file) as f:
         mutations = json.load(f)
+        logging.info(f"Processing file {i}/{total_files}: {json_file}")
         for mutation in mutations:
             key = (str(mutation['chr']), str(mutation['entrezGeneId']), str(mutation['proteinChange'])) #check what is stored
             #dict is a hash map in python. How does key hashing work for tuples or -> .join() to one string
@@ -99,6 +143,7 @@ for i, (key, row) in enumerate(processed_rows):
     logging.info(f"Row value types: {value_types}")
     logging.info("-" * 50)
 
+'''
             if row:
                 # Extract data for the new CSV
                 sample_name = mutation.get('sampleId', '')
