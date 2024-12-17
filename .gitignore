@@ -1,3 +1,4 @@
+batch_*
 env
 downloads
 generated_datasets
@@ -6,4 +7,5 @@ pipeline/convert_step2/liftover/Homo_sapiens.GRCh38.113.gff3
 utils/__pycache__/
 .*/
 *.log
+*.out
 *nohup*

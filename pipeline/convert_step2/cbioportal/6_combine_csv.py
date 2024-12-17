@@ -7,7 +7,7 @@ import glob
 import time
 
 # Logging
-logging.basicConfig(filename="combine_cbio2.log",
+logging.basicConfig(filename="combine_cbio3.log",
                     filemode='a',
                     format='%(asctime)s %(levelname)s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
@@ -62,35 +62,15 @@ for chunk_index, chunk in enumerate(
         chunksize=chunk_size,
     )
 ):
-    logging.info(f"Processing chunk {chunk_index + 1}...")
-
     # Add chunk data to the dictionary
     for _, row in chunk.iterrows():
         key = (str(row['chr_id']), str(row['entrez_gene_id']), str(row['prot_change']))
         base_dict[key] = row
 
-    logging.info(f"Chunk {chunk_index + 1} processed. Current dict size: {len(base_dict)}")
-
 logging.info(f"Finished processing CSV. Total keys in base_dict: {len(base_dict)}")
 logging.info(f"Base dictionary created in {time.time() - start_time:.2f} seconds.")
 
-
-
-
-
-''' This takes too long
-base_df = pd.read_csv(
-    base_csv_path, sep='\t', dtype={'chr_id': str, 'entrez_gene_id': str, 'prot_change': str}, low_memory=False
-)
-logging.info(f"Base CSV loaded with {len(base_df)} rows.")
-
-# Build the dictionary with updated chromosome IDs
-base_dict = {
-    (str(row['chr_id']), str(row['entrez_gene_id']), str(row['prot_change'])): row # Convert all to string to avoid unexpected dtypes
-    for _, row in base_df.iterrows()
-}
 '''
-
 # Check the contents of the first 10 pairs and their dtypes
 for i, (key, value) in enumerate(base_dict.items()):
     if i >= 10:
@@ -100,7 +80,8 @@ for i, (key, value) in enumerate(base_dict.items()):
     value_types = {col: type(value[col]) for col in value.index}
     logging.info(f"Value Types: {value_types}")
     logging.info("-" * 50)
-
+'''
+    
 # Load study IDs with DO information
 with open(study_ids_with_do_path) as f:
     study_ids_with_do = {entry["studyId"]: entry["do_name"] for entry in json.load(f)}
@@ -113,9 +94,10 @@ json_files = glob.glob(os.path.join(json_dir_path, '*.json'))
 total_files = len(json_files)
 processed_mutations = 0
 
+'''
 # Debugging json processing
 processed_rows = []
-
+'''
 for i, json_file in enumerate(json_files, start=1):
     with open(json_file) as f:
         mutations = json.load(f)
@@ -125,25 +107,6 @@ for i, json_file in enumerate(json_files, start=1):
             #dict is a hash map in python. How does key hashing work for tuples or -> .join() to one string
             # Retrieve the corresponding row from base_dict
             row = base_dict.get(key) #print row
-
-            # Store the processed row for debugging
-            if len(processed_rows) < 10:
-                processed_rows.append((key, row))
-
-# Print they first 10 rows and their data types
-for i, (key, row) in enumerate(processed_rows):
-    logging.info(f"Row {i + 1}:")
-    logging.info(f"Key: {key} | Key Types: {tuple(type(k) for k in key)}")
-    if row is None:
-        logging.warning(f"Row is None, skipping...")
-        logging.info("-" * 50)
-        continue
-    logging.info(f"Row data: {row.to_dict()}") # Convert row (Pandas Series) to dict for readability
-    value_types = {col: type(row[col]) for col in row.index}
-    logging.info(f"Row value types: {value_types}")
-    logging.info("-" * 50)
-
-'''
             if row:
                 # Extract data for the new CSV
                 sample_name = mutation.get('sampleId', '')
@@ -188,4 +151,21 @@ output_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/fina
 output_df.to_csv(output_path, index=False)
 
 logging.info(f"CSV file saved to {output_path}")
+'''
+            # Store the processed row for debugging
+            if len(processed_rows) < 10:
+                processed_rows.append((key, row))
+
+# Print they first 10 rows and their data types
+for i, (key, row) in enumerate(processed_rows):
+    logging.info(f"Row {i + 1}:")
+    logging.info(f"Key: {key} | Key Types: {tuple(type(k) for k in key)}")
+    if row is None:
+        logging.warning(f"Row is None, skipping...")
+        logging.info("-" * 50)
+        continue
+    logging.info(f"Row data: {row.to_dict()}") # Convert row (Pandas Series) to dict for readability
+    value_types = {col: type(row[col]) for col in row.index}
+    logging.info(f"Row value types: {value_types}")
+    logging.info("-" * 50)
 '''

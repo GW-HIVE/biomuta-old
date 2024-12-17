@@ -79,6 +79,8 @@ def get_ensp_for_position(chrom, start, end):
 # Helper function to clean and map chromosome IDs back to their original format
 chr_id_cache = {} # Store IDs in a dictionary to avoid repeated computations, esp helpful since input has many repeated chr IDs
 def clean_chr_id(chr_id):
+    for i in (1, 24):
+        
     if chr_id not in chr_id_cache:
         chr_id_clean = chr_id.lstrip("chr") # Remove 'chr' prefix
         chr_id_clean = "23" if chr_id_clean == "X" else "24" if chr_id_clean == "Y" else chr_id_clean

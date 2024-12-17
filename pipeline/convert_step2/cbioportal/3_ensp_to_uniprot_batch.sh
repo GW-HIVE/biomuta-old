@@ -1,22 +1,26 @@
 #!/bin/bash
 
+# Testing on chr_pos_to_ensp.tsv after parsing gff with gffutils
+# Result: writes few entries
+# Investigating why
+
 # Input and output file paths
-input_csv="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/chr_pos_to_ensp.csv"      # Input CSV file
-output_json="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/ensp_to_uniprot_mappings.json"   # Output JSON file
+input_tsv="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/chr_pos_to_ensp.tsv"      # Input TSV file
+output_json="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/gffutils_ensp_to_uniprot_mappings.json"   # Output JSON file
 
 batch_size=5000            # Number of ENSP IDs per batch (adjustable)
 
 # Create a temporary file for unique ENSP IDs
 temp_file=$(mktemp)
 
-# Extract unique ENSP IDs from the input CSV (excluding the header)
-awk -F, 'NR > 1 {print $6}' "$input_csv" | sort -u > "$temp_file"
+# Extract unique ENSP IDs from the input TSV (excluding the header)
+awk -F'\t' 'NR > 1 {print $6}' "$input_tsv" | sort -u > "$temp_file"
 
 # Create an associative array to store mappings
 declare -A mappings
 
 # Ensure cleanup of temporary files on exit
-trap 'rm -f "$temp_file" "$batch_file" batch_*' EXIT
+trap 'rm -f "$temp_file" "$batch_file" batch_* temp_results.json' EXIT
 
 # Process ENSP IDs in batches
 batch_file=$(mktemp)  # Temporary file for batch data
