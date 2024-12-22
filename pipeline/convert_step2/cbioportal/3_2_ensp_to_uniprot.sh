@@ -10,6 +10,8 @@
 # Mapping is going to be done using human_protein_transcriptlocus.csv from data.glygen.org/GLY_000135 (see 3_ensp_to_uniprot.py) to avoid using the API.
 # 87,679 ENSP IDs were mapped, 23,517 ENSP IDs remain unmapped (see if unmapped IDs are non-canonical = process separately).
 # Mapping unmapped IDs using the API... done.
+# Changed output writing logic and format, untested.
+# Improvement needed: log unmapped IDs.
 
 # Log file path
 log_file="3_logfile3.log"
@@ -48,7 +50,7 @@ Unmapped IDs written to $unmapped_file
 log "Splitting ENSP IDs into batches of size $batch_size"
 split -l "$batch_size" "$unmapped_file" batch_
 
-trap 'rm -f temp_results.json' EXIT
+trap 'rm -f temp_results.json; rm -f batch_*' EXIT
 
 # Process each batch
 batch_count=0
@@ -139,7 +141,16 @@ for batch_chunk in batch_*; do
         continue
     fi
 
+    # Initialize a temporary file for the dictionary if it doesn't exist
+    if [ ! -f "$output_json" ]; then
+        echo "{}" > "$output_json"
+    fi
+
+    successful_mappings=$(mktemp)
+    echo "{}" > "$successful_mappings" # Temporary file to accumulate results
+
     # Process successful mappings
+    log "Processing successful mappings for batch $batch_count"
     successful_batch_file="$successful_ids_dir/successful_ids_batch_$batch_count.json"
     echo "$result" | jq -c '.results[]' > temp_results.json
     while read -r record; do
@@ -147,13 +158,14 @@ for batch_chunk in batch_*; do
         primaryAccession=$(echo "$record" | jq -r '.to.primaryAccession')
         if [ -n "$primaryAccession" ]; then
             log "Mapping found: $ensp_id -> $primaryAccession"
-            echo "{\"from\": \"$ensp_id\", \"to\": \"$primaryAccession\"}" >> "$successful_batch_file"
-            echo "{\"from\": \"$ensp_id\", \"to\": \"$primaryAccession\"}" >> "$output_json"
+            jq --arg key "$ensp_id" --arg value "$primaryAccession" \ '. + {($key): $value}' "$successful_mappings" > tmp.json && mv tmp.json "$successful_mappings"
         fi
     done < temp_results.json
 
-    log "Successful mappings for batch $batch_count written to $successful_batch_file"
+    # Merge the batch results with the main output file
+    jq -s '.[0] * .[1]' "$output_json" "$successful_mappings" > tmp.json && mv tmp.json "$output_json"
+    log "Merged successful mappings for batch $batch_count into $output_json"
 
     # Clean up temporary files
-    rm -f "$batch_file" temp_results.json
+    rm -f "$batch_chunk" "$batch_file" temp_results.json "$successful_mappings"
 done

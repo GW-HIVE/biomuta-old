@@ -83,9 +83,35 @@ def compare_tsv_and_output(file1, file2, output_file):
             value1 = data1.get(key, 'N/A')
             value2 = data2.get(key, 'N/A')
             writer.writerow([key, value1, value2])
-
+'''
 # Example usage:
 compare_tsv_and_output('/data/shared/biomuta/generated/stats/sites_per_do_cbio.tsv', '/data/shared/biomuta/generated/stats/sites_per_do_bm.tsv', '/data/shared/biomuta/generated/stats/sites_per_do_bm_cbio.tsv')
+'''
+
+
+def find_all_possible_regex(filepath_csv, colname):
+    data = pd.read_csv(filepath_csv, dtype=
+                       {
+                           "uniprotkb_canonical_ac": str,
+                            "status": str,
+                            "gene_name": str,
+                            "reviewed_isoforms": str,
+                            "unreviewed_isoforms": str
+                       })
+    # Extract the "uniprotkb_canonical_ac" column
+    col = data[colname]
+
+    # Find all numbers after "-" using regex
+    numbers = col.dropna().str.extractall(r'-(\d+)')[0].unique() # Adjust regex as needed
+
+    # Display the unique numbers
+    return sorted(numbers)
+'''
+# Example usage
+filepath = '/data/shared/repos/biomuta-old/downloads/glygen/human_protein_masterlist.csv'
+colname = 'uniprotkb_canonical_ac'
+print(find_all_possible_regex(filepath, colname))
+'''
 
 
 def find_matching_json_records(directory, chr_value, entrezGeneId_value):
@@ -130,11 +156,19 @@ def find_matching_json_records(directory, chr_value, entrezGeneId_value):
 '''
 # Example usage
 json_directory = '/data/shared/biomuta/downloads/cbioportal/2024_10_21/mutations'
-chr_value = 15  # This will be converted to a string
-entrezGeneId_value = 28472  # This should be an integer
+out_file = '/data/shared/repos/biomuta-old/downloads/cbioportal/2024_10_21/filtered_mutations/81855.json'
+chr_value = 10  # This will be converted to a string
+entrezGeneId_value = 81855  # This should be an integer
 matching_records = find_matching_json_records(json_directory, chr_value, entrezGeneId_value)
-print(f"Matching entries: {matching_records}")
+# Fields to print
+fields_to_print = ['proteinChange', 'startPosition', 'endPosition', 'ncbiBuild']
+# Filter the records
+result = [{field: record.get(field) for field in fields_to_print} for record in matching_records]
+# Save the result to a JSON file
+with open(out_file, 'w') as f:
+    json.dump(result, f, indent=4)
 '''
+
 
 def find_records(filename, chr_value, entrezGeneId_value):
     # Ensure chr_value is a string and entrezGeneId_value is an integer
