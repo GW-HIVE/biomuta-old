@@ -1,12 +1,6 @@
 #!/bin/bash
 
-# Successfully created batches of ESNP IDs of size 5000
-# Testing API calls
 # API only processes 25 IDs at a time for some reason
-# Reducing batch size to 25
-# It works for the first batch, testing all batches
-# An error appears at batch 879
-# Stopped there
 # Mapping is going to be done using human_protein_transcriptlocus.csv from data.glygen.org/GLY_000135 (see 3_ensp_to_uniprot.py) to avoid using the API.
 # 87,679 ENSP IDs were mapped, 23,517 ENSP IDs remain unmapped (see if unmapped IDs are non-canonical = process separately).
 # Mapping unmapped IDs using the API... done.
@@ -24,7 +18,7 @@ log() {
 input_tsv="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/chr_pos_to_ensp.tsv"
 unique_ensp="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/unique_ensp"
 unmapped_file="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/unmapped_ids.log"
-output_json="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/gffutils_ensp_to_uniprot_mappings.json"
+output_json="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/ensp_to_uniprot_from_api.json"
 
 batch_size=25  # Number of ENSP IDs per batch (adjustable)
 failed_ids_dir="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/failed_ids"
@@ -153,6 +147,8 @@ for batch_chunk in batch_*; do
     log "Processing successful mappings for batch $batch_count"
     successful_batch_file="$successful_ids_dir/successful_ids_batch_$batch_count.json"
     echo "$result" | jq -c '.results[]' > temp_results.json
+    
+    # Transform and accumulate key-value pairs
     while read -r record; do
         ensp_id=$(echo "$record" | jq -r '.from')
         primaryAccession=$(echo "$record" | jq -r '.to.primaryAccession')

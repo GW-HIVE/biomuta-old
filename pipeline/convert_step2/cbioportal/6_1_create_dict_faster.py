@@ -71,11 +71,11 @@ for chunk in pd.read_csv(
         if uniprot_id is None:
             continue  # Skip this row
 
-        # Replace 'ensp' with 'uniprot_canonical_ac'
+        # Replace 'ensp' with 'uniprotkb_canonical_ac'
         if uniprot_id:
-            row['uniprot_canonical_ac'] = uniprot_id
+            row['uniprotkb_canonical_ac'] = uniprot_id
         else:
-            row['uniprot_canonical_ac'] = None
+            row['uniprotkb_canonical_ac'] = None
         # Drop the original 'ensp' column
         row = row.drop(labels=['ensp'])
 

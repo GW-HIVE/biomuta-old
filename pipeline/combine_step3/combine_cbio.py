@@ -1,8 +1,15 @@
-# Fixes needed:
-# If TCGA in sample name, put "tcga" in "source"
-# How to QC?
-# How many mutations did I lose at each step in the pipeline (e.g. how many weren't lifted over, how many were isoforms, how many weren't found in UniProt map)
+# Should I keep rows whose only difference with each other is sample name?
+
+# QC
+#   - How many mutations did I lose at each step in the pipeline, e.g.
+#      how many weren't lifted over
+#      how many were isoforms (ENSP IDs thrown away because they are isoforms)
+#      how many weren't found in UniProt map
+
 # Don't strip the number after uniprot canonical ac (upstream in the pipeline)
+#   1. Re-run 3_1_ensp_to_uniprot.py: Done! (But there was no need because I updated base_dict directly. Useful for the next release.)
+#   2. Re-run 3_2_ensp_to_uniprot.sh: No need because the API doesn't specify the canonical isoform (e.g. P29692). Could map the resulting accessions to masterlist to extract (e.g. P29692-1). Updating base_dict... Done!
+#   3. Use base_dict_updated to rebuild the final table. Add quotes and +1 to start_pos: Done!
 
 import glob
 import json
@@ -56,8 +63,6 @@ temp_dir = "/data/shared/repos/biomuta-old/generated_datasets/temp_outputs"
 os.makedirs(temp_dir, exist_ok=True)
 
 for i, json_file in enumerate(json_files, start=1):
-    file_size = os.path.getsize(json_file)
-    logging.info(f"File size: {file_size} bytes")
     with open(json_file) as f:
         mutations = json.load(f)
         logging.info(f"Processing file {i}/{total_files}: {json_file}")

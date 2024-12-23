@@ -1,32 +1,37 @@
 import csv
-import json
 
 # File paths
 input_file = "/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/unique_ensp"
 mapping_file = "/data/shared/repos/biomuta-old/downloads/glygen/human_protein_transcriptlocus.csv"
-output_file = "/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/ensp_to_uniprot.json"
-unmapped_file = "/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/unmapped_ids.log"
+output_file = "/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/rerun_uniprot_can_dash_number/ensp_to_uniprot_from_glygen.json"
+unmapped_file = "/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/rerun_uniprot_can_dash_number/unmapped_ids_by_glygen.log"
 
 def read_input_ids(input_path):
-    """Generator to yield ENSP IDs from input file."""
+    """
+    Generator function that extracts ENSP IDs from input file.
+    """
     with open(input_path, 'r') as f:
         for line in f:
             yield line.strip()
 
 def process_mapping_file(mapping_path, ensp_set):
-    """Generator to process mapping file and yield ENSP-UniProt pairs."""
+    """
+    Generator function that processes mapping file and yields ENSP-UniProt pairs.
+    """
     with open(mapping_path, 'r') as f:
         reader = csv.DictReader(f)
         for i, row in enumerate(reader):
             if i % 10000 == 0:
                 print(f"Processed {i} rows from mapping file...")
             peptide_id = row["peptide_id"].split('.')[0]
-            uniprot_ac = row["uniprotkb_canonical_ac"].split('-')[0]
+            uniprot_ac = row["uniprotkb_canonical_ac"]
             if peptide_id in ensp_set:
                 yield peptide_id, uniprot_ac
 
 def write_output(output_path, mapping_generator):
-    """Write ENSP-UniProt mappings incrementally to JSON."""
+    """
+    Write ENSP-UniProt mappings incrementally to JSON.
+    """
     print("Writing output to JSON file...")
     with open(output_path, 'w') as f:
         f.write("{\n")
