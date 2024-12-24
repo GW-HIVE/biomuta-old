@@ -45,7 +45,7 @@ BioMuta gathers mutation data for the following cancers:
 - DOID:11054 / urinary bladder cancer
 
 ## Features
-BioMuta pipeline comprises two steps:
+BioMuta pipeline comprises three steps:
 1. **Download**
 
 Downloads mutation lists from each source.
@@ -54,6 +54,10 @@ TBA: cBioPortal fields, cBioPortal studies
 2. **Convert**
 
 Formats all resources to the BioMuta standard for both data and field structure.
+
+3. **Combine**
+
+Builds the full table in CSV format ready to be shipped.
 
 ## Installation
 1. **Clone the Repository:**
@@ -93,8 +97,10 @@ Example `config.json`:
 1. Go to `pipeline/download_step1/cbioportal`
 2. 
 Script execution order (some scripts will be moved into appropriate directories later)
-1 - fetch_mutations.sh
-2 - cancer_types.py | integrate_cancer_types.sh
+Scripts use cBioPortal API: https://www.cbioportal.org/api/swagger-ui/index.html
+1 - Download list of study IDs with their corresponding cancer names that will be subsequently converted to Disease Ontology cancer slim terms.
+2 - fetch_mutations.sh downloads mutation data in JSON format, using the list of study IDs as input.
+3 - cancer_types.py | integrate_cancer_types.sh
 
 ### UniProt Accession Numbers
 1. Extract GRCh37 chromosomic positions and write out in BED format.
