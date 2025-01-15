@@ -1,8 +1,60 @@
 import csv
 import json
+import glob
 import os
 import pandas as pd
 from collections import Counter
+
+
+def count_json_objects(directory):
+    """
+    Counts the total number of JSON objects across all JSON files in the specified directory.
+
+    Args:
+        directory (str): The path to the directory containing JSON files.
+
+    Returns:
+        int: The total count of JSON objects.
+    """
+    total_count = 0
+    for file_path in glob.glob(f"{directory}/*.json"):
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+            total_count += len(data)
+    return total_count
+'''
+# Example usage:
+directory_path = "/data/shared/biomuta/downloads/cbioportal/2024_10_21/mutations"
+print(f"Total JSON objects: {count_json_objects(directory_path)}")
+'''
+
+
+import json
+import glob
+
+def count_matching_positions(directory):
+    """
+    Counts the total number of JSON objects where 'startPosition' equals 'endPosition'
+    across all JSON files in the specified directory.
+
+    Args:
+        directory (str): The path to the directory containing JSON files.
+
+    Returns:
+        int: The count of matching JSON objects.
+    """
+    matching_count = 0
+    for file_path in glob.glob(f"{directory}/*.json"):
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+            matching_count += sum(1 for item in data if item.get("startPosition") == item.get("endPosition"))
+    return matching_count
+
+# Example usage:
+directory_path = "/data/shared/repos/biomuta-old/downloads/cbioportal/2024_10_21/mutations"
+print(f"Count of matching positions: {count_matching_positions(directory_path)}")
+
+
 
 # Function to count and print the occurrences of each record
 def count_records(json_files, record_name):
@@ -21,14 +73,15 @@ def count_records(json_files, record_name):
     print(f"{record_name} counts:")
     for record, count in record_counter.items():
         print(f"{record}: {count}")
-
 '''
 # Example usage
+json_directory = '/data/shared/biomuta/downloads/cbioportal/2024_10_21/mutations'
 # Get a list of all JSON files in the directory
 json_files = [os.path.join(json_directory, f) for f in os.listdir(json_directory) if f.endswith('.json')]
 # Call the function to count variant types
-count_records(json_files, 'chr') #Change to pass record_name as a command line argument
+count_records(json_files, 'ncbiBuild') #Change to pass record_name as a command line argument
 '''
+
 
 def count_unique_values(file_path, column_name, output_file):
     """

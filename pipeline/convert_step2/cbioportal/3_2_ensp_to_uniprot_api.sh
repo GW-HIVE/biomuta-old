@@ -2,7 +2,7 @@
 
 # API only processes 25 IDs at a time for some reason
 # Mapping is going to be done using human_protein_transcriptlocus.csv from data.glygen.org/GLY_000135 (see 3_ensp_to_uniprot.py) to avoid using the API.
-# 87,679 ENSP IDs were mapped, 23,517 ENSP IDs remain unmapped (see if unmapped IDs are non-canonical = process separately).
+# 87,679 ENSP IDs were mapped, 23,517 ENSP IDs remain unmapped (see if unmapped IDs are non-canonical = process separately. They are canonical and non-canonical btw, Idk what is the pattern here).
 # Mapping unmapped IDs using the API... done.
 # Changed output writing logic and format, untested.
 # Improvement needed: log unmapped IDs.

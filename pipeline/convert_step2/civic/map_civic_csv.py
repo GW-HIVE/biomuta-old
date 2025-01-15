@@ -27,8 +27,15 @@ from cmath import nan
 import csv
 import re
 import pandas as pd
+import logging
 
-
+logging.basicConfig(
+    filename='map_civic_csv.log',
+    level=logging.INFO,
+    format="{asctime} - {levelname} - {message}",
+    style="{",
+    datefmt="%Y-%m-%d %H:%M",
+    )
 
 def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_folder):
     ##################################
@@ -37,7 +44,7 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     # Load in the TCGA mapping file to a mapping and cancer list
     doid_file_csv = mapping_folder + '/' + doid_mapping_csv
     enst_file_csv = mapping_folder + '/' + enst_mapping_csv
-    
+
     with open(doid_file_csv, "r") as doid_mapping_handle:
         doid_mapping = csv.reader(doid_mapping_handle)
         # Skip the header
@@ -75,11 +82,13 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     # Load the civic csv file and map, then export
     ##################################
     civic_df = pd.read_csv(civic_csv, dtype=str)
+    logging.info(f"Initial rows: {len(civic_df)}")
 
     # Map doid child to parent terms
     civic_df['do_name'] = civic_df['CIViC Entity Disease'].map(doid_mapping_dict)
     civic_df['do_name'] = civic_df['do_name'].apply(convert_NA)
-    
+    logging.info(f"Rows converted to NA after DOID mapping: {civic_df['do_name'].isna().sum()}")
+
     # Create a column that removes the dot notation from the ENST IDs in civic data
     civic_df['sample_name'] = ''
     civic_df['ENST'] = ''
@@ -91,11 +100,14 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
 
     # Check for indels and remove
     civic_df['ref_nt'] = civic_df['ref_nt'].apply(remove_indels)
+    logging.info(f"Rows after removing indels: {len(civic_df)}")
 
     # Format the amino acid change and position
-    print('Formatting amino acid information')
+    logging.info('Formatting amino acid information')
     # amino acid changes to exclude
+    logging.info(f"Rows before filtering on amino acid info: {len(civic_df)}")
     civic_df['amino_acid_info'] = civic_df['CIViC Variant Name'].apply(aa_format)
+    logging.info(f"Rows with valid amino acid info: {civic_df['amino_acid_info'].notna().sum()}")
     civic_df.dropna(subset=['amino_acid_info'],inplace=True)
     civic_df[['ref_aa','alt_aa','aa_pos']] = pd.DataFrame(civic_df['amino_acid_info'].tolist(), index=civic_df.index)
     
@@ -104,6 +116,7 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
 
     # Map ENST symbol to uniprot accession
     civic_df['uniprotkb_canonical_ac'] = civic_df['ENST'].map(ensp_mapping_dict)
+    logging.info(f"Rows with UniProt mapping: {civic_df['uniprotkb_canonical_ac'].notna().sum()}")
 
     # Select and rename fields for integration with other sources
     final_fields = (
@@ -127,10 +140,13 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     
     final_df['end_pos'] = final_df['start_pos']
     final_df.dropna(inplace=True)
+    logging.info(f"After dropping NA: {len(final_df)}")
     final_df.drop_duplicates(keep='first',inplace=True)
+    logging.info(f"After dropping duplicates: {len(final_df)}")
 
     mapped_new_file_path = output_folder + "/civic_missense_biomuta_v5.csv"
-    print("Exporting mapped file to " + mapped_new_file_path)
+    logging.info(f"Final rows in output: {len(final_df)}")
+    logging.info(f"Exporting mapped file to {mapped_new_file_path}")
     final_df.to_csv(mapped_new_file_path, index = False)
 
 ###############################
@@ -193,4 +209,4 @@ if __name__ == "__main__":
 
     main(args.civic_csv, args.mapping_folder, args.doid_mapping, args.enst_mapping, args.output_folder)
 
-#python map_civic_csv.py -c /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/downloads/civic/civic_mutations_Mar_01_2022.csv -m /mnt/c/Users/caule/github_general/biomuta/pipeline/convert_step2/mapping -d civic_doid_mapping.csv -e human_protein_transcriptlocus.csv -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/compiled 
+#python3 map_civic_csv.py -c /data/shared/repos/biomuta-old/generated_datasets/civic/2025_01/civic_converted_mutations.csv -m /data/shared/repos/biomuta-old/pipeline/convert_step2/mapping -d civic_doid_mapping.csv -e human_protein_transcriptlocus.csv -o /data/shared/repos/biomuta-old/generated_datasets/civic/2025_01 
