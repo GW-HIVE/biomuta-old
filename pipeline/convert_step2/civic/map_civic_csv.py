@@ -37,6 +37,8 @@ logging.basicConfig(
     datefmt="%Y-%m-%d %H:%M",
     )
 
+logging.info("Logging started--------------------------------")
+
 def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_folder):
     ##################################
     # Load the mapping files
@@ -56,12 +58,12 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
         for row in doid_mapping:
             doid_mapping_dict[row[0]] = row[1]
         
-        for key,value in doid_mapping_dict.items():
+        for _,value in doid_mapping_dict.items():
             re.sub(r'NA', '', value)
     
     # Set up a list of cancers to iterate through
     cancer_list = []
-    for key, value in doid_mapping_dict.items():
+    for _, value in doid_mapping_dict.items():
         if value not in cancer_list:
             cancer_list.append(value)
     
@@ -85,9 +87,17 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     logging.info(f"Initial rows: {len(civic_df)}")
 
     # Map doid child to parent terms
-    civic_df['do_name'] = civic_df['CIViC Entity Disease'].map(doid_mapping_dict)
-    civic_df['do_name'] = civic_df['do_name'].apply(convert_NA)
+    #civic_df['do_name'] = civic_df['CIViC Entity Disease'].map(doid_mapping_dict)
+    civic_df['do_name'] = civic_df['CIViC Entity Disease'].apply(lambda x: map_partial_match(x, doid_mapping_dict))
+    #civic_df['do_name'] = civic_df['do_name'].apply(convert_NA)
     logging.info(f"Rows converted to NA after DOID mapping: {civic_df['do_name'].isna().sum()}")
+
+    # Check which entity diseases failed to map
+    civic_diseases = civic_df['CIViC Entity Disease'].unique()
+    doid_keys = list(doid_mapping_dict.keys())
+    unmatched_diseases = [disease for disease in civic_diseases if disease not in doid_keys]
+    logging.warning(f"Number of unmatched diseases: {len(unmatched_diseases)}")
+    logging.warning(f"Unmatched diseases: {unmatched_diseases}")
 
     # Create a column that removes the dot notation from the ENST IDs in civic data
     civic_df['sample_name'] = ''
@@ -189,6 +199,26 @@ def convert_NA(NA_value):
         NA_value = nan
     
     return NA_value
+
+def map_partial_match(value, mapping):
+    # Convert 'NA' values to NaN using convert_NA(NA_value)
+    value = convert_NA(value)
+    
+    # If value is NaN after conversion, just return it
+    if pd.isna(value):
+        return value
+    
+    # Normalize value by converting to lower case and removing underscores
+    normalized_value = value.lower().replace('_', ' ')
+
+    # Check for partial string match
+    for key, mapped_value in mapping.items():
+        # Normalize dictionary key
+        normalized_key = key.lower().replace('_', ' ')
+        # Check for case-insensitive partial match
+        if normalized_key in normalized_value:
+            return mapped_value
+    return nan # Default if no match is found
     
 
                             
@@ -209,4 +239,4 @@ if __name__ == "__main__":
 
     main(args.civic_csv, args.mapping_folder, args.doid_mapping, args.enst_mapping, args.output_folder)
 
-#python3 map_civic_csv.py -c /data/shared/repos/biomuta-old/generated_datasets/civic/2025_01/civic_converted_mutations.csv -m /data/shared/repos/biomuta-old/pipeline/convert_step2/mapping -d civic_doid_mapping.csv -e human_protein_transcriptlocus.csv -o /data/shared/repos/biomuta-old/generated_datasets/civic/2025_01 
+#python3 map_civic_csv.py -c /data/shared/repos/biomuta-old/generated_datasets/civic/2025_01/civic_converted_mutations.csv -m /data/shared/repos/biomuta-old/pipeline/convert_step2/mapping -d civic_doid_mapping_cleaned.csv -e human_protein_transcriptlocus.csv -o /data/shared/repos/biomuta-old/generated_datasets/civic/2025_01 

@@ -1,0 +1,148 @@
+CIViC Entity Disease,DOID Term
+Acral_Lentiginous_Melanoma,DOID:4159 / skin cancer
+Acute_Lymphoblastic_Leukemia,DOID:2531 / hematologic cancer
+Acute_Myeloid_Leukemia,DOID:2531 / hematologic cancer
+Acute_Promyelocytic_Leukemia,DOID:2531 / hematologic cancer
+Adrenal_Gland_Pheochromocytoma,DOID:3953 / adrenal gland cancer
+Anaplastic_Thyroid_Carcinoma,DOID:1781 / thyroid gland cancer
+Angiosarcoma,NA
+Basal_Cell_Carcinoma,DOID:4159 / skin cancer
+B-cell_Lymphoma,DOID:2531 / hematologic cancer
+Biliary_Tract_Cancer,NA
+Bladder_Carcinoma,DOID:11054 / urinary bladder cancer
+Bladder_Urothelial_Carcinoma,DOID:11054 / urinary bladder cancer
+Bone_Marrow_Cancer,DOID:2531 / hematologic cancer
+Brain_Glioma,DOID:1319 / brain cancer
+Breast_Cancer,DOID:1612 / breast cancer
+Breast_Carcinoma,DOID:1612 / breast cancer
+Breast_Tubular_Carcinoma,DOID:1612 / breast cancer
+Bronchiolo-alveolar_Adenocarcinoma,NA
+Cancer,NA
+Cancer_(DOID_162),NA
+Cervical_Cancer,DOID:4362 / cervical cancer
+Cervix_Carcinoma,DOID:4362 / cervical cancer
+Childhood_Acute_Lymphocytic_Leukemia,DOID:2531 / hematologic cancer
+Childhood_Low-grade_Glioma,NA
+Childhood_Pilocytic_Astrocytoma,NA
+Cholangiocarcinoma,DOID:4606 / bile duct cancer
+Chromophobe_Renal_Cell_Carcinoma,DOID:263 / kidney cancer
+Chronic_Leukemia,DOID:2531 / hematologic cancer
+Chronic_Lymphocytic_Leukemia,DOID:2531 / hematologic cancer
+Chronic_Lymphocytic_Leukemia/small_Lymphocytic_Lymphoma,DOID:2531 / hematologic cancer
+Chronic_Myeloid_Leukemia,DOID:2531 / hematologic cancer
+Chronic_Neutrophilic_Leukemia,DOID:2531 / hematologic cancer
+Chuvash_Polycythemia,DOID:2531 / hematologic cancer
+Clear_Cell_Renal_Cell_Carcinoma,DOID:263 / kidney cancer
+Colon_Cancer,DOID:9256 / colorectal cancer
+Colon_Mucinous_Adenocarcinoma,DOID:9253 / gastrointestinal stromal tumor
+Colon_Signet_Ring_Adenocarcinoma,DOID:9256 / colorectal cancer
+Colorectal_Adenocarcinoma,DOID:9256 / colorectal cancer
+Colorectal_Cancer,DOID:9256 / colorectal cancer
+Colorectal_Cancer_(DOID_9256),DOID:9256 / colorectal cancer
+Desmoid_Tumor,NA
+Diffuse_Large_B-cell_Lymphoma,DOID:2531 / hematologic cancer
+Diffuse_Midline_Glioma_H3_K27M-mutant,NA
+Endometrial_Adenocarcinoma,DOID:363 / uterine cancer
+Endometrial_Cancer,DOID:363 / uterine cancer
+Endometrial_Hyperplasia,NA
+Endometrioid_Ovary_Carcinoma,NA
+Epithelial_Ovarian_Cancer,DOID:2394 / ovarian cancer
+Esophageal_Cancer,DOID:5041 / esophageal cancer
+Esophagus_Squamous_Cell_Carcinoma,DOID:5041 / esophageal cancer
+Estrogen-receptor_Positive_Breast_Cancer,DOID:1612 / breast cancer
+Ewing_Sarcoma_Of_Bone,DOID:184 / bone cancer
+Extramammary_Paget_Disease,NA
+Follicular_Lymphoma,DOID:2531 / hematologic cancer
+Gastrointestinal_Neuroendocrine_Tumor,DOID:9253 / gastrointestinal stromal tumor
+Gastrointestinal_Stromal_Tumor,DOID:9253 / gastrointestinal stromal tumor
+Glioblastoma,DOID:1319 / brain cancer
+Hairy_Cell_Leukemia,DOID:2531 / hematologic cancer
+Head_And_Neck_Cancer,DOID:11934 / head and neck cancer
+Head_And_Neck_Squamous_Cell_Carcinoma,DOID:11934 / head and neck cancer
+Hematologic_Cancer,DOID:2531 / hematologic cancer
+Hepatocellular_Carcinoma,DOID:3571 / liver cancer
+Her2-receptor_Negative_Breast_Cancer,DOID:1612 / breast cancer
+Her2-receptor_Positive_Breast_Cancer,DOID:1612 / breast cancer
+High_Grade_Glioma,DOID:1319 / brain cancer
+Inflammatory_Myofibroblastic_Tumor,NA
+Intrahepatic_Cholangiocarcinoma,DOID:4606 / bile duct cancer
+Langerhans_Cell_Sarcoma,DOID:2531 / hematologic cancer
+Laryngeal_Squamous_Cell_Carcinoma,DOID:2596 / larynx cancer
+Leukemia,DOID:2531 / hematologic cancer
+Li-Fraumeni_Syndrome,NA
+Lung_Adenocarcinoma,DOID:1324 / lung cancer
+Lung_Cancer,DOID:1324 / lung cancer
+Lung_Carcinoma,DOID:1324 / lung cancer
+Lung_Non-small_Cell_Carcinoma,DOID:1324 / lung cancer
+Lung_Non-small_Cell_Carcinoma_(DOID_3908),DOID:1324 / lung cancer
+Lung_Small_Cell_Carcinoma,DOID:1324 / lung cancer
+Lung_Squamous_Cell_Carcinoma,DOID:1324 / lung cancer
+Lymphoid_Leukemia,DOID:2531 / hematologic cancer
+Lymphoplasmacytic_Lymphoma,DOID:2531 / hematologic cancer
+Lymphoma,DOID:2531 / hematologic cancer
+Malignant_Exocrine_Pancreas_Neoplasm,DOID:1793 / pancreatic cancer
+Malignant_Mesothelioma,DOID:1790 / malignant mesothelioma
+Malignant_Pleural_Mesothelioma,DOID:1790 / malignant mesothelioma
+Mammary_Analogue_Secretory_Carcinoma,NA
+Medullary_Thyroid_Carcinoma,DOID:1781 / thyroid gland cancer
+Medulloblastoma,DOID:1319 / brain cancer
+Melanoma,DOID:4159 / skin cancer
+Melanoma_(DOID_1909),DOID:4159 / skin cancer
+Merkel_Cell_Carcinoma,DOID:4159 / skin cancer
+Mucosal_Melanoma,DOID:4159 / skin cancer
+Multiple_Myeloma,DOID:2531 / hematologic cancer
+Myelodysplastic_Syndrome,DOID:2531 / hematologic cancer
+Myeloid_And_Lymphoid_Neoplasms_With_Eosinophilia_And_Abnormalities_Of_PDGFRA_PDGFRB_And_FGFR1,DOID:2531 / hematologic cancer
+Myeloid_Neoplasm,DOID:2531 / hematologic cancer
+Neuroblastoma,NA
+Oligodendroglioma,DOID:3070 / malignant glioma
+Osteosarcoma,DOID:184 / bone cancer
+Ovarian_Cancer,DOID:2394 / ovarian cancer
+Ovarian_Clear_Cell_Carcinoma,DOID:2394 / ovarian cancer
+Ovarian_Granulosa_Cell_Tumor,DOID:2394 / ovarian cancer
+Ovarian_Serous_Carcinoma,DOID:2394 / ovarian cancer
+Ovarian_Sex-cord_Stromal_Tumor,DOID:2394 / ovarian cancer
+Ovary_Serous_Adenocarcinoma,DOID:2394 / ovarian cancer
+PTEN_Hamartoma_Tumor_Syndrome,NA
+Pancreatic_Adenocarcinoma,DOID:1793 / pancreatic cancer
+Pancreatic_Cancer,DOID:1793 / pancreatic cancer
+Pancreatic_Carcinoma,DOID:1793 / pancreatic cancer
+Pancreatic_Ductal_Adenocarcinoma,DOID:1793 / pancreatic cancer
+Pancreatic_Ductal_Carcinoma,DOID:1793 / pancreatic cancer
+Papillary_Thyroid_Carcinoma,DOID:1781 / thyroid gland cancer
+Paraganglioma,DOID:3953 / adrenal gland cancer
+Parietal_Lobe_Ependymoma,NA
+Peritoneal_Carcinoma,DOID:1725 / peritoneum cancer
+Peritoneal_Mesothelioma,DOID:1725 / peritoneum cancer
+Polycythemia_Vera,DOID:2531 / hematologic cancer
+Prostate_Cancer,DOID:10283 / prostate cancer
+Pilocytic_Astrocytoma,NA
+Rectum_Cancer,DOID:9256 / colorectal cancer
+Renal_Carcinoma,DOID:263 / kidney cancer
+Renal_Cell_Carcinoma,DOID:263 / kidney cancer
+Rhabdomyosarcoma,DOID:4045 / muscle cancer
+Sertoli-Leydig_Cell_Tumor,NA
+Skin_Melanoma,DOID:4159 / skin cancer
+Skin_Squamous_Cell_Carcinoma,DOID:4159 / skin cancer
+Solid_Tumor,NA
+Spindle_Cell_Rhabdomyosarcoma,DOID:4045 / muscle cancer
+Stomach_Cancer,DOID:10534 / stomach cancer
+Stomach_Carcinoma,DOID:10534 / stomach cancer
+Systemic_Mastocytosis,DOID:2531 / hematologic cancer
+T-cell_Acute_Lymphoblastic_Leukemia,NA
+Thymic_Carcinoma,DOID:3277 / thymus cancer
+Thyroid_Cancer,DOID:1781 / thyroid gland cancer
+Thyroid_Gland_Anaplastic_Carcinoma,DOID:1781 / thyroid gland cancer
+Thyroid_Gland_Cancer,DOID:1781 / thyroid gland cancer
+Thyroid_Gland_Carcinoma,DOID:1781 / thyroid gland cancer
+Thyroid_Gland_Hurthle_Cell_Carcinoma,DOID:1781 / thyroid gland cancer
+Thyroid_Gland_Medullary_Carcinoma,DOID:1781 / thyroid gland cancer
+Thyroid_Gland_Papillary_Carcinoma,DOID:1781 / thyroid gland cancer
+Transitional_Cell_Carcinoma,NA
+Tuberous_Sclerosis,NA
+Urinary_Bladder_Cancer,DOID:11054 / urinary bladder cancer
+Villous_Adenoma,NA
+Von_Hippel-Lindau_Disease,NA
+Von_Hippel-Lindau_Disease_(DOID_14175),NA
+Vulva_Squamous_Cell_Carcinoma,DOID:1245 / vulva cancer
+Waldenstroem's_Macroglobulinemia,DOID:2531 / hematologic cancer
