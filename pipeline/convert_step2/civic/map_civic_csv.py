@@ -31,7 +31,7 @@ import logging
 
 logging.basicConfig(
     filename='map_civic_csv.log',
-    level=logging.INFO,
+    level=logging.DEBUG,
     format="{asctime} - {levelname} - {message}",
     style="{",
     datefmt="%Y-%m-%d %H:%M",
@@ -45,7 +45,8 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     ##################################
     # Load in the TCGA mapping file to a mapping and cancer list
     doid_file_csv = mapping_folder + '/' + doid_mapping_csv
-    enst_file_csv = mapping_folder + '/' + enst_mapping_csv
+    #enst_file_csv = mapping_folder + '/' + enst_mapping_csv
+    enst_file_csv = '/data/shared/repos/biomuta-old/downloads/glygen/' + enst_mapping_csv
 
     with open(doid_file_csv, "r") as doid_mapping_handle:
         doid_mapping = csv.reader(doid_mapping_handle)
@@ -67,16 +68,16 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
         if value not in cancer_list:
             cancer_list.append(value)
     
-    # Load the ENSP to uniprot mapping file.
+    # Load the ENSP to uniprot mapping file
     with open(enst_file_csv, "r") as enst_file_handle:
         enst_mapping = csv.reader(enst_file_handle, quoting=csv.QUOTE_ALL)
-        # Skip the header.
+        # Skip the header
         next(enst_mapping)
 
-        # Set up the mapping file dictionary.
+        # Set up the mapping file dictionary
         ensp_mapping_dict = {}
 
-        # Populate the mapping dictionary with keys as ensg IDs and values as the gene symbol.
+        # Populate the mapping dictionary with keys as ensg IDs and values as the gene symbol
         for row in enst_mapping:
             ensp_mapping_dict[row[2]] = row[1]
     
@@ -86,11 +87,35 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     civic_df = pd.read_csv(civic_csv, dtype=str)
     logging.info(f"Initial rows: {len(civic_df)}")
 
+
     # Map doid child to parent terms
-    #civic_df['do_name'] = civic_df['CIViC Entity Disease'].map(doid_mapping_dict)
-    civic_df['do_name'] = civic_df['CIViC Entity Disease'].apply(lambda x: map_partial_match(x, doid_mapping_dict))
-    #civic_df['do_name'] = civic_df['do_name'].apply(convert_NA)
+
+    ## Strict equality check first
+    civic_df['do_name'] = civic_df['CIViC Entity Disease'].map(doid_mapping_dict)
+
+    ## Log the number of mapped items
+    mapped_count = civic_df['do_name'].notna().sum()
+    logging.info(f"Number of rows with mapped diseases after strict mapping: {mapped_count}")
+
+    ## Then partial match check
+    civic_df.loc[civic_df['do_name'].isna(), 'do_name'] = civic_df['CIViC Entity Disease'].apply(
+        lambda x: map_partial_match(x, doid_mapping_dict)
+        )
+    mapped_count = civic_df['do_name'].notna().sum()
+    logging.info(f"Number of rows with mapped diseases after partial match mapping: {mapped_count}")
+
+    ## Log unmatched diseases
+    for _, row in civic_df.iterrows():
+        if pd.isna(row['do_name']):
+            logging.warning(f"Unmatched disease: {row['CIViC Entity Disease']}")
+
+    ## Convert 'NA' values to NaN
+    civic_df['do_name'] = civic_df.apply(
+        lambda row: convert_NA(row['do_name']),
+        axis=1
+        )
     logging.info(f"Rows converted to NA after DOID mapping: {civic_df['do_name'].isna().sum()}")
+
 
     # Check which entity diseases failed to map
     civic_diseases = civic_df['CIViC Entity Disease'].unique()
@@ -126,7 +151,12 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
 
     # Map ENST symbol to uniprot accession
     civic_df['uniprotkb_canonical_ac'] = civic_df['ENST'].map(ensp_mapping_dict)
+    logging.info(f"Columns in dataframe: {civic_df.columns.tolist()}")
     logging.info(f"Rows with UniProt mapping: {civic_df['uniprotkb_canonical_ac'].notna().sum()}")
+    for _, row in civic_df.iterrows():
+        if pd.isna(row['uniprotkb_canonical_ac']):
+            logging.warning(f"Unmatched ENST: {row['ENST']}")
+
 
     # Select and rename fields for integration with other sources
     final_fields = (
@@ -149,6 +179,12 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     #Final processing for the output df
     
     final_df['end_pos'] = final_df['start_pos']
+    # Check which rows are being dropped
+    missing_rows = final_df[final_df.isnull().any(axis=1)]
+    missing_csv_path = '/data/shared/repos/biomuta-old/generated_datasets/civic/2025_01/missing.csv'
+    missing_rows.to_csv(missing_csv_path, index = False)
+    logging.info(f"Saved rows with NAs to file {missing_csv_path}")
+    # Now drop rows with NA
     final_df.dropna(inplace=True)
     logging.info(f"After dropping NA: {len(final_df)}")
     final_df.drop_duplicates(keep='first',inplace=True)
@@ -207,7 +243,7 @@ def map_partial_match(value, mapping):
     # If value is NaN after conversion, just return it
     if pd.isna(value):
         return value
-    
+
     # Normalize value by converting to lower case and removing underscores
     normalized_value = value.lower().replace('_', ' ')
 
@@ -215,9 +251,9 @@ def map_partial_match(value, mapping):
     for key, mapped_value in mapping.items():
         # Normalize dictionary key
         normalized_key = key.lower().replace('_', ' ')
-        # Check for case-insensitive partial match
         if normalized_key in normalized_value:
             return mapped_value
+    logging.debug(f"No match found for normalized_value: '{normalized_value}' in mapping keys.")
     return nan # Default if no match is found
     
 
@@ -239,4 +275,4 @@ if __name__ == "__main__":
 
     main(args.civic_csv, args.mapping_folder, args.doid_mapping, args.enst_mapping, args.output_folder)
 
-#python3 map_civic_csv.py -c /data/shared/repos/biomuta-old/generated_datasets/civic/2025_01/civic_converted_mutations.csv -m /data/shared/repos/biomuta-old/pipeline/convert_step2/mapping -d civic_doid_mapping_cleaned.csv -e human_protein_transcriptlocus.csv -o /data/shared/repos/biomuta-old/generated_datasets/civic/2025_01 
+# python3 map_civic_csv.py -c /data/shared/repos/biomuta-old/generated_datasets/civic/2025_01/civic_converted_mutations.csv -m /data/shared/repos/biomuta-old/pipeline/convert_step2/mapping -d civic_doid_mapping.csv -e human_protein_transcriptlocus.csv -o /data/shared/repos/biomuta-old/generated_datasets/civic/2025_01
