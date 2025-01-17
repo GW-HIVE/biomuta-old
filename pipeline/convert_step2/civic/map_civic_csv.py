@@ -25,12 +25,17 @@ Usage:
 import argparse
 from cmath import nan
 import csv
-import re
 import pandas as pd
+from pathlib import Path
+import re
 import logging
+import sys
+
+sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
+from utils import qc
 
 logging.basicConfig(
-    filename='map_civic_csv.log',
+    filename='map_civic.log',
     level=logging.DEBUG,
     format="{asctime} - {levelname} - {message}",
     style="{",
@@ -77,8 +82,9 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
         # Set up the mapping file dictionary
         ensp_mapping_dict = {}
 
-        # Populate the mapping dictionary with keys as ensg IDs and values as the gene symbol
+        # Populate the mapping dictionary with keys as enst IDs and values as the gene symbol
         for row in enst_mapping:
+            row[2] = re.sub(r'\.\d+$', '', row[2]) # Remove the period and digits from the transcript_id
             ensp_mapping_dict[row[2]] = row[1]
     
     ##################################
@@ -104,11 +110,13 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     mapped_count = civic_df['do_name'].notna().sum()
     logging.info(f"Number of rows with mapped diseases after partial match mapping: {mapped_count}")
 
+    '''
     ## Log unmatched diseases
     for _, row in civic_df.iterrows():
         if pd.isna(row['do_name']):
             logging.warning(f"Unmatched disease: {row['CIViC Entity Disease']}")
-
+    '''
+            
     ## Convert 'NA' values to NaN
     civic_df['do_name'] = civic_df.apply(
         lambda row: convert_NA(row['do_name']),
@@ -117,12 +125,14 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     logging.info(f"Rows converted to NA after DOID mapping: {civic_df['do_name'].isna().sum()}")
 
 
+    '''
     # Check which entity diseases failed to map
     civic_diseases = civic_df['CIViC Entity Disease'].unique()
     doid_keys = list(doid_mapping_dict.keys())
     unmatched_diseases = [disease for disease in civic_diseases if disease not in doid_keys]
     logging.warning(f"Number of unmatched diseases: {len(unmatched_diseases)}")
     logging.warning(f"Unmatched diseases: {unmatched_diseases}")
+    '''
 
     # Create a column that removes the dot notation from the ENST IDs in civic data
     civic_df['sample_name'] = ''
@@ -147,15 +157,26 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     civic_df[['ref_aa','alt_aa','aa_pos']] = pd.DataFrame(civic_df['amino_acid_info'].tolist(), index=civic_df.index)
     
     # Create a new column with only ENST ID to be used for mapping and separate AA notation
-    civic_df['ENST'] = civic_df['Feature'].apply(lambda x : x.split('.')[0])
+    civic_df['ENST'] = civic_df['Feature'].apply(lambda x: x.lstrip('_').split('.')[0])
 
-    # Map ENST symbol to uniprot accession
+    # Map ENST symbol to uniprot accession and store unmatched ENST in a string ready to be passed on to the UniProt API
     civic_df['uniprotkb_canonical_ac'] = civic_df['ENST'].map(ensp_mapping_dict)
     logging.info(f"Columns in dataframe: {civic_df.columns.tolist()}")
     logging.info(f"Rows with UniProt mapping: {civic_df['uniprotkb_canonical_ac'].notna().sum()}")
+    logging.info(f"Rows that failed to map to UniProt: {civic_df['uniprotkb_canonical_ac'].isna().sum()}")
+    unmatched_enst_str = ""  # Start with an empty string
+    seen_enst = set()  # Set to track unique ENST IDs
     for _, row in civic_df.iterrows():
-        if pd.isna(row['uniprotkb_canonical_ac']):
-            logging.warning(f"Unmatched ENST: {row['ENST']}")
+        enst_id = row['ENST']
+        if pd.isna(row['uniprotkb_canonical_ac']) and qc.is_valid_enst(enst_id):
+            if enst_id not in seen_enst:
+                seen_enst.add(enst_id)  # Add to the set to track uniqueness
+                if unmatched_enst_str:
+                    unmatched_enst_str += ","
+                unmatched_enst_str += enst_id  # Append the ENST ID to the string
+    # Now unmatched_enst_str contains the unique comma-separated ENST IDs
+    print(unmatched_enst_str)
+
 
 
     # Select and rename fields for integration with other sources
@@ -190,7 +211,7 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     final_df.drop_duplicates(keep='first',inplace=True)
     logging.info(f"After dropping duplicates: {len(final_df)}")
 
-    mapped_new_file_path = output_folder + "/civic_missense_biomuta_v5.csv"
+    mapped_new_file_path = output_folder + "/civic_missense_biomuta_v6.csv"
     logging.info(f"Final rows in output: {len(final_df)}")
     logging.info(f"Exporting mapped file to {mapped_new_file_path}")
     final_df.to_csv(mapped_new_file_path, index = False)
@@ -231,7 +252,7 @@ def remove_indels(nt_info):
     return nt_info
 
 def convert_NA(NA_value):
-    if NA_value == 'NA':
+    if NA_value in ['NA', 'None']:
         NA_value = nan
     
     return NA_value
