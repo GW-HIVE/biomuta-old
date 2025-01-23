@@ -48,7 +48,7 @@ def main(input_folder, output_folder):
     if dup_number > 0:
         print("Removed " + str(dup_number) + " duplicate rows") 
 
-    final_file_path = output_folder + "/biomuta_v5.csv"
+    final_file_path = output_folder + "/biomuta_v6.csv"
     print("Exporting mapped file to " + final_file_path)
     final_df.to_csv(final_file_path, index = False)
 
@@ -63,4 +63,4 @@ if __name__ == "__main__":
 
     main(args.input_folder, args.output_folder)
 
-#python combine_csv.py -i /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/compiled/source_mutation_files -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/compiled
+#python3 combine_csv.py -i /data/shared/repos/biomuta-old/generated_datasets/compiled/source_mutation_files -o /data/shared/repos/biomuta-old/generated_datasets/compiled

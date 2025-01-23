@@ -25,10 +25,12 @@ Usage:
 import argparse
 from cmath import nan
 import csv
+import json
 import pandas as pd
 from pathlib import Path
 import re
 import logging
+import subprocess
 import sys
 
 sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
@@ -66,13 +68,13 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
         
         for _,value in doid_mapping_dict.items():
             re.sub(r'NA', '', value)
-    
+    '''
     # Set up a list of cancers to iterate through
     cancer_list = []
     for _, value in doid_mapping_dict.items():
         if value not in cancer_list:
             cancer_list.append(value)
-    
+    '''
     # Load the ENSP to uniprot mapping file
     with open(enst_file_csv, "r") as enst_file_handle:
         enst_mapping = csv.reader(enst_file_handle, quoting=csv.QUOTE_ALL)
@@ -80,12 +82,12 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
         next(enst_mapping)
 
         # Set up the mapping file dictionary
-        ensp_mapping_dict = {}
+        enst_mapping_dict = {}
 
         # Populate the mapping dictionary with keys as enst IDs and values as the gene symbol
         for row in enst_mapping:
             row[2] = re.sub(r'\.\d+$', '', row[2]) # Remove the period and digits from the transcript_id
-            ensp_mapping_dict[row[2]] = row[1]
+            enst_mapping_dict[row[2]] = row[1]
     
     ##################################
     # Load the civic csv file and map, then export
@@ -101,15 +103,7 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
 
     ## Log the number of mapped items
     mapped_count = civic_df['do_name'].notna().sum()
-    logging.info(f"Number of rows with mapped diseases after strict mapping: {mapped_count}")
-
-    ## Then partial match check
-    civic_df.loc[civic_df['do_name'].isna(), 'do_name'] = civic_df['CIViC Entity Disease'].apply(
-        lambda x: map_partial_match(x, doid_mapping_dict)
-        )
-    mapped_count = civic_df['do_name'].notna().sum()
-    logging.info(f"Number of rows with mapped diseases after partial match mapping: {mapped_count}")
-
+    logging.info(f"Number of rows with mapped diseases, including those that map to 'NA': {mapped_count}")
     '''
     ## Log unmatched diseases
     for _, row in civic_df.iterrows():
@@ -149,7 +143,6 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
 
     # Format the amino acid change and position
     logging.info('Formatting amino acid information')
-    # amino acid changes to exclude
     logging.info(f"Rows before filtering on amino acid info: {len(civic_df)}")
     civic_df['amino_acid_info'] = civic_df['CIViC Variant Name'].apply(aa_format)
     logging.info(f"Rows with valid amino acid info: {civic_df['amino_acid_info'].notna().sum()}")
@@ -159,11 +152,12 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
     # Create a new column with only ENST ID to be used for mapping and separate AA notation
     civic_df['ENST'] = civic_df['Feature'].apply(lambda x: x.lstrip('_').split('.')[0])
 
-    # Map ENST symbol to uniprot accession and store unmatched ENST in a string ready to be passed on to the UniProt API
-    civic_df['uniprotkb_canonical_ac'] = civic_df['ENST'].map(ensp_mapping_dict)
+    # Map ENST symbol to uniprot accession, then map unmatched ENST using UniProt API shell script
+    civic_df['uniprotkb_canonical_ac'] = civic_df['ENST'].map(enst_mapping_dict)
     logging.info(f"Columns in dataframe: {civic_df.columns.tolist()}")
     logging.info(f"Rows with UniProt mapping: {civic_df['uniprotkb_canonical_ac'].notna().sum()}")
     logging.info(f"Rows that failed to map to UniProt: {civic_df['uniprotkb_canonical_ac'].isna().sum()}")
+    logging.info(f"Passing the failed ENST IDs to the UniProt API...")
     unmatched_enst_str = ""  # Start with an empty string
     seen_enst = set()  # Set to track unique ENST IDs
     for _, row in civic_df.iterrows():
@@ -174,9 +168,20 @@ def main(civic_csv, mapping_folder, doid_mapping_csv, enst_mapping_csv, output_f
                 if unmatched_enst_str:
                     unmatched_enst_str += ","
                 unmatched_enst_str += enst_id  # Append the ENST ID to the string
-    # Now unmatched_enst_str contains the unique comma-separated ENST IDs
-    print(unmatched_enst_str)
-
+    script_path = Path(__file__).resolve().parent / "enst_to_uniprot.sh" # Script for ENST to UniProt ID mapping using UniProt API
+    # Run the shell script
+    result = subprocess.run(
+        [str(script_path), unmatched_enst_str],  # Convert Path object to string
+        check=True,
+        stdout=subprocess.PIPE,  # Capture standard output
+        stderr=subprocess.PIPE,  # Capture standard error
+        universal_newlines=True  # Decode output as text
+    )
+    if result.stderr: # Log any errors
+        logging.error(f"Error from shell script: {result.stderr.strip()}")
+    enst_to_uniprot = json.loads(result.stdout) # Parse the JSON output from the shell script
+    civic_df.loc[civic_df['uniprotkb_canonical_ac'].isna(), 'uniprotkb_canonical_ac'] = civic_df['ENST'].map(enst_to_uniprot)
+    logging.info(f"Rows with UniProt mapping: {civic_df['uniprotkb_canonical_ac'].notna().sum()}")
 
 
     # Select and rename fields for integration with other sources
@@ -227,7 +232,7 @@ def aa_format(aa_info):
     aa_clean_up = ['BCR-ABL_','PML-RARA_','EM4-ALK_','ALK_Fusion_','HIP1-ALK_','FIP1L1-PDGFRA_','CD74-ROS1_','ETV6-NTRK3_']
     exception_flag = 0
     for info in aa_clean_up:
-        aa_info = re.sub(info, '', str(aa_info))   
+        aa_info = re.sub(info, '', str(aa_info))
     for exception in aa_exceptions:
         if re.search(exception,aa_info):
             exception_flag = 1
@@ -256,26 +261,6 @@ def convert_NA(NA_value):
         NA_value = nan
     
     return NA_value
-
-def map_partial_match(value, mapping):
-    # Convert 'NA' values to NaN using convert_NA(NA_value)
-    value = convert_NA(value)
-    
-    # If value is NaN after conversion, just return it
-    if pd.isna(value):
-        return value
-
-    # Normalize value by converting to lower case and removing underscores
-    normalized_value = value.lower().replace('_', ' ')
-
-    # Check for partial string match
-    for key, mapped_value in mapping.items():
-        # Normalize dictionary key
-        normalized_key = key.lower().replace('_', ' ')
-        if normalized_key in normalized_value:
-            return mapped_value
-    logging.debug(f"No match found for normalized_value: '{normalized_value}' in mapping keys.")
-    return nan # Default if no match is found
     
 
                             

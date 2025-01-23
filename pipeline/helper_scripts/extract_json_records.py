@@ -49,11 +49,11 @@ def count_matching_positions(directory):
             data = json.load(file)
             matching_count += sum(1 for item in data if item.get("startPosition") == item.get("endPosition"))
     return matching_count
-
+'''
 # Example usage:
 directory_path = "/data/shared/repos/biomuta-old/downloads/cbioportal/2024_10_21/mutations"
 print(f"Count of matching positions: {count_matching_positions(directory_path)}")
-
+'''
 
 
 # Function to count and print the occurrences of each record
@@ -167,22 +167,24 @@ print(find_all_possible_regex(filepath, colname))
 '''
 
 
-def find_matching_json_records(directory, chr_value, entrezGeneId_value):
+def find_matching_json_records(directory, key, record_value, dtype):
     """
-    Find JSON records in json files in the specified directory that have 'chr' as chr_value
-    and 'entrezGeneId' as entrezGeneId_value.
+    Search JSON files in the specified directory for records where a specific key has a certain value.
 
     Args:
         directory (str): The path to the directory containing the JSON files.
-        chr_value (str): The value of the 'chr' field to match, should be a string.
-        entrezGeneId_value (int): The value of the 'entrezGeneId' field to match, should be an integer.
+        key (str): The key in the JSON records to match.
+        record_value: The value to match in the specified key.
+        dtype (type): The expected data type for the value to match.
 
     Returns:
-        list: A list of matching json records.
+        list: A list of matching JSON records.
     """
-    # Ensure chr_value is a string and entrezGeneId_value is an integer
-    chr_value = str(chr_value)
-    entrezGeneId_value = int(entrezGeneId_value)
+    # Convert record_value to the specified dtype
+    try:
+        record_value = dtype(record_value)
+    except (ValueError, TypeError):
+        raise ValueError(f"Unable to convert record_value to the specified dtype: {dtype}")
 
     matching_records = []
 
@@ -199,7 +201,8 @@ def find_matching_json_records(directory, chr_value, entrezGeneId_value):
                     # Iterate over each dictionary in the list
                     for item in data:
                         if isinstance(item, dict):
-                            if item.get('chr') == chr_value and item.get('entrezGeneId') == entrezGeneId_value:
+                            # Ensure the key exists and matches the converted value
+                            if item.get(key) == record_value:
                                 matching_records.append(item)
 
                 except json.JSONDecodeError:
