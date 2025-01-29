@@ -5,6 +5,7 @@ The BioMuta pipeline gathers mutation data from various sources and combines the
 
 The sources included in the current version of BioMuta are:
 - **[cBioPortal](https://www.cbioportal.org)**
+- **[Clinical Interpretation of Variants in Cancer (CIVIC)](https://civicdb.org/welcome)**
 
 BioMuta gathers mutation data for the following cancers:
 - DOID:4045 / muscle cancer
@@ -45,10 +46,12 @@ BioMuta gathers mutation data for the following cancers:
 - DOID:11054 / urinary bladder cancer
 
 ## Features
-BioMuta pipeline comprises three steps:
+BioMuta pipeline comprises three steps: 1. Data download ("Download"); 2. Data cleaning, formatting and transformation ("Convert"); 3. Data integration ("Combine").
 1. **Download**
 
 Downloads mutation lists from each source.
+Input:
+Output:
 TBA: cBioPortal fields, cBioPortal studies
 
 2. **Convert**

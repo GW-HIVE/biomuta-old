@@ -22,7 +22,7 @@
         },
         {
             "cancer_name": "angiosarcoma",
-            "do_term": "DOID:175 / vascular cancer"
+            "do_term": "NA"
         },
         {
             "cancer_name": "basal cell carcinoma",
@@ -58,7 +58,7 @@
         },
         {
             "cancer_name": "bronchiolo-alveolar adenocarcinoma",
-            "do_term": "NA"
+            "do_term": "DOID:1324 / lung cancer"
         },
         {
             "cancer_name": "cancer",
@@ -154,7 +154,7 @@
         },
         {
             "cancer_name": "endometrioid ovary carcinoma",
-            "do_term": "NA"
+            "do_term": "DOID:2394 / ovarian cancer"
         },
         {
             "cancer_name": "epithelial ovarian cancer",
@@ -314,11 +314,11 @@
         },
         {
             "cancer_name": "neuroblastoma",
-            "do_term": "DOID:1192 / peripheral nervous system neoplasm"
+            "do_term": "NA"
         },
         {
             "cancer_name": "oligodendroglioma",
-            "do_term": "DOID:3070 / malignant glioma"
+            "do_term": "DOID:1319 / brain cancer"
         },
         {
             "cancer_name": "osteosarcoma",
@@ -378,7 +378,7 @@
         },
         {
             "cancer_name": "parietal lobe ependymoma",
-            "do_term": "NA"
+            "do_term": "DOID:1319 / brain cancer"
         },
         {
             "cancer_name": "peritoneal mesothelioma",
@@ -442,7 +442,7 @@
         },
         {
             "cancer_name": "t-cell acute lymphoblastic leukemia",
-            "do_term": "NA"
+            "do_term": "DOID:2531 / hematologic cancer"
         },
         {
             "cancer_name": "thymic carcinoma",

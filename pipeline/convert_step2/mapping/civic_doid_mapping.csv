@@ -16,7 +16,7 @@ Brain_Glioma,DOID:1319 / brain cancer
 Breast_Cancer,DOID:1612 / breast cancer
 Breast_Carcinoma,DOID:1612 / breast cancer
 Breast_Tubular_Carcinoma,DOID:1612 / breast cancer
-Bronchiolo-alveolar_Adenocarcinoma,NA
+Bronchiolo-alveolar_Adenocarcinoma,DOID:1324 / lung cancer
 Cancer,NA
 Cancer_(DOID_162),NA
 Cervical_Cancer,DOID:4362 / cervical cancer
@@ -45,7 +45,7 @@ Diffuse_Midline_Glioma_H3_K27M-mutant,NA
 Endometrial_Adenocarcinoma,DOID:363 / uterine cancer
 Endometrial_Cancer,DOID:363 / uterine cancer
 Endometrial_Hyperplasia,NA
-Endometrioid_Ovary_Carcinoma,NA
+Endometrioid_Ovary_Carcinoma,DOID:2394 / ovarian cancer
 Epithelial_Ovarian_Cancer,DOID:2394 / ovarian cancer
 Esophageal_Cancer,DOID:5041 / esophageal cancer
 Esophagus_Squamous_Cell_Carcinoma,DOID:5041 / esophageal cancer
@@ -70,7 +70,7 @@ Langerhans_Cell_Sarcoma,DOID:2531 / hematologic cancer
 Laryngeal_Squamous_Cell_Carcinoma,DOID:2596 / larynx cancer
 Leukemia,DOID:2531 / hematologic cancer
 Li-Fraumeni_Syndrome,NA
-Low_Grade_Glioma,NA
+Low_Grade_Glioma,DOID:1319 / brain cancer
 Lung_Adenocarcinoma,DOID:1324 / lung cancer
 Lung_Cancer,DOID:1324 / lung cancer
 Lung_Carcinoma,DOID:1324 / lung cancer
@@ -112,7 +112,7 @@ Pancreatic_Ductal_Adenocarcinoma,DOID:1793 / pancreatic cancer
 Pancreatic_Ductal_Carcinoma,DOID:1793 / pancreatic cancer
 Papillary_Thyroid_Carcinoma,DOID:1781 / thyroid gland cancer
 Paraganglioma,DOID:3953 / adrenal gland cancer
-Parietal_Lobe_Ependymoma,NA
+Parietal_Lobe_Ependymoma,DOID:1319 / brain cancer
 Peritoneal_Carcinoma,DOID:1725 / peritoneum cancer
 Peritoneal_Mesothelioma,DOID:1725 / peritoneum cancer
 Polycythemia_Vera,DOID:2531 / hematologic cancer
@@ -130,7 +130,7 @@ Spindle_Cell_Rhabdomyosarcoma,DOID:4045 / muscle cancer
 Stomach_Cancer,DOID:10534 / stomach cancer
 Stomach_Carcinoma,DOID:10534 / stomach cancer
 Systemic_Mastocytosis,DOID:2531 / hematologic cancer
-T-cell_Acute_Lymphoblastic_Leukemia,NA
+T-cell_Acute_Lymphoblastic_Leukemia,DOID:2531 / hematologic cancer
 Thymic_Carcinoma,DOID:3277 / thymus cancer
 Thyroid_Cancer,DOID:1781 / thyroid gland cancer
 Thyroid_Gland_Anaplastic_Carcinoma,DOID:1781 / thyroid gland cancer
