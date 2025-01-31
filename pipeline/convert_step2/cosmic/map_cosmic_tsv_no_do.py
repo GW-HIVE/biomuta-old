@@ -60,7 +60,7 @@ def main(cosmic_tsv, mapping_folder, enst_mapping_csv, output_folder):
 
         # Populate the mapping dictionary with keys as ensg IDs and values as the gene symbol.
         for row in enst_mapping:
-            ensp_mapping_dict[row[2]] = row[1]
+            ensp_mapping_dict[row[2].split('.')[0]] = row[1]
     
     ##################################
     # Load the cosmic tsv file and map, then export
@@ -84,38 +84,57 @@ def main(cosmic_tsv, mapping_folder, enst_mapping_csv, output_folder):
         logging.info(f"Starting chunk {i}")
     
         # Create new fields for reformatted data: ENST, genome location, AA mutation, nucleotide mutation
+        cosmic_df.rename(columns={
+            'CHROMOSOME': 'chr_id',
+            'GENOMIC_MUT_START': 'start_pos',
+            'GENOMIC_MUT_STOP': 'end_pos',
+            'GENOMIC_WT_ALLELE_SEQ': 'ref_nt',
+            'GENOMIC_MUT_ALLELE_SEQ': 'alt_nt'
+        }, inplace=True)
         cosmic_df['ENST'] = ''
-        cosmic_df.rename(columns = {'CHROMOSOME':'chr_id'},inplace=True)
-        cosmic_df.rename(columns = {'GENOMIC_MUT_START':'start_pos'},inplace=True)
-        cosmic_df.rename(columns = {'GENOMIC_MUT_STOP':'end_pos'},inplace=True)
         cosmic_df['ref_aa'] = ''
         cosmic_df['alt_aa'] = ''
         cosmic_df['aa_pos'] = ''
-        cosmic_df.rename(columns = {'GENOMIC_WT_ALLELE_SEQ':'ref_nt'},inplace=True)
-        cosmic_df.rename(columns = {'GENOMIC_MUT_ALLELE_SEQ':'alt_nt'},inplace=True)
-    
-        # Drop rows with missing information
-        cosmic_df = drop_na_by_column(cosmic_df)
     
         # Create a new column with only ENST ID to be used for mapping. Also separate the AA notation, genome locations, and nucleotide change
     
         # Format the amino acid change and position
         logging.info('Formatting amino acid information')
-        cosmic_df = cosmic_df.apply(aa_format, axis=1)
-        logging.info(f"Cumulative count of 'p.?': {invalid_aa_count}")
-        cosmic_df.dropna(subset=['amino_acid_info'],inplace=True)
-        cosmic_df[['ref_aa','alt_aa','aa_pos']] = pd.DataFrame(cosmic_df['amino_acid_info'].tolist(), index=cosmic_df.index)
-        
+        # Filter out invalid AA syntax == 'p.?'
+        mask_p_question = cosmic_df['AA_MUT_SYNTAX'].str.contains(r'\?', na=False)
+        mask_non_standard = cosmic_df['AA_MUT_SYNTAX'].str.len() > 8
+        invalid_aa_count += mask_p_question.sum()
+        logging.info(f"Cumulative number of rows with ? dropped: {invalid_aa_count}")
+
+        cosmic_df = cosmic_df[~mask_p_question]
+        cosmic_df = cosmic_df[~mask_non_standard]
+
+        # Extract the amino acid info using regex
+        # Check for rows that do not match the regex
+        non_matching_rows = cosmic_df[~cosmic_df['AA_MUT_SYNTAX'].str.match(r'^p\.([A-Z\*])(\d+)([A-Z\*=])$', na=False)]
+        logging.info("Rows that do not match the regex:")
+        logging.info(non_matching_rows)
+        # This gives three columns: ref_aa, aa_pos, alt_aa
+        standard_regex = r'^p\.([A-Z\*])(\d+)([A-Z\*=])$'
+        cosmic_df = cosmic_df[cosmic_df['AA_MUT_SYNTAX'].str.match(standard_regex, na=False)]
+        # Extract components using the regex
+        cosmic_df[['ref_aa', 'aa_pos', 'alt_aa']] = cosmic_df['AA_MUT_SYNTAX'].str.extract(standard_regex)
+        # Count how many are NaN => mismatch with the pattern
+        mask_invalid_regex = cosmic_df['ref_aa'].isna() | cosmic_df['aa_pos'].isna() | cosmic_df['alt_aa'].isna()
+        #invalid_aa_regex_count += mask_invalid_regex.sum()
+        cosmic_df = cosmic_df[~mask_invalid_regex]
+
+
         # Map ENST symbol to uniprot accession
         logging.info('Mapping ENST IDs to uniprot accession')
-        ## Apply the extract_enst function with the full row passed as an argument
-        cosmic_df = cosmic_df.apply(extract_enst, axis=1)
+        cosmic_df.loc[:, 'ENST'] = cosmic_df['GENE_NAME'].str.split('_', n=1).str.get(1)
+        mask_missing_enst = cosmic_df['ENST'].isna()
+        missing_enst_count += mask_missing_enst.sum()
+        cosmic_df = cosmic_df[~mask_missing_enst]
         # Log the cumulative number of invalid entries and the cumulative number of unique genes
         logging.info(f"Cumulative number of invalid 'GENE_NAME' entries: {missing_enst_count}")
-        logging.info(f"Cumulative number of unique 'GENE_NAME' entries: {len(invalid_entries)}")
         cosmic_df['uniprotkb_canonical_ac'] = cosmic_df['ENST'].map(ensp_mapping_dict)
-    
-        cosmic_df.dropna(subset=['ref_nt', 'ref_aa', 'chr_id'],inplace=True)
+        logging.info(f"Number of rows mapped to UniProt in the current chunk: {len(cosmic_df['uniprotkb_canonical_ac'])}")
      
         # Select and rename fields for integration with other sources
         final_fields = (
@@ -131,6 +150,7 @@ def main(cosmic_tsv, mapping_folder, enst_mapping_csv, output_folder):
         )
     
         final_df = cosmic_df.loc[:, final_fields]
+        logging.info(f"Number of rows in the final df: {len(final_df)}")
         
         # Remove rows that did not map to uniprot canonical transcripts and duplicates
         final_df.dropna(subset=['uniprotkb_canonical_ac'],inplace=True)
@@ -150,34 +170,14 @@ def main(cosmic_tsv, mapping_folder, enst_mapping_csv, output_folder):
     # Log final totals after all chunks are processed
     logging.info(f"Final total count of 'p.?': {invalid_aa_count}")
     logging.info(f"Final total number of invalid 'GENE_NAME' entries: {missing_enst_count}")
-    logging.info(f"Final total number of unique 'GENE_NAME' entries: {len(invalid_entries)}")
-    logging.info(f"Total number of invalid rows: {cosmic_df['is_valid'].value_counts()}")
+    logging.info(f"Total number of invalid rows: {invalid_aa_count + missing_enst_count}")
+    logging.info(f"Number of rows added to the final df: {len(final_df)}")
 
 
 ###############################
 # Functions for formatting data
 ###############################
-
-# Drop NA column by column
-import pandas as pd
-
-def drop_na_by_column(df):
-    """
-    Drops rows with NA values one column at a time and logs the remaining entries.
-    
-    Args:
-        df (pd.DataFrame): The DataFrame to process.
-        
-    Returns:
-        pd.DataFrame: The modified DataFrame with rows dropped for each column.
-    """
-    for col in df.columns:
-        initial_count = len(df)
-        df.dropna(subset=[col], inplace=True)
-        remaining_count = len(df)
-        logging.info(f"After dropping rows with NA in '{col}': {remaining_count} entries remain (dropped {initial_count - remaining_count} rows).")
-    return df
-
+'''
 # Format the amino acid infomation
 def aa_format(row):
     global invalid_aa_count
@@ -197,7 +197,7 @@ def aa_format(row):
         else:
             row['is_valid'] = True
             return row
-        
+            
 def extract_enst(row):
     global invalid_entries, missing_enst_count
     parts = row['GENE_NAME'].split('_')
@@ -209,7 +209,7 @@ def extract_enst(row):
         missing_enst_count += 1
         row['is_valid'] = False
         return row
-
+'''
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Commands for civic mapping to doid and uniprot accessions.')
