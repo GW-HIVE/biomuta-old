@@ -40,9 +40,10 @@ logging.info("Logging started ------------------------")
 invalid_aa_count = 0 # Count the number of 'p.?' in the column 'AA_MUT_SYNTAX'
 invalid_entries = set() # Keep track of gene names missing their ENST ID
 missing_enst_count = 0
+synonymous_aa = 0 # Count the number of synonymous amino acid mutations
 
 def main(cosmic_tsv, mapping_folder, enst_mapping_csv, output_folder):
-    global invalid_aa_count, invalid_entries, missing_enst_count
+    global invalid_aa_count, invalid_entries, missing_enst_count, synonymous_aa
     ##################################
     # Load the mapping files
     ##################################
@@ -102,20 +103,24 @@ def main(cosmic_tsv, mapping_folder, enst_mapping_csv, output_folder):
         logging.info('Formatting amino acid information')
         # Filter out invalid AA syntax == 'p.?'
         mask_p_question = cosmic_df['AA_MUT_SYNTAX'].str.contains(r'\?', na=False)
+        mask_synonymous = cosmic_df['AA_MUT_SYNTAX'].str.contains(r'\=', na=False)
         mask_non_standard = cosmic_df['AA_MUT_SYNTAX'].str.len() > 8
         invalid_aa_count += mask_p_question.sum()
+        synonymous_aa += mask_synonymous.sum()
         logging.info(f"Cumulative number of rows with ? dropped: {invalid_aa_count}")
+        logging.info(f"Cumulative number of rows with synonymous aa mutations dropped: {synonymous_aa}")
 
         cosmic_df = cosmic_df[~mask_p_question]
+        cosmic_df = cosmic_df[~mask_synonymous]
         cosmic_df = cosmic_df[~mask_non_standard]
 
         # Extract the amino acid info using regex
         # Check for rows that do not match the regex
-        non_matching_rows = cosmic_df[~cosmic_df['AA_MUT_SYNTAX'].str.match(r'^p\.([A-Z\*])(\d+)([A-Z\*=])$', na=False)]
+        non_matching_rows = cosmic_df[~cosmic_df['AA_MUT_SYNTAX'].str.match(r'^p\.([A-Z\*])(\d+)([A-Z\*])$', na=False)]
         logging.info("Rows that do not match the regex:")
         logging.info(non_matching_rows)
         # This gives three columns: ref_aa, aa_pos, alt_aa
-        standard_regex = r'^p\.([A-Z\*])(\d+)([A-Z\*=])$'
+        standard_regex = r'^p\.([A-Z\*])(\d+)([A-Z\*])$'
         cosmic_df = cosmic_df[cosmic_df['AA_MUT_SYNTAX'].str.match(standard_regex, na=False)]
         # Extract components using the regex
         cosmic_df[['ref_aa', 'aa_pos', 'alt_aa']] = cosmic_df['AA_MUT_SYNTAX'].str.extract(standard_regex)
@@ -173,43 +178,6 @@ def main(cosmic_tsv, mapping_folder, enst_mapping_csv, output_folder):
     logging.info(f"Total number of invalid rows: {invalid_aa_count + missing_enst_count}")
     logging.info(f"Number of rows added to the final df: {len(final_df)}")
 
-
-###############################
-# Functions for formatting data
-###############################
-'''
-# Format the amino acid infomation
-def aa_format(row):
-    global invalid_aa_count
-    if row['AA_MUT_SYNTAX'] == "p.?":
-        invalid_aa_count += 1
-        row['amino_acid_info'] = [nan, nan, nan]
-        row['is_valid'] = False
-        return row
-    else:
-        aa_list = re.findall(r'[A-Z\*]',row['AA_MUT_SYNTAX'])
-        aa_position = re.findall(r'\d+',row['AA_MUT_SYNTAX'])
-        aa_list.append(aa_position[0])
-        if len(aa_list) != 3:
-            row['amino_acid_info'] = [nan, nan, nan]
-            row['is_valid'] = False
-            return row
-        else:
-            row['is_valid'] = True
-            return row
-            
-def extract_enst(row):
-    global invalid_entries, missing_enst_count
-    parts = row['GENE_NAME'].split('_')
-    if len(parts) > 1: # Check if there are at least two parts after splitting by '_'
-        row['ENST'] = parts[1]
-        return row
-    else: # Track the unique invalid gene names (missing ENST)
-        invalid_entries.add(row['GENE_NAME'])
-        missing_enst_count += 1
-        row['is_valid'] = False
-        return row
-'''
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Commands for civic mapping to doid and uniprot accessions.')
