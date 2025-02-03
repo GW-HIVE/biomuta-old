@@ -169,7 +169,7 @@ def main(cosmic_tsv, mapping_folder, enst_mapping_csv, output_folder):
         header = i == 0
         
 
-        mapped_new_file_path = output_folder + "/cosmic_missense_biomuta_v5.csv"
+        mapped_new_file_path = output_folder + "/cosmic_missense_biomuta_v6.csv"
         logging.info(f"Adding processed data to {mapped_new_file_path}")
         final_df.to_csv(mapped_new_file_path, index = False, header=header, mode=mode)
 
