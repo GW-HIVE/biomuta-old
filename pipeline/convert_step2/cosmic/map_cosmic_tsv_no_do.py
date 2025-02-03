@@ -96,6 +96,9 @@ def main(cosmic_tsv, mapping_folder, enst_mapping_csv, output_folder):
         cosmic_df['ref_aa'] = ''
         cosmic_df['alt_aa'] = ''
         cosmic_df['aa_pos'] = ''
+
+        # Replace non-standard amino acid notations with their one-letter codes
+        cosmic_df['AA_MUT_SYNTAX'] = cosmic_df['AA_MUT_SYNTAX'].str.replace('Sec', 'U', regex=False)
     
         # Create a new column with only ENST ID to be used for mapping. Also separate the AA notation, genome locations, and nucleotide change
     
@@ -104,7 +107,7 @@ def main(cosmic_tsv, mapping_folder, enst_mapping_csv, output_folder):
         # Filter out invalid AA syntax == 'p.?'
         mask_p_question = cosmic_df['AA_MUT_SYNTAX'].str.contains(r'\?', na=False)
         mask_synonymous = cosmic_df['AA_MUT_SYNTAX'].str.contains(r'\=', na=False)
-        mask_non_standard = cosmic_df['AA_MUT_SYNTAX'].str.len() > 8
+        mask_non_standard = cosmic_df['AA_MUT_SYNTAX'].str.contains('fs|ext', case=False, na=False)
         invalid_aa_count += mask_p_question.sum()
         synonymous_aa += mask_synonymous.sum()
         logging.info(f"Cumulative number of rows with ? dropped: {invalid_aa_count}")
