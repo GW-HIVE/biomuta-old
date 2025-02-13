@@ -71,6 +71,7 @@ def main(input_folder, output_folder):
     if dup_number > 0:
         print("Removed " + str(dup_number) + " duplicate rows") 
 
+    # This bit is untested (new functionality: versioning)
     base_filename = "biomuta"
     next_version = get_next_version_number(output_folder, base_filename)
     new_filename = f"{base_filename}_v{next_version}.csv"
