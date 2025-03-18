@@ -211,19 +211,21 @@ def find_matching_json_records(directory, key, record_value, dtype):
     return matching_records
 '''
 # Example usage
-json_directory = '/data/shared/biomuta/downloads/cbioportal/2024_10_21/mutations'
-out_file = '/data/shared/repos/biomuta-old/downloads/cbioportal/2024_10_21/filtered_mutations/81855.json'
-chr_value = 10  # This will be converted to a string
-entrezGeneId_value = 81855  # This should be an integer
-matching_records = find_matching_json_records(json_directory, chr_value, entrezGeneId_value)
+json_directory = '/home/maria.kim/bioxpress'
+out_file = '/data/shared/bioxpress/generated/datasets/cbio/mrna_expression.json'
+key = 'molecularAlterationType'
+record_value = 'MRNA_EXPRESSION'
+matching_records = find_matching_json_records(json_directory, key, record_value, str)
+
 # Fields to print
 fields_to_print = ['proteinChange', 'startPosition', 'endPosition', 'ncbiBuild']
 # Filter the records
 result = [{field: record.get(field) for field in fields_to_print} for record in matching_records]
+'''
 # Save the result to a JSON file
 with open(out_file, 'w') as f:
-    json.dump(result, f, indent=4)
-'''
+    json.dump(matching_records, f, indent=4)
+
 
 
 def find_records(filename, chr_value, entrezGeneId_value):
