@@ -3,7 +3,7 @@
 # This script extracts study IDs and the corresponding cancer names. It takes as input the output of cancer_types.sh
 
 # Define the directory where your JSON files are located
-input_dir="/data/shared/biomuta/downloads/cbioportal/current/cancer_types"
+input_dir="/data/shared/biomuta/generated/datasets/current/cancer_types"
 
 # Define the output TSV file
 output_file="/data/shared/biomuta/generated/datasets/current/cancer_type_per_study.json"
