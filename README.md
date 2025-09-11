@@ -128,6 +128,155 @@ After cloning this repo, you will need to set the parameters given in pipeline/c
 
 
 
+
+# cBioPortal Data Downloader Script Documentation
+
+## Overview
+
+This bash script downloads mutation data from the cBioPortal API for all available cancer studies. It systematically retrieves study information, molecular profiles, sample lists, and mutation data, organizing the downloaded files in a structured directory hierarchy.
+
+## Prerequisites
+
+- **curl**: For making HTTP requests to the cBioPortal API
+- **jq**: For parsing and extracting data from JSON responses
+- **bash**: Version 4.0+ recommended
+- **Internet connection**: Required for API access
+
+## Configuration
+
+The script expects a `config.json` file located two directories up from the script location (`../../config.json`). This configuration file must contain:
+
+```json
+{
+  "relevant_paths": {
+    "downloads": "/path/to/downloads/directory"
+  }
+}
+```
+
+## Directory Structure
+
+The script creates the following directory structure:
+
+```
+{downloads_path}/
+└── cbioportal/
+    ├── current -> {YYYY_MM_DD}/  (symbolic link to today's download)
+    └── {YYYY_MM_DD}/
+        ├── all_studies.json
+        ├── study_ids.txt
+        ├── {study_id}_molecular_profiles.json
+        ├── {study_id}_sample_lists.json
+        └── mutations/
+            └── {molecular_profile_id}_{sample_list_id}.json
+```
+
+## Workflow
+
+### 1. Setup and Initialization
+- Determines script directory and loads configuration
+- Creates date-stamped download directory (`YYYY_MM_DD` format)
+- Creates symbolic link named `current` pointing to today's directory
+- Sets up subdirectories for organizing downloaded data
+
+### 2. Study Discovery
+- Fetches all available studies from cBioPortal API
+- Saves complete study metadata to `all_studies.json`
+- Extracts study IDs to `study_ids.txt` for processing
+
+### 3. Study Processing
+For each study ID, the script:
+- Downloads molecular profile metadata
+- Downloads sample list metadata
+- Extracts molecular profile IDs and sample list IDs
+
+### 4. Mutation Data Download
+For each combination of molecular profile and sample list:
+- Downloads mutation data via the cBioPortal mutations API
+- Saves data with descriptive filename format
+- Implements 5-second delay between requests to respect rate limits
+- Provides detailed progress logging
+
+### 5. Cleanup
+- Removes JSON files containing "not found" responses
+- Keeps only successfully downloaded mutation data
+
+## API Endpoints Used
+
+- **Studies**: `https://www.cbioportal.org/api/studies`
+- **Molecular Profiles**: `https://www.cbioportal.org/api/studies/{studyId}/molecular-profiles`
+- **Sample Lists**: `https://www.cbioportal.org/api/studies/{studyId}/sample-lists`
+- **Mutations**: `https://www.cbioportal.org/api/molecular-profiles/{molecularProfileId}/mutations`
+
+## Error Handling
+
+- Validates HTTP response codes for each API call
+- Continues processing other studies if individual requests fail
+- Logs both successful and failed operations
+- Removes incomplete or error response files during cleanup
+
+## Rate Limiting
+
+The script implements a 5-second delay between mutation data requests to avoid overwhelming the cBioPortal API servers and prevent rate limiting.
+
+## Output Files
+
+### Study Metadata
+- `all_studies.json`: Complete metadata for all studies
+- `study_ids.txt`: Newline-separated list of study identifiers
+- `{study_id}_molecular_profiles.json`: Molecular profiles for each study
+- `{study_id}_sample_lists.json`: Sample lists for each study
+
+### Mutation Data
+- `{molecular_profile_id}_{sample_list_id}.json`: Mutation data files in the mutations subdirectory
+
+## Usage
+
+```bash
+./download_cbioportal_data.sh
+```
+
+## Runtime Considerations
+
+- **Duration**: Complete execution may take several hours depending on the number of studies and data volume
+- **Storage**: Requires significant disk space for mutation data (potentially several GB)
+- **Network**: Bandwidth-intensive due to large JSON file downloads
+- **API Limits**: Respects cBioPortal rate limits with built-in delays
+
+## Logging
+
+The script provides verbose console output including:
+- Current study being processed
+- Success/failure status for each API request
+- Progress indicators for mutation data downloads
+- Summary of operations performed
+
+## Troubleshooting
+
+### Common Issues
+- **Missing dependencies**: Ensure `curl` and `jq` are installed and accessible
+- **Configuration errors**: Verify `config.json` exists and contains valid download path
+- **Network timeouts**: Large downloads may timeout; consider increasing curl timeout settings
+- **Disk space**: Monitor available storage during execution
+
+### Recovery
+- The script can be safely rerun; it will create a new date-stamped directory
+- Previous downloads remain intact and accessible via their date stamps
+- The `current` symlink always points to the most recent download
+
+## Data Usage
+
+The downloaded mutation data follows cBioPortal's standard JSON format and can be used for:
+- Cancer genomics research
+- Mutation analysis pipelines  
+- Bioinformatics tool development
+- Educational purposes
+
+Ensure compliance with cBioPortal's terms of use and data licensing requirements when using the downloaded data.
+
+
+
+
 # Deprecated documentation
 ## Requirements
 The following must be available on your server:

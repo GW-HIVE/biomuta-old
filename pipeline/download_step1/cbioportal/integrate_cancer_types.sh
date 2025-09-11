@@ -43,4 +43,4 @@ echo "]" >> "$output_file"
 echo "Data successfully written to $output_file"
 
 # Make a list of unique cancer names in json format
-jq -r '.[].cancerType' $output_file | sort | uniq | jq -R . | jq -s . > unique_cancer_names.json
+jq -r '.[].cancerType' $output_file | sort | uniq | jq -R . | jq -s . > /data/shared/biomuta/generated/datasets/current/unique_cancer_names.json
