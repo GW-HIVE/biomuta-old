@@ -277,6 +277,183 @@ Ensure compliance with cBioPortal's terms of use and data licensing requirements
 
 
 
+# Cancer Types Downloader Script Documentation
+
+## Overview
+
+This bash script downloads detailed study metadata from the cBioPortal API for cancer studies. It processes a list of study IDs from a previously downloaded dataset and retrieves comprehensive information about each study, including cancer type details. The script is designed to work as a follow-up to the main cBioPortal data downloader.
+
+## Prerequisites
+
+- **curl**: For making HTTP requests to the cBioPortal API
+- **jq**: For parsing JSON configuration files
+- **bash**: Version 4.0+ recommended
+- **sed**: For text processing (removing carriage returns)
+- **Internet connection**: Required for API access
+
+## Dependencies
+
+This script depends on data from the main cBioPortal downloader script, specifically the `study_ids.txt` file containing the list of study identifiers.
+
+## Configuration
+
+The script expects a `config.json` file located two directories up from the script location (`../../config.json`). This configuration file must contain:
+
+```json
+{
+  "relevant_paths": {
+    "downloads": "/path/to/downloads/directory",
+    "generated_datasets": "/path/to/generated/datasets/directory"
+  }
+}
+```
+
+## Directory Structure
+
+The script creates the following directory structure:
+
+```
+{generated_datasets_path}/
+└── {YYYY_MM_DD}/
+    └── cancer_types/
+        ├── {study_id_1}.json
+        ├── {study_id_2}.json
+        └── ...
+```
+
+Where `{YYYY_MM_DD}` corresponds to the latest cBioPortal download date.
+
+## Workflow
+
+### 1. Setup and Configuration
+- Determines script directory and loads configuration from `config.json`
+- Identifies the latest cBioPortal download directory by timestamp
+- Constructs output directory path using the latest dump directory name
+
+### 2. Output Directory Management
+The script provides flexible directory handling:
+- **Existing Directory**: If the target directory exists, prompts user to:
+  - Overwrite the existing directory (`y`)
+  - Create a timestamped alternative directory (`n`)
+- **New Directory**: Creates the directory structure if it doesn't exist
+
+### 3. Input Validation
+- Verifies the existence of the `study_ids.txt` file from the latest download
+- Prompts user to confirm the input file before processing
+- Allows user to abort if incorrect file is selected
+
+### 4. Study Metadata Download
+- Processes each study ID from the input file
+- Removes carriage return characters that may cause API issues
+- Downloads detailed study metadata for each study ID
+- Saves individual JSON files named by study ID
+
+## API Endpoint Used
+
+- **Study Details**: `https://www.cbioportal.org/api/studies/{studyId}`
+
+## User Interaction
+
+The script includes two interactive prompts:
+
+### Directory Overwrite Confirmation
+```
+Directory {OUTPUT_DIR} already exists.
+Do you want to overwrite it? (y/n):
+```
+
+### Input File Confirmation
+```
+The input file is: {INPUT_FILE}
+Are you sure this is the input file you want to use? (y/n):
+```
+
+## Error Handling
+
+- **Missing Input File**: Exits with error code 1 if `study_ids.txt` doesn't exist
+- **User Cancellation**: Exits gracefully if user chooses not to proceed
+- **Directory Creation**: Handles both overwrite and alternative directory scenarios
+- **Carriage Return Handling**: Strips Windows-style line endings that could cause API errors
+
+## Output Files
+
+### Study Metadata Files
+Each study produces a JSON file containing detailed metadata:
+- **Filename**: `{study_id}.json`
+- **Content**: Complete study information including:
+  - Study description and citation
+  - Cancer type and subtype information
+  - Sample counts and demographics
+  - Publication details
+  - Data availability status
+
+## Usage
+
+```bash
+./download_cancer_types.sh
+```
+
+### Example Interactive Session
+```bash
+$ ./download_cancer_types.sh
+Directory /path/to/generated/2024_03_15/cancer_types already exists.
+Do you want to overwrite it? (y/n): n
+Creating new directory: /path/to/generated/2024_03_15/cancer_types_20240315143022
+Final output directory: /path/to/generated/2024_03_15/cancer_types_20240315143022
+The input file is: /path/to/downloads/cbioportal/2024_03_15/study_ids.txt
+Are you sure this is the input file you want to use? (y/n): y
+Using /path/to/downloads/cbioportal/2024_03_15/study_ids.txt for processing...
+```
+
+## Runtime Considerations
+
+- **Duration**: Typically faster than the main downloader (minutes rather than hours)
+- **Storage**: Moderate disk space requirements (individual JSON files are small)
+- **Network**: Less bandwidth-intensive than mutation data downloads
+- **Rate Limits**: No explicit rate limiting implemented (individual study requests are typically fast)
+
+## Data Processing Features
+
+### Carriage Return Handling
+The script uses `sed 's/\r$//'` to remove Windows-style carriage returns from the input file, ensuring compatibility across different operating systems and preventing API request failures.
+
+### Automatic Latest Version Detection
+The script automatically identifies the most recent cBioPortal download using `ls -t` to sort directories by modification time, ensuring it processes the freshest available data.
+
+## Output Data Usage
+
+The downloaded study metadata can be used for:
+- Cancer type classification and analysis
+- Study cataloging and organization
+- Metadata extraction for research projects
+- Building study selection interfaces
+- Generating study summaries and reports
+
+## Troubleshooting
+
+### Common Issues
+- **Missing dependencies**: Ensure `curl`, `jq`, and `sed` are installed
+- **Configuration errors**: Verify `config.json` paths are correct
+- **Input file not found**: Ensure the main cBioPortal downloader has been run first
+- **Permission errors**: Verify write permissions to the generated datasets directory
+
+### Recovery Options
+- **Interrupted downloads**: Safe to rerun; existing files will be overwritten or new directory created
+- **Partial completion**: Individual study files can be manually verified and re-downloaded if needed
+- **Wrong input file**: Script validates input file before processing begins
+
+## Integration Notes
+
+This script is designed to be part of a larger cBioPortal data processing pipeline:
+1. **First**: Run the main cBioPortal data downloader
+2. **Second**: Run this cancer types downloader for study metadata
+3. **Third**: Process the downloaded data with analysis scripts
+
+The consistent directory naming scheme ensures compatibility between pipeline stages.
+
+
+
+
 # Deprecated documentation
 ## Requirements
 The following must be available on your server:
