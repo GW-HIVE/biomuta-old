@@ -55,8 +55,8 @@ read -p "Are you sure this is the input file you want to use? (y/n): " confirm
 # Check user's response
 if [[ "$confirm" == [yY] ]]; then
     echo "Using $INPUT_FILE for processing..."
-    # Read study IDs from the input file
-    while IFS= read -r study_id; do
+    # Read study IDs from the carriage return-free input file
+    sed 's/\r$//' "$INPUT_FILE" | while IFS= read -r study_id; do
     curl -X 'GET' \
     "https://www.cbioportal.org/api/studies/${study_id}" \
     -H 'accept: application/json' \
