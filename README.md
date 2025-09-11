@@ -453,6 +453,203 @@ The consistent directory naming scheme ensures compatibility between pipeline st
 
 
 
+# Cancer Type Extractor Script Documentation
+
+## Overview
+
+This bash script processes the JSON files downloaded by the cancer types downloader script to extract and consolidate cancer type information. It creates a structured JSON dataset mapping study IDs to their corresponding cancer types, and generates a list of unique cancer names for further analysis.
+
+## Prerequisites
+
+- **jq**: For JSON parsing, manipulation, and formatting
+- **bash**: Version 4.0+ recommended
+- **sort**: For sorting operations (standard Unix utility)
+- **uniq**: For removing duplicates (standard Unix utility)
+
+## Dependencies
+
+This script depends on the output from the cancer types downloader script, specifically the individual JSON files containing study metadata located in the `cancer_types` directory.
+
+## Input Requirements
+
+### Expected Input Structure
+```
+/data/shared/biomuta/generated/datasets/current/cancer_types/
+├── study_id_1.json
+├── study_id_2.json
+├── study_id_3.json
+└── ...
+```
+
+### Input File Format
+Each JSON file should contain study metadata with the following structure:
+```json
+{
+  "studyId": "study_identifier",
+  "cancerType": {
+    "name": "Cancer Type Name",
+    "...": "other fields"
+  },
+  "...": "other study metadata"
+}
+```
+
+## Output Files
+
+### Primary Output: `cancer_type_per_study.json`
+A JSON array containing study ID and cancer type mappings:
+```json
+[
+  {
+    "studyId": "acc_tcga",
+    "cancerType": "Adrenocortical Carcinoma"
+  },
+  {
+    "studyId": "blca_tcga",
+    "cancerType": "Bladder Urothelial Carcinoma"
+  }
+]
+```
+
+### Secondary Output: `unique_cancer_names.json`
+A JSON array of unique cancer type names:
+```json
+[
+  "Adrenocortical Carcinoma",
+  "Bladder Urothelial Carcinoma",
+  "Brain Lower Grade Glioma",
+  "Breast Invasive Carcinoma"
+]
+```
+
+## Workflow
+
+### 1. Initialization
+- Sets up input and output directory paths
+- Initializes the output JSON array structure
+- Prepares formatting variables for proper JSON syntax
+
+### 2. Data Extraction
+For each JSON file in the input directory:
+- Extracts the `studyId` field using `jq -r '.studyId'`
+- Extracts the cancer type name using `jq -r '.cancerType.name'`
+- Creates a formatted JSON object with both fields
+
+### 3. JSON Array Construction
+- Handles proper JSON array formatting with commas
+- Tracks the first record to avoid leading comma
+- Builds a well-formed JSON array incrementally
+
+### 4. Unique Cancer Names Generation
+- Extracts all cancer type names from the primary output
+- Sorts cancer names alphabetically
+- Removes duplicates using `uniq`
+- Formats as a JSON array of strings
+
+## File Paths (Hard-coded)
+
+The script uses fixed paths that may need adjustment for different environments:
+
+```bash
+# Input directory
+input_dir="/data/shared/biomuta/generated/datasets/current/cancer_types"
+
+# Primary output file
+output_file="/data/shared/biomuta/generated/datasets/current/cancer_type_per_study.json"
+
+# Secondary output file
+"/data/shared/biomuta/generated/datasets/current/unique_cancer_names.json"
+```
+
+## Usage
+
+```bash
+./extract_cancer_types.sh
+```
+
+### Expected Output
+```
+Data successfully written to /data/shared/biomuta/generated/datasets/current/cancer_type_per_study.json
+```
+
+## Technical Implementation Details
+
+### JSON Formatting Strategy
+The script builds a valid JSON array by:
+1. Writing the opening bracket `[`
+2. Adding comma separators between objects (except before the first)
+3. Appending each JSON object without trailing commas
+4. Closing with the final bracket `]`
+
+### jq Command Usage
+- **Extraction**: `jq -r '.field'` - Raw string output without quotes
+- **Object Creation**: `jq -n --arg var value '{field: $var}'` - Create JSON objects
+- **Array Processing**: `jq -R . | jq -s .` - Convert lines to JSON string array
+
+### Data Processing Pipeline
+```bash
+# Extract cancer types → Sort → Remove duplicates → Convert to JSON array
+jq -r '.[].cancerType' $output_file | sort | uniq | jq -R . | jq -s .
+```
+
+## Error Handling
+
+### Potential Issues
+- **Missing input directory**: Script will fail if cancer_types directory doesn't exist
+- **Malformed JSON files**: Invalid JSON in input files will cause jq errors
+- **Missing fields**: If `studyId` or `cancerType.name` fields are missing, jq will output `null`
+- **Permission errors**: Write permissions required for output directory
+
+### Validation
+The script doesn't include explicit error checking, but will fail visibly if:
+- Input directory is empty or missing
+- JSON files are malformed
+- Output directory is not writable
+
+## Data Quality Considerations
+
+### Null Value Handling
+If input JSON files contain missing or null values for `studyId` or `cancerType.name`, these will appear as `null` in the output JSON, which may require downstream processing to handle.
+
+### Duplicate Studies
+The script doesn't check for duplicate study IDs, so if the same study appears in multiple input files, it will create multiple entries in the output.
+
+## Integration with Pipeline
+
+This script fits into the cBioPortal data processing pipeline as:
+
+1. **cBioPortal Data Downloader** → Downloads raw study data
+2. **Cancer Types Downloader** → Downloads study metadata  
+3. **Cancer Type Extractor** (this script) → Extracts structured cancer type mappings
+4. **Analysis Scripts** → Use the structured JSON output for research
+
+## Output Usage
+
+The generated files can be used for:
+- **Research Analysis**: Mapping studies to cancer types for comparative analysis
+- **Data Visualization**: Creating cancer type distribution charts
+- **Study Selection**: Filtering studies by cancer type for focused research  
+- **Metadata Enhancement**: Adding cancer type information to other datasets
+- **Quality Control**: Verifying cancer type consistency across studies
+
+## Customization Options
+
+To adapt the script for different environments:
+
+1. **Update file paths** to match your directory structure
+2. **Modify field extraction** if input JSON structure differs
+3. **Add error handling** for production environments
+4. **Include validation** for data quality checking
+
+## Performance Considerations
+
+- **Speed**: Fast execution for typical dataset sizes (hundreds of studies)
+- **Memory**: Minimal memory usage due to streaming processing
+- **Storage**: Output files are typically small (KB to low MB range)
+- **Scalability**: Linear scaling with number of input files
+
+
+
 
 # Deprecated documentation
 ## Requirements
