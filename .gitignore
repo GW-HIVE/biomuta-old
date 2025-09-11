@@ -3,8 +3,8 @@ env
 downloads
 generated_datasets
 nginx-file-server
-nginx-file-server/data/current
 pipeline/convert_step2/liftover/Homo_sapiens.GRCh38.113.gff3
+pipeline/logs
 utils/__pycache__/
 .*/
 *.log
