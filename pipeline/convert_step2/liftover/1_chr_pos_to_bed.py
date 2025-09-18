@@ -35,6 +35,9 @@ def process_json_to_bed(input_directory, output_bed_file):
     file_count = 0
     error_count = 0
 
+    # Create output directory if it doesn't exist
+    os.makedirs(os.path.dirname(output_bed_file), exist_ok=True)
+
     with open(output_bed_file, 'w') as bed_file:
         for json_file_path in glob.glob(os.path.join(input_directory, '*.json')):
             file_count += 1
