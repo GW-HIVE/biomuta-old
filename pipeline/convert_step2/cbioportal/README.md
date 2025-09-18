@@ -202,6 +202,7 @@ When contributing to this tool:
 - User confirmation is required before processing begins
 
 # 2_parse_gff.py Documentation (auto-generated, unreviewed)
+Recommended to run with nohup.
 
 ## Overview
 
