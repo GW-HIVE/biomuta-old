@@ -1,4 +1,57 @@
-# 2_liftover.sh Script Documentation (auto-generated, unreviewed)
+# 1_chr_pos_to_bed.py (auto-generated, only inputs and outputs, not markdown)
+Inputs
+
+Input directory: A folder containing JSON files with mutation data from cBioPortal
+
+Location: downloads/cbioportal/current/mutations/
+Files: Multiple .json files containing genomic variant records
+Each JSON file contains an array of mutation records with fields like:
+
+ncbiBuild (genome build: GRCh37, GRCh38, etc.)
+variantType (SNP, DEL, INS, etc.)
+chr (chromosome)
+startPosition and endPosition
+entrezGeneId
+proteinChange
+
+
+
+
+
+Outputs
+
+Output file: A single BED format file
+
+Location: generated_datasets/current/liftover/hg19entrez_build_protChange.bed
+Format: Tab-separated values with 6 columns:
+
+Chromosome (with 'chr' prefix, X/Y converted from 23/24)
+Start position (0-based, converted from 1-based)
+End position
+
+
+Entrez Gene ID
+
+
+NCBI Build version
+Protein change description
+
+
+
+
+
+Data Filtering
+The script applies several filters to select only:
+
+SNP variants (single nucleotide polymorphisms)
+Records with valid genome builds (excludes 'NA')
+Non-mitochondrial chromosomes (excludes 'MT')
+Non-splice site mutations
+Unique records (duplicates removed)
+
+The script processes the JSON files in batches and outputs progress information, reporting the total number of files processed and any errors encountered.
+
+# 2_liftover.sh (auto-generated, unreviewed)
 
 ## Overview
 This bash script performs genomic coordinate liftover from GRCh37 (hg19) to GRCh38 coordinate systems for biomutation data. It processes BED files containing genomic positions and protein changes, using multiple liftover strategies to maximize successful coordinate conversions.
