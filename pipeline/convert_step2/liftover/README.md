@@ -1,4 +1,6 @@
 # 1_chr_pos_to_bed.py (auto-generated, only inputs and outputs, not markdown)
+Recommended to run with nohup.
+
 Inputs
 
 Input directory: A folder containing JSON files with mutation data from cBioPortal
@@ -52,6 +54,7 @@ Unique records (duplicates removed)
 The script processes the JSON files in batches and outputs progress information, reporting the total number of files processed and any errors encountered.
 
 # 2_liftover.sh (auto-generated, unreviewed)
+This script doesn't require running with nohup.
 
 ## Overview
 This bash script performs genomic coordinate liftover from GRCh37 (hg19) to GRCh38 coordinate systems for biomutation data. It processes BED files containing genomic positions and protein changes, using multiple liftover strategies to maximize successful coordinate conversions.
