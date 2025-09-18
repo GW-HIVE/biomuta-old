@@ -1,3 +1,206 @@
+# 1_generate_cancer_do_json.py (auto-generated, unreviewed)
+Cancer Disease Ontology (DO) Mapping Tool
+
+A Python script for mapping cancer types to Disease Ontology terms using hierarchical mapping sources.
+
+## Overview
+
+This tool processes cancer type data and maps it to standardized Disease Ontology (DO) terms. It uses a two-tier mapping approach with primary sources (CIVIC and COSMIC) and fallback mappings to ensure comprehensive coverage.
+
+## Features
+
+- **Hierarchical Mapping**: Primary mapping from CIVIC/COSMIC sources with fallback support
+- **Interactive Confirmation**: User-prompted directory selection for safety
+- **Comprehensive Logging**: Detailed logging with configurable levels
+- **JSON Processing**: Handles multiple JSON input/output formats
+- **Study-Level Mapping**: Maps individual studies to DO terms via cancer types
+
+## Prerequisites
+
+- Python 3.7+
+- Required files:
+  - `config.json` (configuration file with paths)
+  - `combined_do_mapping.json` (primary CIVIC/COSMIC mappings)
+  - `fallback_cbio_doid_mapping.json` (fallback mappings)
+  - `unique_cancer_names.json` (input cancer types)
+  - `cancer_type_per_study.json` (study-cancer type associations)
+
+## Configuration
+
+The script expects a `config.json` file with the following structure:
+
+```json
+{
+  "relevant_paths": {
+    "mapping": "/path/to/mapping/files",
+    "generated_datasets": "/path/to/datasets"
+  }
+}
+```
+
+## Input Files
+
+### `unique_cancer_names.json`
+```json
+[
+  "breast cancer",
+  "lung adenocarcinoma",
+  "glioblastoma"
+]
+```
+
+### `cancer_type_per_study.json`
+```json
+[
+  {
+    "studyId": "study001",
+    "cancerType": "breast cancer"
+  }
+]
+```
+
+### `combined_do_mapping.json`
+```json
+{
+  "civic": [
+    {
+      "cancer_name": "breast cancer",
+      "do_term": "DOID:1612"
+    }
+  ],
+  "cosmic": [
+    {
+      "cancer_name": "lung adenocarcinoma",
+      "do_term": "DOID:3910"
+    }
+  ]
+}
+```
+
+## Output Files
+
+### `cancer_types_with_do.json`
+Maps each cancer type to its corresponding DO term:
+```json
+[
+  {
+    "cancerType": "breast cancer",
+    "do_name": "DOID:1612"
+  }
+]
+```
+
+### `study_ids_with_do.json`
+Maps each study ID to its corresponding DO term:
+```json
+[
+  {
+    "studyId": "study001",
+    "do_name": "DOID:1612"
+  }
+]
+```
+
+## Usage
+
+1. **Prepare configuration**: Ensure `config.json` is properly configured
+2. **Place input files**: Put required JSON files in the appropriate directories
+3. **Run the script**:
+   ```bash
+   python 1_generate_cancer_do_json.py
+   ```
+4. **Confirm directory**: The script will prompt for confirmation of the latest dataset directory
+5. **Review outputs**: Check generated JSON files and log file for results
+
+## Mapping Logic
+
+The script uses a hierarchical approach:
+
+1. **Primary Mapping**: Searches CIVIC and COSMIC mappings for exact matches (case-insensitive)
+2. **Fallback Mapping**: Uses keyword-based matching if no primary match found
+   - Exact keyword match takes precedence
+   - Word-level keyword matching as secondary option
+   - Handles multiple matches with warnings
+
+## Logging
+
+The script generates detailed logs in `cancer_mapping.log`:
+
+- **INFO**: Successful mappings and file operations
+- **WARNING**: Multiple matches or unmapped cancer types
+- **ERROR**: File access or processing errors
+
+### Log Levels
+- `ERROR`: Critical failures
+- `WARNING`: Potential issues requiring attention
+- `INFO`: General operations and successful mappings
+- `DEBUG`: Detailed debugging information
+
+## Error Handling
+
+- **Multiple Matches**: Returns "Too many cancer type matches." with warning
+- **No Matches**: Returns "NA" with warning log
+- **Missing Files**: Script will fail with file not found errors
+- **User Abort**: Clean exit when user declines directory confirmation
+
+## File Structure
+
+```
+project/
+├── config.json
+├── 1_generate_cancer_do_json.py
+├── cancer_mapping.log
+├── mapping/
+│   ├── combined_do_mapping.json
+│   └── fallback_cbio_doid_mapping.json
+└── generated_datasets/
+    └── [timestamp_directory]/
+        ├── unique_cancer_names.json
+        ├── cancer_type_per_study.json
+        ├── cancer_types_with_do.json
+        └── study_ids_with_do.json
+```
+
+## Best Practices
+
+- **Version Control**: Add `*.log` to `.gitignore`
+- **Backup**: Keep backups of mapping files before updates
+- **Validation**: Review log files after each run
+- **Testing**: Test with small datasets before full processing
+
+## Troubleshooting
+
+### Common Issues
+
+1. **FileNotFoundError**: Check config.json paths and file existence
+2. **Permission Errors**: Ensure write permissions for output directory
+3. **JSON Decode Errors**: Validate JSON file formatting
+4. **Empty Results**: Check input file format and mapping file completeness
+
+### Debug Steps
+
+1. Check log file for detailed error messages
+2. Verify all input files exist and are properly formatted
+3. Confirm config.json paths are correct
+4. Test with a small subset of data first
+
+## Contributing
+
+When contributing to this tool:
+
+1. Maintain logging consistency
+2. Add appropriate error handling
+3. Update documentation for new features
+4. Test with various input formats
+5. Follow existing code style
+
+## Notes
+
+- The script automatically selects the most recently created dataset directory
+- Case-insensitive matching is used for cancer type comparison
+- Multiple keyword matches in fallback mapping trigger warnings
+- User confirmation is required before processing begins
+
 # 2_parse_gff.py Documentation (auto-generated, unreviewed)
 
 ## Overview
