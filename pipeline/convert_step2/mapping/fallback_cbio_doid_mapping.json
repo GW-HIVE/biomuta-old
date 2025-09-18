@@ -30,6 +30,7 @@
   "histiocytic": "DOID:0060073 / lymphatic system cancer",
   "leukemia": "DOID:2531 / hematologic cancer",
   "leukemia/lymphoma": "DOID:2531 / hematologic cancer",
+  "leukemias": "DOID:2531 / hematologic cancer",
   "lung": "DOID:1324 / lung cancer",
   "lymphoid": "DOID:2531 / hematologic cancer",
   "lymphoma": "DOID:2531 / hematologic cancer",

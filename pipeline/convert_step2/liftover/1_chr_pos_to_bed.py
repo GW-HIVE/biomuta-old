@@ -113,6 +113,6 @@ def process_json_to_bed(input_directory, output_bed_file):
 config_obj = get_config()
 dl_dir = Path(config_obj["relevant_paths"]["downloads"])
 out_dir = Path(config_obj["relevant_paths"]["generated_datasets"])
-input_directory = dl_dir / 'cbioportal' / '2024_10_21' / 'mutations'  # Write a util to get latest dir
-output_bed_file = out_dir / '2024_10_22' / 'liftover' / 'hg19entrez_build_protChange.bed' #Write a util to get latest dir
+input_directory = dl_dir / 'cbioportal' / 'current' / 'mutations'
+output_bed_file = out_dir / 'current' / 'liftover' / 'hg19entrez_build_protChange.bed'
 process_json_to_bed(input_directory, output_bed_file)
