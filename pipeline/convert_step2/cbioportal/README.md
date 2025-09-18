@@ -393,3 +393,146 @@ The script logs important events and results:
 - **Database Updates**: Requires periodic updates with new Ensembl releases
 - **Path Configuration**: Uses configuration system for flexible file paths
 - **Feature Types**: Currently hardcoded to query 'CDS' features only
+
+# 3_1_ensp_to_uniprot_from_glygen.py (auto-generated, unreviewed)
+ENSP to UniProt Mapping Documentation
+
+## Overview
+
+The `3_1_ensp_to_uniprot_from_glygen.py` script maps Ensembl Protein IDs (ENSP) to UniProt accession numbers using GlyGen protein mapping data. It processes large datasets efficiently using generator functions and produces both mapped results and unmapped ID logs.
+
+## Purpose
+
+This script is part of the BiOMuta pipeline and serves to:
+- Map ENSP IDs to their corresponding UniProt canonical accession numbers
+- Track unmapped IDs for quality control and completeness assessment
+- Handle large datasets with memory-efficient streaming processing
+
+## Input Files
+
+### Required Files
+
+1. **Input ENSP File**: `/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/unique_ensp`
+   - Contains unique ENSP IDs (one per line)
+   - Plain text format
+
+2. **GlyGen Mapping File**: `/data/shared/repos/biomuta-old/downloads/glygen/human_protein_transcriptlocus.csv`
+   - CSV file from GlyGen containing protein-transcript mappings
+   - Required columns:
+     - `peptide_id`: Ensembl protein ID (may include version numbers)
+     - `uniprotkb_canonical_ac`: UniProt canonical accession number
+
+## Output Files
+
+1. **Mapping Results**: `ensp_to_uniprot_from_glygen.json`
+   - JSON format with ENSP IDs as keys and UniProt accessions as values
+   - Example: `{"ENSP00000123456": "P12345"}`
+
+2. **Unmapped IDs Log**: `unmapped_ids_by_glygen.log`
+   - Plain text file listing ENSP IDs that couldn't be mapped
+   - One ID per line
+
+## Functions
+
+### `read_input_ids(input_path)`
+**Purpose**: Generator function that reads ENSP IDs from the input file.
+
+**Parameters**:
+- `input_path` (str): Path to the file containing ENSP IDs
+
+**Returns**: Generator yielding stripped ENSP IDs
+
+**Memory Efficiency**: Uses generator to avoid loading all IDs into memory at once
+
+### `process_mapping_file(mapping_path, ensp_set)`
+**Purpose**: Generator function that processes the GlyGen mapping file and extracts relevant mappings.
+
+**Parameters**:
+- `mapping_path` (str): Path to the GlyGen CSV mapping file
+- `ensp_set` (set): Set of ENSP IDs to match against
+
+**Returns**: Generator yielding tuples of (peptide_id, uniprot_ac)
+
+**Key Features**:
+- Strips version numbers from peptide IDs (splits on '.')
+- Progress reporting every 10,000 rows
+- Only yields mappings for requested ENSP IDs
+
+### `write_output(output_path, mapping_generator)`
+**Purpose**: Writes ENSP-UniProt mappings to a JSON file incrementally.
+
+**Parameters**:
+- `output_path` (str): Path for the output JSON file
+- `mapping_generator`: Generator yielding (peptide_id, uniprot_ac) tuples
+
+**Key Features**:
+- Streams output to avoid memory issues with large datasets
+- Properly formats JSON with correct syntax
+- Progress reporting every 10,000 mappings
+
+### `log_unmapped_ids(input_ids, mapped_ids, log_path)`
+**Purpose**: Identifies and logs ENSP IDs that couldn't be mapped.
+
+**Parameters**:
+- `input_ids` (set): Set of all input ENSP IDs
+- `mapped_ids` (set): Set of successfully mapped ENSP IDs
+- `log_path` (str): Path for the unmapped IDs log file
+
+**Operation**: Calculates set difference and writes unmapped IDs to log file
+
+## Execution Flow
+
+1. **Load Input IDs**: Read all ENSP IDs from the input file into a set
+2. **Create Generators**: Set up two generators from the mapping file (one for output, one for logging)
+3. **Track Mapped IDs**: Process one generator to collect all mapped ENSP IDs
+4. **Write Output**: Process the second generator to write JSON mappings
+5. **Log Unmapped**: Calculate and log IDs that weren't found in the mapping file
+
+## Performance Characteristics
+
+### Memory Efficiency
+- Uses generator functions to process large files without loading everything into memory
+- Only stores sets of IDs (input and mapped) in memory simultaneously
+
+### Progress Reporting
+- Reports progress every 10,000 rows during mapping file processing
+- Reports progress every 10,000 mappings during output writing
+- Provides completion status for each major operation
+
+### Scalability
+- Designed to handle large datasets (millions of records)
+- Streaming I/O prevents memory exhaustion
+
+## Usage Notes
+
+### Data Processing Details
+- **Version Handling**: Strips version numbers from Ensembl IDs by splitting on '.'
+- **Exact Matching**: Uses set membership for fast ENSP ID lookups
+- **JSON Format**: Output is properly formatted JSON with quoted keys and values
+
+### Error Handling
+- Script assumes all input files exist and are readable
+- No explicit error handling for malformed CSV or missing columns
+- Progress messages help identify where processing might fail
+
+### Limitations
+- Creates duplicate generators which may not be memory efficient for extremely large files
+- Processes the mapping file twice (once for tracking, once for output)
+- No validation of UniProt accession format
+
+## Expected Output
+
+Upon successful completion, the script will:
+- Report the number of ENSP IDs loaded from input
+- Show progress during mapping file processing
+- Report the number of mappings written to JSON
+- Log the number of unmapped IDs
+- Display final file paths for both outputs
+
+## Dependencies
+
+- Python 3.x
+- `csv` module (standard library)
+- Sufficient disk space for output files
+- Read access to input and mapping files
+- Write access to output directory
