@@ -11,7 +11,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent.parent.parent))
 from utils import ROOT_DIR
 from utils.config import get_config
 
-logging.basicConfig(filename="cancer_mapping.log",
+logging.basicConfig(filename="/data/shared/repos/biomuta-old/pipeline/logs/2_convert/cancer_mapping.log",
                     filemode='a',
                     format='%(asctime)s %(levelname)s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
@@ -80,12 +80,11 @@ def get_ensp_for_position(chrom, start, end):
 chr_id_cache = {} # Store IDs in a dictionary to avoid repeated computations, esp helpful since input has many repeated chr IDs
 def clean_chr_id(chr_id):
     for i in (1, 24):
-        
-    if chr_id not in chr_id_cache:
-        chr_id_clean = chr_id.lstrip("chr") # Remove 'chr' prefix
-        chr_id_clean = "23" if chr_id_clean == "X" else "24" if chr_id_clean == "Y" else chr_id_clean
-        chr_id_cache[chr_id] = chr_id_clean
-    return chr_id_cache[chr_id]
+        if chr_id not in chr_id_cache:
+            chr_id_clean = chr_id.lstrip("chr") # Remove 'chr' prefix
+            chr_id_clean = "23" if chr_id_clean == "X" else "24" if chr_id_clean == "Y" else chr_id_clean
+            chr_id_cache[chr_id] = chr_id_clean
+        return chr_id_cache[chr_id]
 
 
 def process_bed_file(input_file, output_file):

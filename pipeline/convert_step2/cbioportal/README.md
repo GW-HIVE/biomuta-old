@@ -204,6 +204,12 @@ When contributing to this tool:
 # 2_parse_gff.py Documentation (auto-generated, unreviewed)
 Recommended to run with nohup.
 
+As of last `ps -ux`, has been running for 180:57 (terminated to test the optimized version). Previous successful run took 48 hrs.
+
+Running the optimized version: `parse_gff_opt1.py` current time (mm:ss) 986:56 (~16hrs) - terminated.
+
+`parse_gff_opt2.py` 46:26
+
 ## Overview
 
 This script maps chromosomal positions from BED files to Ensembl protein IDs (ENSP) using GFF3 annotation data. It serves as a key component in a bioinformatics pipeline for cancer variant mapping, converting genomic coordinates to protein identifiers for downstream analysis.
