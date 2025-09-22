@@ -1,7 +1,7 @@
 import csv
 
 # File paths
-input_file = "/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/unique_ensp"
+input_file = "/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/chr_pos_to_ensp.tsv"
 mapping_file = "/data/shared/repos/biomuta-old/downloads/glygen/human_protein_transcriptlocus.csv"
 output_file = "/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/rerun_uniprot_can_dash_number/ensp_to_uniprot_from_glygen.json"
 unmapped_file = "/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/rerun_uniprot_can_dash_number/unmapped_ids_by_glygen.log"
