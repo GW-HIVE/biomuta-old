@@ -543,3 +543,5 @@ Upon successful completion, the script will:
 - Sufficient disk space for output files
 - Read access to input and mapping files
 - Write access to output directory
+
+4_1_canonical_yes_no.py is very fast.

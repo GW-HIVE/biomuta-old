@@ -1,0 +1,5 @@
+Replace 3_1_ensp_to_uniprot_from_glygen.py with 3_1_ensp_to_uniprot_from_glygen_diff_input.py
+- Takes the tsv file from the previous step instead of an intermediate file with unique ENSP IDs
+- Generates a log file
+
+It turns out 3_2 does both mappings so we don't need 3_1. But I'll keep them for now for reference.
