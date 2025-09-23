@@ -5,7 +5,7 @@ import os
 import pandas as pd
 
 # Load the ENSP to UniProt mapping JSON
-with open("/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/formatted_gffutils_mappings.json", "r") as f:
+with open("/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/ensp_to_uniprot_merged.json", "r") as f:
     ensp_to_uniprot = json.load(f)
 
 # Load the isoform data CSV
@@ -44,8 +44,8 @@ for ensp, uniprot in ensp_to_uniprot.items():
 
 # Write the result to a JSON file
 import os
-output_dir = "/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids"
+output_dir = "/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids"
 os.makedirs(output_dir, exist_ok=True)
-output_path = os.path.join(output_dir, "ensp_to_uniprot_canonical_gffutils.json")
+output_path = os.path.join(output_dir, "ensp_to_uniprot_canonical.json")
 with open(output_path, "w") as json_file:
     json.dump(result, json_file, indent=4)

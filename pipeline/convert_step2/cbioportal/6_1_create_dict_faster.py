@@ -4,7 +4,7 @@ import os
 import pandas as pd
 
 # Logging
-logging.basicConfig(filename="6_1_create_dict1.log",
+logging.basicConfig(filename="/home/maria.kim/logs/2_convert/6_1_create_dict_faster.log",
                     filemode='a',
                     format='%(asctime)s %(levelname)s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
@@ -13,9 +13,9 @@ logging.basicConfig(filename="6_1_create_dict1.log",
 logging.info("Logger started ----------------------")
 
 # Paths
-base_tsv_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/chr_pos_to_ensp.tsv'
-uniprot_ac_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/merged_ensp_to_uniprot.json'
-base_dict_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/base_dict.json'
+base_tsv_path = '/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/chr_pos_to_ensp.tsv'
+uniprot_ac_path = '/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/ensp_to_uniprot_merged.json'
+base_dict_path = '/data/shared/repos/biomuta-old/generated_datasets/current/base_dict.json'
 chunk_size = 1000
 
 # Initialize base_dict
