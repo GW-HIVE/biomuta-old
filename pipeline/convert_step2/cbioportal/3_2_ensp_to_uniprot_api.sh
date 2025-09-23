@@ -15,15 +15,15 @@ log() {
 }
 
 # Input and output file paths
-input_tsv="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/chr_pos_to_ensp.tsv"
-unique_ensp="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/unique_ensp"
-unmapped_file="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/unmapped_ids.log"
-output_json="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/ensp_to_uniprot_from_api.json"
+input_tsv="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/chr_pos_to_ensp.tsv"
+unique_ensp="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/unique_ensp"
+unmapped_file="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/unmapped_ids_by_glygen.log"
+output_json="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/ensp_to_uniprot_from_api.json"
 
 batch_size=25  # Number of ENSP IDs per batch (adjustable)
-failed_ids_dir="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/failed_ids"
-raw_dir="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/raw"
-successful_ids_dir="/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/mapping_ids/successful_ids"
+failed_ids_dir="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/failed_ids"
+raw_dir="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/raw"
+successful_ids_dir="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/successful_ids"
 mkdir -p "$failed_ids_dir" "$raw_dir" "$successful_ids_dir"
 
 # Extract unique ENSP IDs if the file doesn't already exist
