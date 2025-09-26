@@ -18,7 +18,7 @@ import os
 import pandas as pd
 
 # Logging
-logging.basicConfig(filename="6_combine_cbio6.log",
+logging.basicConfig(filename="/data/shared/repos/biomuta-old/pipeline/logs/3_combine/6_combine_cbio6.log",
                     filemode='a',
                     format='%(asctime)s %(levelname)s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
@@ -27,10 +27,10 @@ logging.basicConfig(filename="6_combine_cbio6.log",
 logging.info("Logger started ----------------------")
 
 # Paths
-base_dict_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/base_dict.json'
-json_dir_path = '/data/shared/biomuta/downloads/cbioportal/2024_10_21/mutations'
-study_ids_with_do_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/study_ids_with_do.json'
-output_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/final_table.csv'
+base_dict_path = '/data/shared/repos/biomuta-old/generated_datasets/current/base_dict.json'
+json_dir_path = '/data/shared/biomuta/downloads/cbioportal/current/mutations'
+study_ids_with_do_path = '/data/shared/repos/biomuta-old/generated_datasets/current/study_ids_with_do.json'
+output_path = '/data/shared/repos/biomuta-old/generated_datasets/current/final_cbio_table.csv'
 
 # Load base_dict from file
 if os.path.exists(base_dict_path):
