@@ -1,7 +1,7 @@
 import os
 import ijson
 
-def find_incomplete_json_files(directory, output_file="incomplete_files.txt"):
+def find_incomplete_json_files(directory, output_file="/data/shared/repos/biomuta-old/downloads/cbioportal/current/mutations/truncated/incomplete_files.txt"):
     # List to store the names of incomplete files
     incomplete_files = []
 
