@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Create the truncated directory if it doesn't exist
-truncated_dir="/data/shared/biomuta/downloads/cbioportal/current/mutations/truncated/"
+truncated_dir="/data/shared/biomuta/downloads/cbioportal/current/truncated/"
 mkdir -p "$truncated_dir"
 
 for file in /data/shared/biomuta/downloads/cbioportal/current/mutations/*.json; do
