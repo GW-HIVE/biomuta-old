@@ -18,7 +18,7 @@ import os
 import pandas as pd
 
 # Logging
-logging.basicConfig(filename="/data/shared/repos/biomuta-old/pipeline/logs/3_combine/6_combine_cbio6.log",
+logging.basicConfig(filename="/data/shared/repos/biomuta-old/pipeline/logs/3_combine/6_combine_cbio.log",
                     filemode='a',
                     format='%(asctime)s %(levelname)s %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
