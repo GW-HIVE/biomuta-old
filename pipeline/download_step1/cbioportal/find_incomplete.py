@@ -26,7 +26,7 @@ def find_incomplete_json_files(directory, output_file="incomplete_files.txt"):
     print(f"Found {len(incomplete_files)} incomplete files. Results saved to '{output_file}'.")
 
 # Specify the directory containing your JSON files
-directory_path = "/data/shared/biomuta/downloads/cbioportal/2024_10_21/mutationss"
+directory_path = "/data/shared/biomuta/downloads/cbioportal/current/mutations/truncated"
 
 # Run the function
 find_incomplete_json_files(directory_path)
