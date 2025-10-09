@@ -16,8 +16,8 @@ logging.info("Logger started ----------------------")
 # Paths
 base_dict_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/base_dict.json'
 json_dir_path = '/data/shared/biomuta/downloads/cbioportal/2024_10_21/mutations'
-bm_path = "/data/shared/repos/biomuta-old/nginx-file-server/data/current/biomuta.csv"
-output_path = '/data/shared/repos/biomuta-old/generated_datasets/2024_10_22/clinical-information.csv'
+bm_path = "/data/shared/repos/biomuta-old/generated_datasets/current/final_cbio_table.csv"
+output_path = '/data/shared/repos/biomuta-old/generated_datasets/current/clinical-information.csv'
 
 # Load base_dict from file
 if os.path.exists(base_dict_path):
