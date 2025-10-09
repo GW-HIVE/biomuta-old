@@ -27,7 +27,12 @@ import json
 import logging
 
 # Configure the logging
-logging.basicConfig(filename='convert_civic_vcf.log', level=logging.INFO)
+logging.basicConfig(
+    filename='/home/maria.kim/logs/2_convert/convert_civic_vcf.log', 
+    level=logging.INFO,
+    format='%(asctime)s %(levelname)s %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 # Create a logger
 logger = logging.getLogger(__name__)
@@ -70,6 +75,16 @@ def main(input_vcf_file, schema, output_folder):
         
         logger.info('Loaded ' + str(len(data)) + ' rows from input VCF')
 
+        # DATA INSPECTION
+        # Check what variant types are in the VCF file
+        logger.info("Sample VCF rows:")
+        for i, line in enumerate(data[:3]):  # First 3 rows
+            logger.info(f"Row {i}: {line}")
+        if len(line) > 7:  # If INFO column exists
+            logger.info(f"INFO column: {line[7]}")
+        # Check the mutation fields header
+        logger.info(f"VCF columns: {mut_fields}")
+
     # Use the field schema file to create the output header
     logger.info('Creating the output header...')
     with open(schema) as schema_file: 
@@ -92,11 +107,11 @@ def main(input_vcf_file, schema, output_folder):
 
     # A list of variant classifications to include in the final output
     variant_type_list = [
-        'Missense_Variant',
-        'Stop_Gained',
-        'Stop_Lost',
-        'Start_Gained',
-        'Start_Lost'
+        'Missense Variant',
+        'Stop Gained',
+        'Stop Lost',
+        'Start Gained',
+        'Start Lost'
     ]
 
     # Write to the output file row by row
@@ -135,15 +150,27 @@ def main(input_vcf_file, schema, output_folder):
                         # Split the INFO field into the categories
                         section_list = mutation_info.split(';')
     
-                        if len(section_list) != 3:
-                            logger.info(line + ' contains irregular section count, should be 3 (sections separated by '';'')')
+                        # Initialize section variables
+                        gene_section_info = None
+                        annotation_section_info = None
+                        variant_section_info = None
+
+                        # Parse sections by prefix
+                        for section in section_list:
+                            if section.startswith('GN='):
+                                gene_section_info = section
+                            elif section.startswith('CSQ='):
+                                annotation_section_info = section
+                            elif section.startswith('VT='):
+                                variant_section_info = section
+                            else:
+                                logger.error(f"Unknown section prefix!")
+                                continue
+
+                        # Validate that all required sections are present
+                        if not gene_section_info or not annotation_section_info or not variant_section_info:
+                            logger.warning(f"Missing required sections...")
                             continue
-
-
-                        # Separate the list of all row information into sections
-                        gene_section_info = section_list[0]
-                        variant_section_info = section_list[1]
-                        annotation_section_info = section_list[2]
                         
                         # Process sections containing subfields that can have multiple annotations
                         gene_section_processed = process_gene_section(gene_section_info)
@@ -184,7 +211,7 @@ def process_variant_section(section_info):
 
 # A function for processing each section of a VCF row
 def process_annotation_section(section_info, section_subfields):
-
+    section_info = re.sub(r'CSQ=', '', section_info)
     subfield_count = len(section_subfields)
     
     # A dictionary to hold each unqique annotation given in a section
@@ -236,4 +263,4 @@ if __name__ == "__main__":
 
 
 # Example Run:
-# python3 convert_civic_vcf.py -i /data/shared/repos/biomuta-old/downloads/civic/01-Jan-2025-civic_accepted_lifted.vcf -s subfield_schema.json -o /data/shared/biomuta/generated/datasets/civic/2025_01/
+# python3 convert_civic_vcf.py -i /data/shared/repos/biomuta-old/downloads/civic/current_civic.vcf -s subfield_schema.json -o /data/shared/repos/biomuta-old/generated_datasets/civic/current
