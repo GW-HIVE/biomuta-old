@@ -1,6 +1,6 @@
 #!/bin/bash
 
-wd="/data/shared/biomuta/generated/datasets/2024_10_22/liftover"
+wd="/data/shared/biomuta/generated/datasets/current/liftover"
 
 # Extract rows with GRCh38 and save as tab-separated:
 awk '$5 == "GRCh38"' ${wd}/hg19entrez_build_protChange.bed | awk '{OFS="\t"; $5=""; $1=$1; print}' > ${wd}/cbio_hg38.bed

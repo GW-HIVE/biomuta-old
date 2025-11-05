@@ -3,10 +3,10 @@
 # This script extracts study IDs and the corresponding cancer names. It takes as input the output of cancer_types.sh
 
 # Define the directory where your JSON files are located
-input_dir="/data/shared/biomuta/downloads/cbioportal/2024_10_21/cancer_types"
+input_dir="/data/shared/biomuta/generated/datasets/current/cancer_types"
 
 # Define the output TSV file
-output_file="/data/shared/biomuta/generated/datasets/2024_10_22/cancer_type_per_study.json"
+output_file="/data/shared/biomuta/generated/datasets/current/cancer_type_per_study.json"
 
 # Initialize the JSON array
 echo "[" > "$output_file"
@@ -43,4 +43,4 @@ echo "]" >> "$output_file"
 echo "Data successfully written to $output_file"
 
 # Make a list of unique cancer names in json format
-jq -r '.[].cancerType' $output_file | sort | uniq | jq -R . | jq -s . > unique_cancer_names.json
+jq -r '.[].cancerType' $output_file | sort | uniq | jq -R . | jq -s . > /data/shared/biomuta/generated/datasets/current/unique_cancer_names.json

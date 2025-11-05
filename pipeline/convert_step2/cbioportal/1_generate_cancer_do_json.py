@@ -55,11 +55,11 @@ def ask_confirmation(prompt):
         else:
             print(f"Invalid input. Please enter 'y' for yes or 'n' for no.")
 if ask_confirmation(f"The latest created directory is: {latest_dir}. Proceed?"):
-    input_file = Path(latest_dir) / "unique_cancer_names.txt"
+    input_file = Path(latest_dir) / "unique_cancer_names.json"
     cancer_types_with_do = Path(latest_dir) / "cancer_types_with_do.json"
     cancer_type_per_study = Path(latest_dir) / "cancer_type_per_study.json"
     study_ids_with_do = Path(latest_dir) / "study_ids_with_do.json"
-    print(f"Using {latest_dir}/unique_cancer_names.txt and writing out to {latest_dir}/cancer_types_with_do.json")
+    print(f"Using {latest_dir}/unique_cancer_names.json and writing out to {latest_dir}/cancer_types_with_do.json")
 else:
     sys.exit("Aborted by user.")
 
@@ -97,11 +97,11 @@ def check_do_mapping(cancer_type: str) -> str:
     else:
         return matches[0]
 
-# Read the input file and generate the JSON objects
+# Read the JSON input file and generate the JSON objects
 cancer_list = []
 with open(input_file, "r") as f:
-    for line in f:
-        cancer_type = line.strip()
+    cancer_names = json.load(f)
+    for cancer_type in cancer_names:
         if cancer_type:  # Skip empty lines
             do_name = check_do_mapping(cancer_type)
             cancer_list.append({"cancerType": cancer_type, "do_name": do_name})

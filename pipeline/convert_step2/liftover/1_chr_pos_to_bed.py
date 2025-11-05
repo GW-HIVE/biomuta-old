@@ -35,6 +35,9 @@ def process_json_to_bed(input_directory, output_bed_file):
     file_count = 0
     error_count = 0
 
+    # Create output directory if it doesn't exist
+    os.makedirs(os.path.dirname(output_bed_file), exist_ok=True)
+
     with open(output_bed_file, 'w') as bed_file:
         for json_file_path in glob.glob(os.path.join(input_directory, '*.json')):
             file_count += 1
@@ -113,6 +116,6 @@ def process_json_to_bed(input_directory, output_bed_file):
 config_obj = get_config()
 dl_dir = Path(config_obj["relevant_paths"]["downloads"])
 out_dir = Path(config_obj["relevant_paths"]["generated_datasets"])
-input_directory = dl_dir / 'cbioportal' / '2024_10_21' / 'mutations'  # Write a util to get latest dir
-output_bed_file = out_dir / '2024_10_22' / 'liftover' / 'hg19entrez_build_protChange.bed' #Write a util to get latest dir
+input_directory = dl_dir / 'cbioportal' / 'current' / 'mutations'
+output_bed_file = out_dir / 'current' / 'liftover' / 'hg19entrez_build_protChange.bed'
 process_json_to_bed(input_directory, output_bed_file)

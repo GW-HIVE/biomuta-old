@@ -1,0 +1,167 @@
+#!/bin/bash
+
+# API only processes 25 IDs at a time for some reason
+# Mapping is going to be done using human_protein_transcriptlocus.csv from data.glygen.org/GLY_000135 (see 3_ensp_to_uniprot.py) to avoid using the API.
+# 87,679 ENSP IDs were mapped, 23,517 ENSP IDs remain unmapped (see if unmapped IDs are non-canonical = process separately. They are canonical and non-canonical btw, Idk what is the pattern here).
+# Mapping unmapped IDs using the API... done.
+# Changed output writing logic and format, untested.
+# Improvement needed: log unmapped IDs.
+
+# Log file path
+log_file="3_logfile3.log"
+
+log() {
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $1" | tee -a "$log_file"
+}
+
+# Input and output file paths
+input_tsv="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/chr_pos_to_ensp.tsv"
+unique_ensp="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/unique_ensp"
+unmapped_file="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/unmapped_ids_by_glygen.log"
+output_json="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/ensp_to_uniprot_from_api.json"
+
+batch_size=25  # Number of ENSP IDs per batch (adjustable)
+failed_ids_dir="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/failed_ids"
+raw_dir="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/raw"
+successful_ids_dir="/data/shared/repos/biomuta-old/generated_datasets/current/mapping_ids/successful_ids"
+mkdir -p "$failed_ids_dir" "$raw_dir" "$successful_ids_dir"
+
+# Extract unique ENSP IDs if the file doesn't already exist
+if [ ! -f "$unique_ensp" ]; then
+    log "Extracting unique ENSP IDs from $input_tsv"
+    awk -F'\t' 'NR > 1 {print $6}' "$input_tsv" | sort -u > "$unique_ensp"
+    log "Unique ENSP IDs written to $unique_ensp"
+else
+    log "File $unique_ensp already exists. Skipping extraction."
+fi
+
+"""
+unique_ensp processed by 3_ensp_to_uniprot.py
+Unmapped IDs written to $unmapped_file
+"""
+
+# Split unmapped ENSP IDs into batches
+log "Splitting ENSP IDs into batches of size $batch_size"
+split -l "$batch_size" "$unmapped_file" batch_
+
+trap 'rm -f temp_results.json; rm -f batch_*' EXIT
+
+# Process each batch
+batch_count=0
+for batch_chunk in batch_*; do
+    batch_count=$((batch_count + 1))
+
+    # Log the batch being processed
+    num_ids_in_batch=$(wc -l < "$batch_chunk")
+    log "Processing batch $batch_count with $num_ids_in_batch ENSP IDs"
+
+    # Create a comma-separated list of ENSP IDs for the batch
+    batch_file=$(mktemp)
+    log "Created temporary file $batch_file"
+    paste -sd, "$batch_chunk" | tr -d '\r' | tr '\n' ',' | sed 's/,$//' > "$batch_file"
+
+    # Submit the batch request to the UniProt API
+    log "Submitting batch $batch_count to the API"
+    response=$(curl --silent --request POST 'https://rest.uniprot.org/idmapping/run' \
+        --form "ids=$(cat $batch_file)" \
+        --form 'from="Ensembl_Protein"' \
+        --form 'to="UniProtKB"')
+    
+    # Log the raw response from the API for debugging purposes
+    log "Raw API response saved to debug_raw_results_batch_$batch_count.json"
+    echo "$response" > "$raw_dir/debug_raw_results_batch_$batch_count".json
+
+    # Extract jobId from the response
+    jobId=$(echo "$response" | jq -r '.jobId')
+    if [ -z "$jobId" ]; then
+        log "Failed to retrieve jobId for batch: $(cat $batch_chunk)"
+        continue
+    else
+        job_details=$(curl --silent "https://rest.uniprot.org/idmapping/details/$jobId")
+        log "Job details for $jobId: $job_details"
+    fi
+
+    # Poll the job status
+    log "Polling job status for jobId: $jobId"
+    retry_count=0
+    max_retries=3  # Retry limit for transient errors
+    
+    while true; do
+        status_response=$(curl --silent "https://rest.uniprot.org/idmapping/status/$jobId")
+        log "Job status response: $status_response"
+        
+        status=$(echo "$status_response" | jq -r '.jobStatus')
+        if [ "$status" == "FINISHED" ]; then
+            log "Job $jobId finished successfully."
+            break
+        elif [ "$status" == "FAILED" ]; then
+            log "Job $jobId failed. Skipping batch."
+            break
+        elif [ "$status" == "ERROR" ]; then
+            log "Job $jobId encountered an error: $(echo "$status_response" | jq -r '.errors[]?.message')"
+            
+            # Retry logic for transient errors
+            retry_count=$((retry_count + 1))
+            if [ "$retry_count" -le "$max_retries" ]; then
+                log "Retrying job $jobId ($retry_count/$max_retries)..."
+                sleep $((2 ** retry_count))  # Exponential backoff
+            else
+                log "Job $jobId failed after $max_retries retries. Marking batch as failed."
+                echo "$batch_chunk" >> "$failed_ids_dir/failed_ids_batch_$batch_count.log"
+                break
+            fi
+        else
+            log "Job $jobId still in progress... waiting"
+            sleep 5
+        fi
+    done
+
+    # Fetch and parse results
+    log "Fetching results for jobId: $jobId"
+    result=$(curl --silent "https://rest.uniprot.org/idmapping/uniprotkb/results/$jobId")
+
+    # Save failed IDs to a separate file
+    failed_ids=$(echo "$result" | jq -r '.failedIds[]?' || true)
+    if [ -n "$failed_ids" ]; then
+        failed_ids_file="$failed_ids_dir/failed_ids_batch_$batch_count.log"
+        echo "$failed_ids" > "$failed_ids_file"
+        log "Failed IDs for batch $batch_count written to $failed_ids_file"
+    else
+        log "No failed IDs for batch $batch_count"
+    fi
+
+    if [ -z "$result" ]; then
+        log "No results returned for batch: $(cat $batch_chunk)"
+        continue
+    fi
+
+    # Initialize a temporary file for the dictionary if it doesn't exist
+    if [ ! -f "$output_json" ]; then
+        echo "{}" > "$output_json"
+    fi
+
+    successful_mappings=$(mktemp)
+    echo "{}" > "$successful_mappings" # Temporary file to accumulate results
+
+    # Process successful mappings
+    log "Processing successful mappings for batch $batch_count"
+    successful_batch_file="$successful_ids_dir/successful_ids_batch_$batch_count.json"
+    echo "$result" | jq -c '.results[]' > temp_results.json
+    
+    # Transform and accumulate key-value pairs
+    while read -r record; do
+        ensp_id=$(echo "$record" | jq -r '.from')
+        primaryAccession=$(echo "$record" | jq -r '.to.primaryAccession')
+        if [ -n "$primaryAccession" ]; then
+            log "Mapping found: $ensp_id -> $primaryAccession"
+            jq --arg key "$ensp_id" --arg value "$primaryAccession" \ '. + {($key): $value}' "$successful_mappings" > tmp.json && mv tmp.json "$successful_mappings"
+        fi
+    done < temp_results.json
+
+    # Merge the batch results with the main output file
+    jq -s '.[0] * .[1]' "$output_json" "$successful_mappings" > tmp.json && mv tmp.json "$output_json"
+    log "Merged successful mappings for batch $batch_count into $output_json"
+
+    # Clean up temporary files
+    rm -f "$batch_chunk" "$batch_file" temp_results.json "$successful_mappings"
+done

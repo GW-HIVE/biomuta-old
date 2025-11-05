@@ -5,6 +5,7 @@ The BioMuta pipeline gathers mutation data from various sources and combines the
 
 The sources included in the current version of BioMuta are:
 - **[cBioPortal](https://www.cbioportal.org)**
+- **[Clinical Interpretation of Variants in Cancer (CIVIC)](https://civicdb.org/welcome)**
 
 BioMuta gathers mutation data for the following cancers:
 - DOID:4045 / muscle cancer
@@ -45,15 +46,21 @@ BioMuta gathers mutation data for the following cancers:
 - DOID:11054 / urinary bladder cancer
 
 ## Features
-BioMuta pipeline comprises two steps:
+BioMuta pipeline comprises three steps: 1. Data download ("Download"); 2. Data cleaning, formatting and transformation ("Convert"); 3. Data integration ("Combine").
 1. **Download**
 
 Downloads mutation lists from each source.
+Input:
+Output:
 TBA: cBioPortal fields, cBioPortal studies
 
 2. **Convert**
 
 Formats all resources to the BioMuta standard for both data and field structure.
+
+3. **Combine**
+
+Builds the full table in CSV format ready to be shipped.
 
 ## Installation
 1. **Clone the Repository:**
@@ -87,12 +94,16 @@ Example `config.json`:
 ```
 
 ## Usage
+(Provide info on each script: which file is used as input, what output is produced etc.)
+
 ### Step 1: Download
 1. Go to `pipeline/download_step1/cbioportal`
 2. 
 Script execution order (some scripts will be moved into appropriate directories later)
-1 - fetch_mutations.sh
-2 - cancer_types.py | integrate_cancer_types.sh
+Scripts use cBioPortal API: https://www.cbioportal.org/api/swagger-ui/index.html
+1 - Download list of study IDs with their corresponding cancer names that will be subsequently converted to Disease Ontology cancer slim terms.
+2 - fetch_mutations.sh downloads mutation data in JSON format, using the list of study IDs as input.
+3 - cancer_types.py | integrate_cancer_types.sh
 
 ### UniProt Accession Numbers
 1. Extract GRCh37 chromosomic positions and write out in BED format.
@@ -114,6 +125,529 @@ The liftover from GRCh37 to GRCh38 was performed with the [LiftOver](https://gen
 
 ## Setting config parameters
 After cloning this repo, you will need to set the parameters given in pipeline/config.json.
+
+
+
+
+# cBioPortal Data Downloader Script Documentation
+
+## Overview
+
+This bash script downloads mutation data from the cBioPortal API for all available cancer studies. It systematically retrieves study information, molecular profiles, sample lists, and mutation data, organizing the downloaded files in a structured directory hierarchy.
+
+## Prerequisites
+
+- **curl**: For making HTTP requests to the cBioPortal API
+- **jq**: For parsing and extracting data from JSON responses
+- **bash**: Version 4.0+ recommended
+- **Internet connection**: Required for API access
+
+## Configuration
+
+The script expects a `config.json` file located two directories up from the script location (`../../config.json`). This configuration file must contain:
+
+```json
+{
+  "relevant_paths": {
+    "downloads": "/path/to/downloads/directory"
+  }
+}
+```
+
+## Directory Structure
+
+The script creates the following directory structure:
+
+```
+{downloads_path}/
+└── cbioportal/
+    ├── current -> {YYYY_MM_DD}/  (symbolic link to today's download)
+    └── {YYYY_MM_DD}/
+        ├── all_studies.json
+        ├── study_ids.txt
+        ├── {study_id}_molecular_profiles.json
+        ├── {study_id}_sample_lists.json
+        └── mutations/
+            └── {molecular_profile_id}_{sample_list_id}.json
+```
+
+## Workflow
+
+### 1. Setup and Initialization
+- Determines script directory and loads configuration
+- Creates date-stamped download directory (`YYYY_MM_DD` format)
+- Creates symbolic link named `current` pointing to today's directory
+- Sets up subdirectories for organizing downloaded data
+
+### 2. Study Discovery
+- Fetches all available studies from cBioPortal API
+- Saves complete study metadata to `all_studies.json`
+- Extracts study IDs to `study_ids.txt` for processing
+
+### 3. Study Processing
+For each study ID, the script:
+- Downloads molecular profile metadata
+- Downloads sample list metadata
+- Extracts molecular profile IDs and sample list IDs
+
+### 4. Mutation Data Download
+For each combination of molecular profile and sample list:
+- Downloads mutation data via the cBioPortal mutations API
+- Saves data with descriptive filename format
+- Implements 5-second delay between requests to respect rate limits
+- Provides detailed progress logging
+
+### 5. Cleanup
+- Removes JSON files containing "not found" responses
+- Keeps only successfully downloaded mutation data
+
+## API Endpoints Used
+
+- **Studies**: `https://www.cbioportal.org/api/studies`
+- **Molecular Profiles**: `https://www.cbioportal.org/api/studies/{studyId}/molecular-profiles`
+- **Sample Lists**: `https://www.cbioportal.org/api/studies/{studyId}/sample-lists`
+- **Mutations**: `https://www.cbioportal.org/api/molecular-profiles/{molecularProfileId}/mutations`
+
+## Error Handling
+
+- Validates HTTP response codes for each API call
+- Continues processing other studies if individual requests fail
+- Logs both successful and failed operations
+- Removes incomplete or error response files during cleanup
+
+## Rate Limiting
+
+The script implements a 5-second delay between mutation data requests to avoid overwhelming the cBioPortal API servers and prevent rate limiting.
+
+## Output Files
+
+### Study Metadata
+- `all_studies.json`: Complete metadata for all studies
+- `study_ids.txt`: Newline-separated list of study identifiers
+- `{study_id}_molecular_profiles.json`: Molecular profiles for each study
+- `{study_id}_sample_lists.json`: Sample lists for each study
+
+### Mutation Data
+- `{molecular_profile_id}_{sample_list_id}.json`: Mutation data files in the mutations subdirectory
+
+## Usage
+
+```bash
+./download_cbioportal_data.sh
+```
+
+## Runtime Considerations
+
+- **Duration**: Complete execution may take several hours depending on the number of studies and data volume
+- **Storage**: Requires significant disk space for mutation data (potentially several GB)
+- **Network**: Bandwidth-intensive due to large JSON file downloads
+- **API Limits**: Respects cBioPortal rate limits with built-in delays
+
+## Logging
+
+The script provides verbose console output including:
+- Current study being processed
+- Success/failure status for each API request
+- Progress indicators for mutation data downloads
+- Summary of operations performed
+
+## Troubleshooting
+
+### Common Issues
+- **Missing dependencies**: Ensure `curl` and `jq` are installed and accessible
+- **Configuration errors**: Verify `config.json` exists and contains valid download path
+- **Network timeouts**: Large downloads may timeout; consider increasing curl timeout settings
+- **Disk space**: Monitor available storage during execution
+
+### Recovery
+- The script can be safely rerun; it will create a new date-stamped directory
+- Previous downloads remain intact and accessible via their date stamps
+- The `current` symlink always points to the most recent download
+
+## Data Usage
+
+The downloaded mutation data follows cBioPortal's standard JSON format and can be used for:
+- Cancer genomics research
+- Mutation analysis pipelines  
+- Bioinformatics tool development
+- Educational purposes
+
+Ensure compliance with cBioPortal's terms of use and data licensing requirements when using the downloaded data.
+
+
+
+
+# Cancer Types Downloader Script Documentation
+
+## Overview
+
+This bash script downloads detailed study metadata from the cBioPortal API for cancer studies. It processes a list of study IDs from a previously downloaded dataset and retrieves comprehensive information about each study, including cancer type details. The script is designed to work as a follow-up to the main cBioPortal data downloader.
+
+## Prerequisites
+
+- **curl**: For making HTTP requests to the cBioPortal API
+- **jq**: For parsing JSON configuration files
+- **bash**: Version 4.0+ recommended
+- **sed**: For text processing (removing carriage returns)
+- **Internet connection**: Required for API access
+
+## Dependencies
+
+This script depends on data from the main cBioPortal downloader script, specifically the `study_ids.txt` file containing the list of study identifiers.
+
+## Configuration
+
+The script expects a `config.json` file located two directories up from the script location (`../../config.json`). This configuration file must contain:
+
+```json
+{
+  "relevant_paths": {
+    "downloads": "/path/to/downloads/directory",
+    "generated_datasets": "/path/to/generated/datasets/directory"
+  }
+}
+```
+
+## Directory Structure
+
+The script creates the following directory structure:
+
+```
+{generated_datasets_path}/
+└── {YYYY_MM_DD}/
+    └── cancer_types/
+        ├── {study_id_1}.json
+        ├── {study_id_2}.json
+        └── ...
+```
+
+Where `{YYYY_MM_DD}` corresponds to the latest cBioPortal download date.
+
+## Workflow
+
+### 1. Setup and Configuration
+- Determines script directory and loads configuration from `config.json`
+- Identifies the latest cBioPortal download directory by timestamp
+- Constructs output directory path using the latest dump directory name
+
+### 2. Output Directory Management
+The script provides flexible directory handling:
+- **Existing Directory**: If the target directory exists, prompts user to:
+  - Overwrite the existing directory (`y`)
+  - Create a timestamped alternative directory (`n`)
+- **New Directory**: Creates the directory structure if it doesn't exist
+
+### 3. Input Validation
+- Verifies the existence of the `study_ids.txt` file from the latest download
+- Prompts user to confirm the input file before processing
+- Allows user to abort if incorrect file is selected
+
+### 4. Study Metadata Download
+- Processes each study ID from the input file
+- Removes carriage return characters that may cause API issues
+- Downloads detailed study metadata for each study ID
+- Saves individual JSON files named by study ID
+
+## API Endpoint Used
+
+- **Study Details**: `https://www.cbioportal.org/api/studies/{studyId}`
+
+## User Interaction
+
+The script includes two interactive prompts:
+
+### Directory Overwrite Confirmation
+```
+Directory {OUTPUT_DIR} already exists.
+Do you want to overwrite it? (y/n):
+```
+
+### Input File Confirmation
+```
+The input file is: {INPUT_FILE}
+Are you sure this is the input file you want to use? (y/n):
+```
+
+## Error Handling
+
+- **Missing Input File**: Exits with error code 1 if `study_ids.txt` doesn't exist
+- **User Cancellation**: Exits gracefully if user chooses not to proceed
+- **Directory Creation**: Handles both overwrite and alternative directory scenarios
+- **Carriage Return Handling**: Strips Windows-style line endings that could cause API errors
+
+## Output Files
+
+### Study Metadata Files
+Each study produces a JSON file containing detailed metadata:
+- **Filename**: `{study_id}.json`
+- **Content**: Complete study information including:
+  - Study description and citation
+  - Cancer type and subtype information
+  - Sample counts and demographics
+  - Publication details
+  - Data availability status
+
+## Usage
+
+```bash
+./download_cancer_types.sh
+```
+
+### Example Interactive Session
+```bash
+$ ./download_cancer_types.sh
+Directory /path/to/generated/2024_03_15/cancer_types already exists.
+Do you want to overwrite it? (y/n): n
+Creating new directory: /path/to/generated/2024_03_15/cancer_types_20240315143022
+Final output directory: /path/to/generated/2024_03_15/cancer_types_20240315143022
+The input file is: /path/to/downloads/cbioportal/2024_03_15/study_ids.txt
+Are you sure this is the input file you want to use? (y/n): y
+Using /path/to/downloads/cbioportal/2024_03_15/study_ids.txt for processing...
+```
+
+## Runtime Considerations
+
+- **Duration**: Typically faster than the main downloader (minutes rather than hours)
+- **Storage**: Moderate disk space requirements (individual JSON files are small)
+- **Network**: Less bandwidth-intensive than mutation data downloads
+- **Rate Limits**: No explicit rate limiting implemented (individual study requests are typically fast)
+
+## Data Processing Features
+
+### Carriage Return Handling
+The script uses `sed 's/\r$//'` to remove Windows-style carriage returns from the input file, ensuring compatibility across different operating systems and preventing API request failures.
+
+### Automatic Latest Version Detection
+The script automatically identifies the most recent cBioPortal download using `ls -t` to sort directories by modification time, ensuring it processes the freshest available data.
+
+## Output Data Usage
+
+The downloaded study metadata can be used for:
+- Cancer type classification and analysis
+- Study cataloging and organization
+- Metadata extraction for research projects
+- Building study selection interfaces
+- Generating study summaries and reports
+
+## Troubleshooting
+
+### Common Issues
+- **Missing dependencies**: Ensure `curl`, `jq`, and `sed` are installed
+- **Configuration errors**: Verify `config.json` paths are correct
+- **Input file not found**: Ensure the main cBioPortal downloader has been run first
+- **Permission errors**: Verify write permissions to the generated datasets directory
+
+### Recovery Options
+- **Interrupted downloads**: Safe to rerun; existing files will be overwritten or new directory created
+- **Partial completion**: Individual study files can be manually verified and re-downloaded if needed
+- **Wrong input file**: Script validates input file before processing begins
+
+## Integration Notes
+
+This script is designed to be part of a larger cBioPortal data processing pipeline:
+1. **First**: Run the main cBioPortal data downloader
+2. **Second**: Run this cancer types downloader for study metadata
+3. **Third**: Process the downloaded data with analysis scripts
+
+The consistent directory naming scheme ensures compatibility between pipeline stages.
+
+
+
+# Cancer Type Extractor Script Documentation
+
+## Overview
+
+This bash script processes the JSON files downloaded by the cancer types downloader script to extract and consolidate cancer type information. It creates a structured JSON dataset mapping study IDs to their corresponding cancer types, and generates a list of unique cancer names for further analysis.
+
+## Prerequisites
+
+- **jq**: For JSON parsing, manipulation, and formatting
+- **bash**: Version 4.0+ recommended
+- **sort**: For sorting operations (standard Unix utility)
+- **uniq**: For removing duplicates (standard Unix utility)
+
+## Dependencies
+
+This script depends on the output from the cancer types downloader script, specifically the individual JSON files containing study metadata located in the `cancer_types` directory.
+
+## Input Requirements
+
+### Expected Input Structure
+```
+/data/shared/biomuta/generated/datasets/current/cancer_types/
+├── study_id_1.json
+├── study_id_2.json
+├── study_id_3.json
+└── ...
+```
+
+### Input File Format
+Each JSON file should contain study metadata with the following structure:
+```json
+{
+  "studyId": "study_identifier",
+  "cancerType": {
+    "name": "Cancer Type Name",
+    "...": "other fields"
+  },
+  "...": "other study metadata"
+}
+```
+
+## Output Files
+
+### Primary Output: `cancer_type_per_study.json`
+A JSON array containing study ID and cancer type mappings:
+```json
+[
+  {
+    "studyId": "acc_tcga",
+    "cancerType": "Adrenocortical Carcinoma"
+  },
+  {
+    "studyId": "blca_tcga",
+    "cancerType": "Bladder Urothelial Carcinoma"
+  }
+]
+```
+
+### Secondary Output: `unique_cancer_names.json`
+A JSON array of unique cancer type names:
+```json
+[
+  "Adrenocortical Carcinoma",
+  "Bladder Urothelial Carcinoma",
+  "Brain Lower Grade Glioma",
+  "Breast Invasive Carcinoma"
+]
+```
+
+## Workflow
+
+### 1. Initialization
+- Sets up input and output directory paths
+- Initializes the output JSON array structure
+- Prepares formatting variables for proper JSON syntax
+
+### 2. Data Extraction
+For each JSON file in the input directory:
+- Extracts the `studyId` field using `jq -r '.studyId'`
+- Extracts the cancer type name using `jq -r '.cancerType.name'`
+- Creates a formatted JSON object with both fields
+
+### 3. JSON Array Construction
+- Handles proper JSON array formatting with commas
+- Tracks the first record to avoid leading comma
+- Builds a well-formed JSON array incrementally
+
+### 4. Unique Cancer Names Generation
+- Extracts all cancer type names from the primary output
+- Sorts cancer names alphabetically
+- Removes duplicates using `uniq`
+- Formats as a JSON array of strings
+
+## File Paths (Hard-coded)
+
+The script uses fixed paths that may need adjustment for different environments:
+
+```bash
+# Input directory
+input_dir="/data/shared/biomuta/generated/datasets/current/cancer_types"
+
+# Primary output file
+output_file="/data/shared/biomuta/generated/datasets/current/cancer_type_per_study.json"
+
+# Secondary output file
+"/data/shared/biomuta/generated/datasets/current/unique_cancer_names.json"
+```
+
+## Usage
+
+```bash
+./extract_cancer_types.sh
+```
+
+### Expected Output
+```
+Data successfully written to /data/shared/biomuta/generated/datasets/current/cancer_type_per_study.json
+```
+
+## Technical Implementation Details
+
+### JSON Formatting Strategy
+The script builds a valid JSON array by:
+1. Writing the opening bracket `[`
+2. Adding comma separators between objects (except before the first)
+3. Appending each JSON object without trailing commas
+4. Closing with the final bracket `]`
+
+### jq Command Usage
+- **Extraction**: `jq -r '.field'` - Raw string output without quotes
+- **Object Creation**: `jq -n --arg var value '{field: $var}'` - Create JSON objects
+- **Array Processing**: `jq -R . | jq -s .` - Convert lines to JSON string array
+
+### Data Processing Pipeline
+```bash
+# Extract cancer types → Sort → Remove duplicates → Convert to JSON array
+jq -r '.[].cancerType' $output_file | sort | uniq | jq -R . | jq -s .
+```
+
+## Error Handling
+
+### Potential Issues
+- **Missing input directory**: Script will fail if cancer_types directory doesn't exist
+- **Malformed JSON files**: Invalid JSON in input files will cause jq errors
+- **Missing fields**: If `studyId` or `cancerType.name` fields are missing, jq will output `null`
+- **Permission errors**: Write permissions required for output directory
+
+### Validation
+The script doesn't include explicit error checking, but will fail visibly if:
+- Input directory is empty or missing
+- JSON files are malformed
+- Output directory is not writable
+
+## Data Quality Considerations
+
+### Null Value Handling
+If input JSON files contain missing or null values for `studyId` or `cancerType.name`, these will appear as `null` in the output JSON, which may require downstream processing to handle.
+
+### Duplicate Studies
+The script doesn't check for duplicate study IDs, so if the same study appears in multiple input files, it will create multiple entries in the output.
+
+## Integration with Pipeline
+
+This script fits into the cBioPortal data processing pipeline as:
+
+1. **cBioPortal Data Downloader** → Downloads raw study data
+2. **Cancer Types Downloader** → Downloads study metadata  
+3. **Cancer Type Extractor** (this script) → Extracts structured cancer type mappings
+4. **Analysis Scripts** → Use the structured JSON output for research
+
+## Output Usage
+
+The generated files can be used for:
+- **Research Analysis**: Mapping studies to cancer types for comparative analysis
+- **Data Visualization**: Creating cancer type distribution charts
+- **Study Selection**: Filtering studies by cancer type for focused research  
+- **Metadata Enhancement**: Adding cancer type information to other datasets
+- **Quality Control**: Verifying cancer type consistency across studies
+
+## Customization Options
+
+To adapt the script for different environments:
+
+1. **Update file paths** to match your directory structure
+2. **Modify field extraction** if input JSON structure differs
+3. **Add error handling** for production environments
+4. **Include validation** for data quality checking
+
+## Performance Considerations
+
+- **Speed**: Fast execution for typical dataset sizes (hundreds of studies)
+- **Memory**: Minimal memory usage due to streaming processing
+- **Storage**: Output files are typically small (KB to low MB range)
+- **Scalability**: Linear scaling with number of input files
+
 
 
 

@@ -24,7 +24,30 @@ import argparse
 import os
 import glob
 import pandas as pd
+import re
 
+
+
+def get_next_version_number(output_folder, base_filename):
+    """
+    Finds the highest version number in the output folder for files matching the base filename and returns the next version number.
+    """
+    # Regex pattern to match "biomuta_vX.csv"
+    pattern = re.compile(rf"{re.escape(base_filename)}_v(\d+)\.csv$")
+
+    max_version = 0
+
+    # Iterate through files in the output folder
+    for filename in os.listdir(output_folder):
+        match = pattern.match(filename)
+        if match:
+            # Extract the version number from the filename
+            version = int(match.group(1))
+            if version > max_version:
+                max_version = version
+
+    # Return the next version number
+    return max_version + 1
 
 
 def main(input_folder, output_folder):
@@ -48,9 +71,13 @@ def main(input_folder, output_folder):
     if dup_number > 0:
         print("Removed " + str(dup_number) + " duplicate rows") 
 
-    final_file_path = output_folder + "/biomuta_v5.csv"
+    # This bit is untested (new functionality: versioning)
+    base_filename = "biomuta"
+    next_version = get_next_version_number(output_folder, base_filename)
+    new_filename = f"{base_filename}_v{next_version}.csv"
+    final_file_path = os.path.join(output_folder, new_filename)
     print("Exporting mapped file to " + final_file_path)
-    final_df.to_csv(final_file_path, index = False)
+    final_df.to_csv(final_file_path, index = False, quoting=1)
 
                         
 if __name__ == "__main__":
@@ -63,4 +90,4 @@ if __name__ == "__main__":
 
     main(args.input_folder, args.output_folder)
 
-#python combine_csv.py -i /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/compiled/source_mutation_files -o /mnt/c/Users/caule/OncoMX/biomuta/v-5.0/compiled
+#python3 combine_csv.py -i /data/shared/repos/biomuta-old/generated_datasets/compiled/source_mutation_files -o /data/shared/repos/biomuta-old/generated_datasets/compiled

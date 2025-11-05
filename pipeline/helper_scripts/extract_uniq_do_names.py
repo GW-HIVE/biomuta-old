@@ -1,6 +1,6 @@
 import json
 
-# Replace 'path_to_your_file.json' with the path to your JSON file
+# Path to JSON file
 file_path = '/data/shared/biomuta/generated/datasets/2024_10_22/cancer_types_with_do.json'
 
 # Open and load JSON data from the file

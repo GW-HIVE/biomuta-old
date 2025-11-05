@@ -14,6 +14,7 @@ DOWNLOAD_DIR="${DOWNLOADS}/cbioportal/${TODAY}"
 MUTATIONS_DIR="${DOWNLOAD_DIR}/mutations"
 # Create necessary directories
 mkdir -p "${DOWNLOAD_DIR}" "${MUTATIONS_DIR}"
+ln -s "${DOWNLOAD_DIR}" current
 
 # Base URLs for the API
 STUDY_URL="https://www.cbioportal.org/api/studies"
@@ -81,3 +82,7 @@ while IFS= read -r study_id; do
   done
 
 done < "$STUDY_IDS_FILE"
+
+# Remove files from the mutations directory that contain "not found"
+cd "${MUTATIONS_DIR}"
+grep -l "not found" *.json 2>/dev/null | xargs -r rm
